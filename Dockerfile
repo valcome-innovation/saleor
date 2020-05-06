@@ -48,4 +48,6 @@ ENV PORT 8000
 ENV PYTHONUNBUFFERED 1
 ENV PROCESSES 4
 
+USER saleor
+
 CMD ["uwsgi", "--ini", "/app/saleor/wsgi/uwsgi.ini"]
