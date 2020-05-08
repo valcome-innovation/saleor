@@ -56,9 +56,7 @@ services:
     volumes:
       - ./saleor/:/app/saleor:Z
       - ./templates/:/app/templates:Z
-      # prevents overshadowing of build-time assets
       - /app/templates/templated_email/compiled
-      # shared volume between worker and api for media
       - saleor-media-test:/app/media
 
 volumes:
