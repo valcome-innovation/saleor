@@ -64,4 +64,5 @@ volumes:
 
 networks:
   saleor-backend-tier-test:
+    name: 'saleor-backend-tier-test'
     driver: bridge
