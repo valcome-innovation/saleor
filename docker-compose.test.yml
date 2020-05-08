@@ -26,8 +26,6 @@ services:
   redis:
     container_name: saleor_test-redis
     image: library/redis:5.0-alpine
-    ports:
-      - 7051:6379
     restart: unless-stopped
     networks:
       - saleor-backend-tier-test
