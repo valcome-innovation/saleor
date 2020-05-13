@@ -615,6 +615,9 @@ class ProductType(CountableDjangoObjectType):
     tax_type = graphene.Field(
         TaxType, description="A type of tax. Assigned by enabled tax gateway"
     )
+    customizable_attributes = graphene.List(
+        Attribute, description="Customizable attributes of that product type."
+    )
     variant_attributes = graphene.List(
         Attribute, description="Variant attributes of that product type."
     )
@@ -662,6 +665,10 @@ class ProductType(CountableDjangoObjectType):
     @staticmethod
     def resolve_variant_attributes(root: models.ProductType, *_args, **_kwargs):
         return root.variant_attributes.variant_attributes_sorted().all()
+
+    @staticmethod
+    def resolve_customizable_attributes(root: models.ProductType, *_args, **_kwargs):
+        return root.custom_attributes.customizable_attributes_sorted().all()
 
     @staticmethod
     def resolve_products(root: models.ProductType, info, **_kwargs):

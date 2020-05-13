@@ -692,6 +692,24 @@ class AttributeVariant(SortableModel):
         return self.product_type.attributevariant.all()
 
 
+class AttributeCustom(SortableModel):
+    attribute = models.ForeignKey(
+        "Attribute", related_name="attributecustom", on_delete=models.CASCADE
+    )
+    product_type = models.ForeignKey(
+        ProductType, related_name="attributecustom", on_delete=models.CASCADE
+    )
+
+    objects = AssociatedAttributeQuerySet.as_manager()
+
+    class Meta:
+        unique_together = (("attribute", "product_type"),)
+        ordering = ("sort_order",)
+
+    def get_ordering_queryset(self):
+        return self.product_type.attributecustom.all()
+
+
 class AttributeQuerySet(BaseAttributeQuerySet):
     def get_unassigned_attributes(self, product_type_pk: int):
         return self.exclude(
@@ -726,6 +744,9 @@ class AttributeQuerySet(BaseAttributeQuerySet):
     def variant_attributes_sorted(self, asc=True):
         return self._get_sorted_m2m_field("attributevariant", asc)
 
+    def customizable_attributes_sorted(self, asc=True):
+        return self._get_sorted_m2m_field("attributecustom", asc)
+
 
 class Attribute(ModelWithMetadata):
     slug = models.SlugField(max_length=250, unique=True)
@@ -749,6 +770,14 @@ class Attribute(ModelWithMetadata):
         blank=True,
         related_name="variant_attributes",
         through=AttributeVariant,
+        through_fields=("attribute", "product_type"),
+    )
+
+    product_custom_types = models.ManyToManyField(
+        ProductType,
+        blank=True,
+        related_name="custom_attributes",
+        through=AttributeCustom,
         through_fields=("attribute", "product_type"),
     )
 
