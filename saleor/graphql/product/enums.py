@@ -9,6 +9,7 @@ AttributeInputTypeEnum = to_enum(AttributeInputType)
 class AttributeTypeEnum(graphene.Enum):
     PRODUCT = "PRODUCT"
     VARIANT = "VARIANT"
+    CUSTOM = "CUSTOM"
 
 
 class AttributeValueType(graphene.Enum):

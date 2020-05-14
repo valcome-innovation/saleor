@@ -312,6 +312,7 @@ class AttributeAssign(BaseMutation):
         """Resolve all passed global ids into integer PKs of the Attribute type."""
         product_attrs_pks = []
         variant_attrs_pks = []
+        custom_attrs_pks = []
 
         for operation in operations:
             pk = from_global_id_strict_type(
@@ -319,19 +320,21 @@ class AttributeAssign(BaseMutation):
             )
             if operation.type == AttributeTypeEnum.PRODUCT:
                 product_attrs_pks.append(pk)
+            elif operation.type == AttributeTypeEnum.CUSTOM:
+                custom_attrs_pks.append(pk)
             else:
                 variant_attrs_pks.append(pk)
 
-        return product_attrs_pks, variant_attrs_pks
+        return product_attrs_pks, variant_attrs_pks, custom_attrs_pks
 
     @classmethod
     def check_operations_not_assigned_already(
-        cls, product_type, product_attrs_pks, variant_attrs_pks
+        cls, product_type, product_attrs_pks, variant_attrs_pks, custom_attrs_pks
     ):
         qs = (
             models.Attribute.objects.get_assigned_attributes(product_type.pk)
             .values_list("name", "slug")
-            .filter(Q(pk__in=product_attrs_pks) | Q(pk__in=variant_attrs_pks))
+            .filter(Q(pk__in=product_attrs_pks) | Q(pk__in=variant_attrs_pks) | Q(pk__in=custom_attrs_pks))
         )
 
         invalid_attributes = list(qs)
@@ -383,9 +386,9 @@ class AttributeAssign(BaseMutation):
             )
 
     @classmethod
-    def clean_operations(cls, product_type, product_attrs_pks, variant_attrs_pks):
+    def clean_operations(cls, product_type, product_attrs_pks, variant_attrs_pks, custom_attrs_pks):
         """Ensure the attributes are not already assigned to the product type."""
-        attrs_pk = product_attrs_pks + variant_attrs_pks
+        attrs_pk = product_attrs_pks + variant_attrs_pks + custom_attrs_pks
         attributes = models.Attribute.objects.filter(id__in=attrs_pk).values_list(
             "pk", flat=True
         )
@@ -405,7 +408,7 @@ class AttributeAssign(BaseMutation):
             )
         cls.check_product_operations_are_assignable(product_attrs_pks)
         cls.check_operations_not_assigned_already(
-            product_type, product_attrs_pks, variant_attrs_pks
+            product_type, product_attrs_pks, variant_attrs_pks, custom_attrs_pks
         )
 
     @classmethod
@@ -425,9 +428,8 @@ class AttributeAssign(BaseMutation):
             info, product_type_id, only_type=ProductType
         )
 
-        # TODO add customizables
         # Resolve all the passed IDs to ints
-        product_attrs_pks, variant_attrs_pks  = cls.get_operations(info, operations)
+        product_attrs_pks, variant_attrs_pks, custom_attrs_pks  = cls.get_operations(info, operations)
 
         if variant_attrs_pks and not product_type.has_variants:
             raise ValidationError(
@@ -440,11 +442,12 @@ class AttributeAssign(BaseMutation):
             )
 
         # Ensure the attribute are assignable
-        cls.clean_operations(product_type, product_attrs_pks, variant_attrs_pks)
+        cls.clean_operations(product_type, product_attrs_pks, variant_attrs_pks, custom_attrs_pks)
 
         # Commit
         cls.save_field_values(product_type, "AttributeProduct", product_attrs_pks)
         cls.save_field_values(product_type, "AttributeVariant", variant_attrs_pks)
+        cls.save_field_values(product_type, "AttributeCustom", custom_attrs_pks)
 
         return cls(product_type=product_type)
 
@@ -497,7 +500,7 @@ class AttributeUnassign(BaseMutation):
         # Commit
         cls.save_field_values(product_type, "product_attributes", attribute_pks)
         cls.save_field_values(product_type, "variant_attributes", attribute_pks)
-        cls.save_field_values(product_type, "customizable_attributes", attribute_pks)
+        cls.save_field_values(product_type, "custom_attributes", attribute_pks)
 
         return cls(product_type=product_type)
 
@@ -701,6 +704,8 @@ class ProductTypeReorderAttributes(BaseMutation):
 
         if type == AttributeTypeEnum.PRODUCT:
             m2m_field = "attributeproduct"
+        elif type == AttributeTypeEnum.CUSTOM:
+            m2m_field = "attributecustom"
         else:
             m2m_field = "attributevariant"
 

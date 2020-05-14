@@ -1223,6 +1223,9 @@ ASSIGN_ATTR_QUERY = """
           variantAttributes {
             id
           }
+          customizableAttributes {
+            id
+          }
         }
       }
     }
@@ -1444,6 +1447,9 @@ UNASSIGN_ATTR_QUERY = """
             id
           }
           productAttributes {
+            id
+          }
+          customizableAttributes {
             id
           }
         }
