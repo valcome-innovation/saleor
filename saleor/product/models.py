@@ -94,6 +94,7 @@ class ProductType(ModelWithMetadata):
     name = models.CharField(max_length=250)
     slug = models.SlugField(max_length=255, unique=True)
     has_variants = models.BooleanField(default=True)
+    is_customizable = models.BooleanField(default=False)
     is_shipping_required = models.BooleanField(default=True)
     is_digital = models.BooleanField(default=False)
     weight = MeasurementField(

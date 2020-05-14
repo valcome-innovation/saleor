@@ -1403,6 +1403,11 @@ class ProductTypeInput(graphene.InputObjectType):
             "least one variant created under the hood."
         )
     )
+    is_customizable = graphene.Boolean(
+        description=(
+            "Determines if product of this type does have customizable attributes."
+        )
+    )
     product_attributes = graphene.List(
         graphene.ID,
         description="List of attributes shared among all product variants.",
@@ -1415,6 +1420,13 @@ class ProductTypeInput(graphene.InputObjectType):
             "a product."
         ),
         name="variantAttributes",
+    )
+    customizable_attributes = graphene.List(
+        graphene.ID,
+        description=(
+            "List of attributes used which can be customized"
+        ),
+        name="customAttributes",
     )
     is_shipping_required = graphene.Boolean(
         description="Determines if shipping is required for products of this variant."

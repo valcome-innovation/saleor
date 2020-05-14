@@ -425,8 +425,9 @@ class AttributeAssign(BaseMutation):
             info, product_type_id, only_type=ProductType
         )
 
+        # TODO add customizables
         # Resolve all the passed IDs to ints
-        product_attrs_pks, variant_attrs_pks = cls.get_operations(info, operations)
+        product_attrs_pks, variant_attrs_pks  = cls.get_operations(info, operations)
 
         if variant_attrs_pks and not product_type.has_variants:
             raise ValidationError(
@@ -496,6 +497,7 @@ class AttributeUnassign(BaseMutation):
         # Commit
         cls.save_field_values(product_type, "product_attributes", attribute_pks)
         cls.save_field_values(product_type, "variant_attributes", attribute_pks)
+        cls.save_field_values(product_type, "customizable_attributes", attribute_pks)
 
         return cls(product_type=product_type)
 

@@ -638,6 +638,7 @@ class ProductType(CountableDjangoObjectType):
         only_fields = [
             "has_variants",
             "id",
+            "is_customizable",
             "is_digital",
             "is_shipping_required",
             "name",
