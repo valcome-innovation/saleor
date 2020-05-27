@@ -608,24 +608,23 @@ def create_staff_users(how_many=2, superuser=False):
     users = []
     for _ in range(how_many):
         address = create_address()
-        first_name = address.first_name
-        last_name = address.last_name
-        email = get_email(first_name, last_name)
-
-        staff_user = User.objects.create_user(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            password="password",
-            default_billing_address=address,
-            default_shipping_address=address,
-            is_staff=True,
-            is_active=True,
-            is_superuser=superuser,
-        )
+        staff_user = create_stuff_user(address, address.first_name, address.last_name, superuser)
         users.append(staff_user)
+    users.append(create_stuff_user(create_address(), "unit", "test", superuser))
     return users
 
+def create_stuff_user(address, first_name, last_name, superuser=False):
+    return User.objects.create_user(
+        first_name=first_name,
+        last_name=last_name,
+        email=get_email(first_name, last_name),
+        password="password",
+        default_billing_address=address,
+        default_shipping_address=address,
+        is_staff=True,
+        is_active=True,
+        is_superuser=superuser,
+    )
 
 def create_orders(how_many=10):
     discounts = fetch_discounts(timezone.now())
