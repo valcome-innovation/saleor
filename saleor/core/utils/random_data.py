@@ -516,7 +516,9 @@ def create_fulfillments(order):
 def create_fake_order(discounts, max_order_lines=5):
     customers = User.objects.filter(is_superuser=False).order_by("?")
     customer = random.choice([None, customers.first()])
+    return create_fake_order_with_customer(customer, discounts, max_order_lines)
 
+def create_fake_order_with_customer(customer, discounts, max_order_lines=5):
     if customer:
         address = customer.default_shipping_address
         order_data = {
@@ -557,7 +559,6 @@ def create_fake_order(discounts, max_order_lines=5):
     create_fake_payment(order=order)
     create_fulfillments(order)
     return order
-
 
 def create_fake_sale():
     sale = Sale.objects.create(
@@ -610,7 +611,13 @@ def create_staff_users(how_many=2, superuser=False):
         address = create_address()
         staff_user = create_stuff_user(address, address.first_name, address.last_name, superuser)
         users.append(staff_user)
-    users.append(create_stuff_user(create_address(), "unit", "test", superuser))
+
+    test_user = create_stuff_user(create_address(), "unit", "test", superuser)
+    discounts = fetch_discounts(timezone.now())
+    for _ in range(15):
+        create_fake_order_with_customer(test_user, discounts)
+
+    users.append(test_user)
     return users
 
 def create_stuff_user(address, first_name, last_name, superuser=False):
