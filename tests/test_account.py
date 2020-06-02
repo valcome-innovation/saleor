@@ -62,22 +62,23 @@ def test_address_form_postal_code_validation():
     assert "postal_code" in errors
 
 
-@pytest.mark.parametrize(
-    "country, phone, is_valid",
-    (
-        ("US", "123-456-7890", False),
-        ("US", "(541) 754-3010", True),
-        ("FR", "0600000000", True),
-    ),
-)
-def test_address_form_phone_number_validation(country, phone, is_valid):
-    data = {"country": country, "phone": phone}
-    form = forms.get_address_form(data, country_code="PL")[0]
-    errors = form.errors
-    if not is_valid:
-        assert "phone" in errors
-    else:
-        assert "phone" not in errors
+# TODO disabled in favor of no phone validation
+# @pytest.mark.parametrize(
+#     "country, phone, is_valid",
+#     (
+#         ("US", "123-456-7890", False),
+#         ("US", "(541) 754-3010", True),
+#         ("FR", "0600000000", True),
+#     ),
+# )
+# def test_address_form_phone_number_validation(country, phone, is_valid):
+#     data = {"country": country, "phone": phone}
+#     form = forms.get_address_form(data, country_code="PL")[0]
+#     errors = form.errors
+#     if not is_valid:
+#         assert "phone" in errors
+#     else:
+#         assert "phone" not in errors
 
 
 @pytest.mark.parametrize(
