@@ -49,6 +49,7 @@ class AddressQueryset(models.QuerySet):
 
 
 class Address(models.Model):
+    gender = models.CharField(max_length=256, blank=True)
     first_name = models.CharField(max_length=256, blank=True)
     last_name = models.CharField(max_length=256, blank=True)
     company_name = models.CharField(max_length=256, blank=True)
@@ -131,6 +132,7 @@ class UserManager(BaseUserManager):
 
 
 class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
+    gender = models.CharField(max_length=256, blank=True)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=256, blank=True)
     last_name = models.CharField(max_length=256, blank=True)

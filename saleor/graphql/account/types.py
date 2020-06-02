@@ -23,6 +23,7 @@ from .utils import can_user_manage_group, get_groups_which_user_can_manage
 
 
 class AddressInput(graphene.InputObjectType):
+    gender = graphene.String(description="Gender of the resident.")
     first_name = graphene.String(description="Given name.")
     last_name = graphene.String(description="Family name.")
     company_name = graphene.String(description="Company or organization.")
@@ -59,6 +60,7 @@ class Address(CountableDjangoObjectType):
             "country",
             "country_area",
             "first_name",
+            "gender",
             "id",
             "last_name",
             "phone",
@@ -239,6 +241,7 @@ class User(CountableDjangoObjectType):
             "default_shipping_address",
             "email",
             "first_name",
+            "gender",
             "id",
             "is_active",
             "is_staff",

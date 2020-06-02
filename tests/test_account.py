@@ -197,6 +197,7 @@ def test_format_address_all_options(address):
 def test_address_as_data(address):
     data = address.as_data()
     assert data == {
+        "gender": "",
         "first_name": "John",
         "last_name": "Doe",
         "company_name": "Mirumee Software",
