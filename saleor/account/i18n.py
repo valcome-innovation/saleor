@@ -107,8 +107,7 @@ class AddressForm(forms.ModelForm):
             "street_address_2": "Apartment, suite, unit, building, floor, etc",
         }
 
-    # TODO this line enables phone validation
-    # phone = PossiblePhoneNumberFormField(widget=PhonePrefixWidget, required=False)
+    phone = PossiblePhoneNumberFormField(widget=PhonePrefixWidget, required=False)
 
     def __init__(self, *args, **kwargs):
         autocomplete_type = kwargs.pop("autocomplete_type", None)
