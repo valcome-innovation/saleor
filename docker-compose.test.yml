@@ -13,6 +13,7 @@ services:
     depends_on:
       - db
       - redis
+    user: saleor
     volumes:
       - ./saleor/:/app/saleor:Z
       - ./templates/:/app/templates:Z
@@ -53,6 +54,7 @@ services:
     env_file: ./common.test.env
     depends_on:
       - redis
+    user: saleor
     volumes:
       - ./saleor/:/app/saleor:Z
       - ./templates/:/app/templates:Z
