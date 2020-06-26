@@ -386,6 +386,7 @@ PLAYGROUND_ENABLED = get_bool_from_env("PLAYGROUND_ENABLED", True)
 ALLOWED_HOSTS = get_list(os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1"))
 ALLOWED_GRAPHQL_ORIGINS = os.environ.get("ALLOWED_GRAPHQL_ORIGINS", "*")
 
+USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Amazon S3 configuration
@@ -481,7 +482,8 @@ CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", None)
 
 # Change this value if your application is running behind a proxy,
 # e.g. HTTP_CF_Connecting_IP for Cloudflare or X_FORWARDED_FOR
-REAL_IP_ENVIRON = os.environ.get("REAL_IP_ENVIRON", "REMOTE_ADDR")
+# REAL_IP_ENVIRON = os.environ.get("REAL_IP_ENVIRON", "REMOTE_ADDR")
+REAL_IP_ENVIRON = os.environ.get("X_FORWARDED_FOR", "REMOTE_ADDR")
 
 # The maximum length of a graphql query to log in tracings
 OPENTRACING_MAX_QUERY_LENGTH_LOG = 2000
