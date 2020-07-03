@@ -346,8 +346,8 @@ AUTH_PASSWORD_VALIDATORS = [
     }
 ]
 
-DEFAULT_COUNTRY = os.environ.get("DEFAULT_COUNTRY", "US")
-DEFAULT_CURRENCY = os.environ.get("DEFAULT_CURRENCY", "USD")
+DEFAULT_COUNTRY = os.environ.get("DEFAULT_COUNTRY", "AT")
+DEFAULT_CURRENCY = os.environ.get("DEFAULT_CURRENCY", "EUR")
 DEFAULT_DECIMAL_PLACES = get_currency_fraction(DEFAULT_CURRENCY)
 DEFAULT_MAX_DIGITS = 12
 DEFAULT_CURRENCY_CODE_LENGTH = 3
@@ -507,6 +507,17 @@ GRAPHENE = {
         "saleor.graphql.middleware.app_middleware",
     ],
 }
+
+# Braintree
+BRAINTREE_PLUGIN_ACTIVE = get_bool_from_env("BRAINTREE_PLUGIN_ACTIVE", False)
+BRAINTREE_SANDBOX_MODE = get_bool_from_env("BRAINTREE_SANDBOX_MODE", True)
+BRAINTREE_PUBLIC_KEY = os.environ.get("BRAINTREE_PUBLIC_KEY", None)
+BRAINTREE_PRIVATE_KEY = os.environ.get("BRAINTREE_PRIVATE_KEY", None)
+BRAINTREE_MERCHANT_ID = os.environ.get("BRAINTREE_MERCHANT_ID", None)
+
+# Vatlayer
+VATLAYER_PLUGIN_ACTIVE = get_bool_from_env("VATLAYER_PLUGIN_ACTIVE", False)
+VATLAYER_ACCESS_KEY = os.environ.get("VATLAYER_ACCESS_KEY", None)
 
 PLUGINS_MANAGER = "saleor.plugins.manager.PluginsManager"
 

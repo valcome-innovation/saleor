@@ -1053,7 +1053,7 @@ def add_address_to_admin(email):
     store_user_address(user, address, AddressType.SHIPPING)
 
 
-def create_page():
+def create_page(title, slug):
     content = """
     <h2>E-commerce for the PWA era</h2>
     <h3>A modular, high performance e-commerce storefront built with GraphQL,
@@ -1140,10 +1140,10 @@ def create_page():
     page_data = {
         "content": content,
         "content_json": content_json,
-        "title": "About",
+        "title": title,
         "is_published": True,
     }
-    page, dummy = Page.objects.get_or_create(slug="about", defaults=page_data)
+    page, dummy = Page.objects.get_or_create(slug=slug, defaults=page_data)
     yield "Page %s created" % page.slug
 
 

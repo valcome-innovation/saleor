@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, List
 
+from django.conf import settings
 from saleor.plugins.base_plugin import BasePlugin, ConfigurationTypeField
 
 from . import (
@@ -34,11 +35,12 @@ def require_active_plugin(fn):
 class BraintreeGatewayPlugin(BasePlugin):
     PLUGIN_ID = "mirumee.payments.braintree"
     PLUGIN_NAME = GATEWAY_NAME
+    DEFAULT_ACTIVE = settings.BRAINTREE_PLUGIN_ACTIVE
     DEFAULT_CONFIGURATION = [
-        {"name": "Public API key", "value": None},
-        {"name": "Secret API key", "value": None},
-        {"name": "Use sandbox", "value": True},
-        {"name": "Merchant ID", "value": None},
+        {"name": "Public API key", "value": settings.BRAINTREE_PUBLIC_KEY},
+        {"name": "Secret API key", "value": settings.BRAINTREE_PRIVATE_KEY},
+        {"name": "Use sandbox", "value": settings.BRAINTREE_SANDBOX_MODE},
+        {"name": "Merchant ID", "value": settings.BRAINTREE_MERCHANT_ID},
         {"name": "Store customers card", "value": False},
         {"name": "Automatic payment capture", "value": True},
         {"name": "Require 3D secure", "value": False},

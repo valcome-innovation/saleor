@@ -39,7 +39,8 @@ class VatlayerPlugin(BasePlugin):
     PLUGIN_NAME = "Vatlayer"
     META_CODE_KEY = "vatlayer.code"
     META_DESCRIPTION_KEY = "vatlayer.description"
-    DEFAULT_CONFIGURATION = [{"name": "Access key", "value": None}]
+    DEFAULT_ACTIVE = settings.VATLAYER_PLUGIN_ACTIVE
+    DEFAULT_CONFIGURATION = [{"name": "Access key", "value": settings.VATLAYER_ACCESS_KEY}]
     CONFIG_STRUCTURE = {
         "Access key": {
             "type": ConfigurationTypeField.PASSWORD,

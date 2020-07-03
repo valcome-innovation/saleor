@@ -105,7 +105,13 @@ class Command(BaseCommand):
             self.stdout.write(msg)
         for msg in set_homepage_collection():
             self.stdout.write(msg)
-        for msg in create_page():
+        for msg in create_page("About", "about"):
+            self.stdout.write(msg)
+        for msg in create_page("Impressum", "impressum"):
+            self.stdout.write(msg)
+        for msg in create_page("Datenschutz", "privacy"):
+            self.stdout.write(msg)
+        for msg in create_page("AGB", "agb"):
             self.stdout.write(msg)
         for msg in create_menus():
             self.stdout.write(msg)
