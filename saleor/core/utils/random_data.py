@@ -622,6 +622,7 @@ def create_staff_users(how_many=2, superuser=False):
 
 def create_stuff_user(address, first_name, last_name, superuser=False):
     return User.objects.create_user(
+        gender="M",
         first_name=first_name,
         last_name=last_name,
         email=get_email(first_name, last_name),
