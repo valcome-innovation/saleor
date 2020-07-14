@@ -370,6 +370,7 @@ def create_product_image(product, placeholder_dir, image_name):
 
 def create_address(save=True):
     address = Address(
+        gender="M",
         first_name=fake.first_name(),
         last_name=fake.last_name(),
         street_address_1=fake.street_address(),
