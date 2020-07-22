@@ -65,6 +65,7 @@ enum AccountErrorCode {
 }
 
 input AccountInput {
+  gender: String
   firstName: String
   lastName: String
   defaultBillingAddress: AddressInput
@@ -109,6 +110,7 @@ type AccountUpdateMeta {
 
 type Address implements Node {
   id: ID!
+  gender: String!
   firstName: String!
   lastName: String!
   companyName: String!
@@ -139,6 +141,7 @@ type AddressDelete {
 }
 
 input AddressInput {
+  gender: String
   firstName: String
   lastName: String
   companyName: String
@@ -458,6 +461,7 @@ type AttributeTranslation implements Node {
 enum AttributeTypeEnum {
   PRODUCT
   VARIANT
+  CUSTOM
 }
 
 type AttributeUnassign {
@@ -1436,6 +1440,12 @@ type CountryDisplay {
   vat: VAT
 }
 
+type CreateOAuthToken {
+  token: String
+  errors: [Error]!
+  user: User
+}
+
 type CreateToken {
   token: String
   errors: [Error!]! @deprecated(reason: "Use typed errors with error codes. This field will be removed after 2020-07-31.")
@@ -2260,6 +2270,7 @@ input MoveProductInput {
 }
 
 type Mutation {
+  oauthTokenCreate(accessToken: String, backend: String): CreateOAuthToken
   webhookCreate(input: WebhookCreateInput!): WebhookCreate
   webhookDelete(id: ID!): WebhookDelete
   webhookUpdate(id: ID!, input: WebhookUpdateInput!): WebhookUpdate
@@ -3574,6 +3585,7 @@ type ProductType implements Node & ObjectWithMetadata {
   name: String!
   slug: String!
   hasVariants: Boolean!
+  isCustomizable: Boolean!
   isShippingRequired: Boolean!
   isDigital: Boolean!
   weight: Weight
@@ -3584,6 +3596,7 @@ type ProductType implements Node & ObjectWithMetadata {
   products(before: String, after: String, first: Int, last: Int): ProductCountableConnection
   taxRate: TaxRateType
   taxType: TaxType
+  customizableAttributes: [Attribute]
   variantAttributes: [Attribute]
   productAttributes: [Attribute]
   availableAttributes(filter: AttributeFilterInput, before: String, after: String, first: Int, last: Int): AttributeCountableConnection
@@ -3651,8 +3664,10 @@ input ProductTypeInput {
   name: String
   slug: String
   hasVariants: Boolean
+  isCustomizable: Boolean
   productAttributes: [ID]
   variantAttributes: [ID]
+  customAttributes: [ID]
   isShippingRequired: Boolean
   isDigital: Boolean
   weight: WeightScalar
@@ -4760,6 +4775,7 @@ scalar Upload
 type User implements Node & ObjectWithMetadata {
   id: ID!
   lastLogin: DateTime
+  gender: String!
   email: String!
   firstName: String!
   lastName: String!

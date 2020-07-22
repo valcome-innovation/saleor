@@ -17,6 +17,7 @@ urlpatterns = [
         digital_product,
         name="digital-product",
     ),
+    url('', include('social_django.urls', namespace='social'))
 ]
 
 if settings.DEBUG:

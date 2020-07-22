@@ -203,6 +203,7 @@ if not SECRET_KEY and DEBUG:
     SECRET_KEY = get_random_secret_key()
 
 MIDDLEWARE = [
+    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
     "saleor.core.middleware.request_time",
@@ -246,6 +247,7 @@ INSTALLED_APPS = [
     "saleor.wishlist",
     "saleor.app",
     # External apps
+    'social_django',
     "versatileimagefield",
     "django_measurement",
     "django_prices",
@@ -255,7 +257,7 @@ INSTALLED_APPS = [
     "mptt",
     "django_countries",
     "django_filters",
-    "phonenumber_field",
+    "phonenumber_field"
 ]
 
 
@@ -457,16 +459,42 @@ DEFAULT_PLACEHOLDER = "images/placeholder255x255.png"
 SEARCH_BACKEND = "saleor.search.backends.postgresql"
 
 AUTHENTICATION_BACKENDS = [
+    "social_core.backends.google.GoogleOAuth2",
+    "social_core.backends.facebook.FacebookOAuth2",
     "graphql_jwt.backends.JSONWebTokenBackend",
-    "django.contrib.auth.backends.ModelBackend",
+    "django.contrib.auth.backends.ModelBackend"
 ]
+
+# social-auth
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'social_core.pipeline.social_auth.associate_by_email',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '325157966507-6nqb2qfjcign0vk1j4lnhoh4bspgpp05.apps.googleusercontent.com'  #local
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'fYP77Fwzfkdfxral6-QRItLX'  #local
+
+SOCIAL_AUTH_FACEBOOK_KEY = '570472933755093'  #local
+SOCIAL_AUTH_FACEBOOK_SECRET = '31c417f5de67f7b4f49ba97c0787a205'  #local
+
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id,name,email',
+}
 
 # Django GraphQL JWT settings
 GRAPHQL_JWT = {
     "JWT_PAYLOAD_HANDLER": "saleor.graphql.utils.create_jwt_payload",
-    # How long until a token expires, default is 5m from graphql_jwt.settings
     "JWT_EXPIRATION_DELTA": timedelta(minutes=5),
-    # Whether the JWT tokens should expire or not
     "JWT_VERIFY_EXPIRATION": get_bool_from_env("JWT_VERIFY_EXPIRATION", False),
 }
 
