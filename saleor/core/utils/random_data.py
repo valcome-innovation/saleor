@@ -370,6 +370,7 @@ def create_product_image(product, placeholder_dir, image_name):
 
 def create_address(save=True):
     address = Address(
+        gender="M",
         first_name=fake.first_name(),
         last_name=fake.last_name(),
         street_address_1=fake.street_address(),
@@ -622,6 +623,7 @@ def create_staff_users(how_many=2, superuser=False):
 
 def create_stuff_user(address, first_name, last_name, superuser=False):
     return User.objects.create_user(
+        gender="M",
         first_name=first_name,
         last_name=last_name,
         email=get_email(first_name, last_name),
