@@ -20,6 +20,8 @@ from social_django.compat import reverse
 
 from ..types import User
 from ...core.types import Error
+from ...shop.types import AuthorizationKeyType
+from ....site.models import AuthorizationKey
 
 def token_auth(f):
     @wraps(f)
@@ -40,12 +42,12 @@ def token_auth(f):
         token = kwargs.get('access_token')
         backend = kwargs.get('backend')
 
-        if not hasattr(conf.settings, 'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY') or not hasattr(conf.settings, 'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET'):
+        if conf.settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY is None or conf.settings.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET is None:
             authorization_key = AuthorizationKey.objects.get(name="google-oauth2")
             conf.settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = authorization_key.key
             conf.settings.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = authorization_key.password
 
-        if not hasattr(conf.settings, 'SOCIAL_AUTH_FACEBOOK_KEY') or not hasattr(conf.settings, 'SOCIAL_AUTH_FACEBOOK_SECRET'):
+        if conf.settings.SOCIAL_AUTH_FACEBOOK_KEY is None or conf.settings.SOCIAL_AUTH_FACEBOOK_SECRET is None:
             authorization_key = AuthorizationKey.objects.get(name="facebook")
             conf.settings.SOCIAL_AUTH_FACEBOOK_KEY = authorization_key.key
             conf.settings.SOCIAL_AUTH_FACEBOOK_SECRET = authorization_key.password
