@@ -18,3 +18,16 @@ CountryCodeEnum = graphene.Enum(
 class StaffMemberStatus(graphene.Enum):
     ACTIVE = "active"
     DEACTIVATED = "deactivated"
+
+class TicketType(graphene.Enum):
+    SINGLE = "single"
+    DAY = "day"
+    TEAM = "team"
+    LEAGUE = "league"
+
+    CHOICES = [
+        (SINGLE, 'single'),
+        (DAY, 'day'),
+        (TEAM, 'team'),
+        (LEAGUE, 'league')
+    ]

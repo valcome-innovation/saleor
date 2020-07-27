@@ -96,6 +96,13 @@ type AccountSetDefaultAddress {
   accountErrors: [AccountError!]!
 }
 
+type AccountStreamTicketCreate {
+  errors: [Error!]! @deprecated(reason: "Use typed errors with error codes. This field will be removed after 2020-07-31.")
+  user: User
+  accountErrors: [AccountError!]!
+  streamTicket: StreamTicket
+}
+
 type AccountUpdate {
   errors: [Error!]! @deprecated(reason: "Use typed errors with error codes. This field will be removed after 2020-07-31.")
   accountErrors: [AccountError!]!
@@ -2494,6 +2501,7 @@ type Mutation {
   accountUpdate(input: AccountInput!): AccountUpdate
   accountRequestDeletion(redirectUrl: String!): AccountRequestDeletion
   accountDelete(token: String!): AccountDelete
+  accountStreamTicketCreate(input: StreamTicketInput!): AccountStreamTicketCreate
   accountUpdateMeta(input: MetaInput!): AccountUpdateMeta @deprecated(reason: "Use the `updateMetadata` mutation. This field will be removed after 2020-07-31.")
   addressCreate(input: AddressInput!, userId: ID!): AddressCreate
   addressUpdate(id: ID!, input: AddressInput!): AddressUpdate
@@ -4631,6 +4639,24 @@ input StockInput {
   quantity: Int
 }
 
+type StreamTicket {
+  id: ID!
+  streamId: String
+  type: TicketType
+  teamId: String
+  leagueId: String
+  expires: DateTime
+  userStreamTickets(before: String, after: String, first: Int, last: Int): UserCountableConnection!
+}
+
+input StreamTicketInput {
+  streamId: String
+  type: TicketType
+  teamId: String
+  leagueId: String
+  expires: DateTime
+}
+
 enum TaxRateType {
   ACCOMMODATION
   ADMISSION_TO_CULTURAL_EVENTS
@@ -4674,6 +4700,14 @@ type TaxedMoney {
 type TaxedMoneyRange {
   start: TaxedMoney
   stop: TaxedMoney
+}
+
+enum TicketType {
+  SINGLE
+  DAY
+  TEAM
+  LEAGUE
+  CHOICES
 }
 
 type Transaction implements Node {
@@ -4800,6 +4834,7 @@ type User implements Node & ObjectWithMetadata {
   avatar(size: Int): Image
   events: [CustomerEvent]
   storedPaymentSources: [PaymentSource]
+  streamTickets: [StreamTicket]
 }
 
 type UserAvatarDelete {
@@ -5305,7 +5340,7 @@ enum WeightUnitsEnum {
 
 scalar _Any
 
-union _Entity = Address | User | Group | ServiceAccount | App | ProductVariant | Product | ProductType | Collection | Category | ProductImage
+union _Entity = Address | User | Group | ProductVariant | Product | ProductType | Collection | Category | ProductImage | ServiceAccount | App
 
 type _Service {
   sdl: String

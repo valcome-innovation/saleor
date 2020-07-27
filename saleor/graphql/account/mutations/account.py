@@ -9,8 +9,8 @@ from ....account.error_codes import AccountErrorCode
 from ....account.utils import create_jwt_token, decode_jwt_token
 from ....checkout import AddressType
 from ....core.utils.url import validate_storefront_url
-from ...account.enums import AddressTypeEnum
-from ...account.types import Address, AddressInput, User
+from ...account.enums import AddressTypeEnum, TicketType
+from ...account.types import Address, AddressInput, User, StreamTicket, StreamTicketInput
 from ...core.mutations import BaseMutation, ModelDeleteMutation, ModelMutation
 from ...core.types.common import AccountError
 from ...meta.deprecated.mutations import UpdateMetaBaseMutation
@@ -332,6 +332,43 @@ class AccountSetDefaultAddress(BaseMutation):
         utils.change_user_default_address(user, address, address_type)
         return cls(user=user)
 
+class AccountStreamTicketCreate(ModelMutation):
+    user = graphene.Field(
+        User, description="A user instance for which the ticket was created."
+    )
+
+    class Arguments:
+        input = StreamTicketInput(
+            description="Fields required to create address.", required=True
+        )
+
+    class Meta:
+        description = "Create a new stream ticket for the customer."
+        model = models.StreamTicket
+        error_type_class = AccountError
+        error_type_field = "account_errors"
+
+    @classmethod
+    def check_permissions(cls, context):
+        return context.user.is_authenticated
+
+    @classmethod
+    def perform_mutation(cls, root, info, **data):
+        user = info.context.user
+        cleaned_input = cls.clean_input(
+            info=info, instance=StreamTicket(), data=data.get("input")
+        )
+        ticket = cleaned_input
+        cls.clean_instance(info, ticket)
+        cls.save(info, ticket, cleaned_input)
+        cls._save_m2m(info, ticket, cleaned_input)
+        return AccountStreamTicketCreate(user=user, ticket=ticket)
+
+    @classmethod
+    def save(cls, info, instance, cleaned_input):
+        super().save(info, instance, cleaned_input)
+        user = info.context.user
+        instance.user_stream_tickets.add(user)
 
 class AccountUpdateMeta(UpdateMetaBaseMutation):
     class Meta:

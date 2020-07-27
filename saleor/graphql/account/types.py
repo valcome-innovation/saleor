@@ -18,7 +18,7 @@ from ..meta.deprecated.resolvers import resolve_meta, resolve_private_meta
 from ..meta.types import ObjectWithMetadata
 from ..utils import format_permissions_for_display
 from ..wishlist.resolvers import resolve_wishlist_items_from_user
-from .enums import CountryCodeEnum, CustomerEventsEnum
+from .enums import CountryCodeEnum, CustomerEventsEnum, TicketType
 from .utils import can_user_manage_group, get_groups_which_user_can_manage
 
 
@@ -36,6 +36,12 @@ class AddressInput(graphene.InputObjectType):
     country_area = graphene.String(description="State or province.")
     phone = graphene.String(description="Phone number.")
 
+class StreamTicketInput(graphene.InputObjectType):
+    stream_id = graphene.String(description="Stream ID")
+    type = TicketType(description="Type of the ticket")
+    team_id = graphene.String(description="ID of the team")
+    league_id = graphene.String(description="ID of the league")
+    expires = graphene.types.datetime.DateTime(description="Date when the Ticket expires")
 
 @key(fields="id")
 class Address(CountableDjangoObjectType):
@@ -115,6 +121,15 @@ class Address(CountableDjangoObjectType):
     def __resolve_reference(root, _info, **_kwargs):
         return graphene.Node.get_node_from_global_id(_info, root.id)
 
+class StreamTicket(CountableDjangoObjectType):
+    stream_id = graphene.String(description="Stream ID")
+    type = TicketType(description="Type of the ticket")
+    team_id = graphene.String(description="ID of the team")
+    league_id = graphene.String(description="ID of the league")
+    expires = graphene.types.datetime.DateTime(description="Date when the Ticket expires")
+
+    class Meta:
+        model = models.StreamTicket
 
 class CustomerEvent(CountableDjangoObjectType):
     date = graphene.types.datetime.DateTime(
@@ -230,6 +245,9 @@ class User(CountableDjangoObjectType):
         "saleor.graphql.payment.types.PaymentSource",
         description="List of stored payment sources.",
     )
+    stream_tickets = graphene.List(
+        "saleor.graphql.account.types.StreamTicket",
+        description="List of stored payment sources.")
 
     class Meta:
         description = "Represents user data."
@@ -282,6 +300,11 @@ class User(CountableDjangoObjectType):
     @staticmethod
     def resolve_editable_groups(root: models.User, _info, **_kwargs):
         return get_groups_which_user_can_manage(root)
+
+    @staticmethod
+    @permission_required(AccountPermissions.MANAGE_USERS)
+    def resolve_stream_tickets(root: models.User, *_args, **_kwargs):
+        return root.stream_tickets.all()
 
     @staticmethod
     @one_of_permissions_required(

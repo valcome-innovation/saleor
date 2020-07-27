@@ -21,7 +21,6 @@ from ..core.utils.json_serializer import CustomJsonEncoder
 from . import CustomerEvents
 from .validators import validate_possible_number
 
-
 class PossiblePhoneNumberField(PhoneNumberField):
     """Less strict field for phone numbers written to database."""
 
@@ -130,6 +129,15 @@ class UserManager(BaseUserManager):
     def staff(self):
         return self.get_queryset().filter(is_staff=True)
 
+class StreamTicket(models.Model):
+    stream_id = models.CharField(max_length=256, blank=True)
+    type = models.CharField(max_length=256, blank=True)
+    team_id = models.CharField(max_length=256, blank=True)
+    league_id = models.CharField(max_length=256, blank=True)
+    expires = models.DateTimeField(default=timezone.now, editable=True)
+
+    class Meta:
+        ordering = ("expires",)
 
 class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
     gender = models.CharField(max_length=256, blank=True)
@@ -150,6 +158,9 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         Address, related_name="+", null=True, blank=True, on_delete=models.SET_NULL
     )
     avatar = VersatileImageField(upload_to="user-avatars", blank=True, null=True)
+    stream_tickets = models.ManyToManyField(
+        StreamTicket, blank=True, related_name="user_stream_tickets"
+    )
 
     USERNAME_FIELD = "email"
 
@@ -179,7 +190,6 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         # This method is overridden to accept perm as BasePermissionEnum
         perm_value = perm.value if hasattr(perm, "value") else perm  # type: ignore
         return super().has_perm(perm_value, obj)
-
 
 class CustomerNote(models.Model):
     user = models.ForeignKey(

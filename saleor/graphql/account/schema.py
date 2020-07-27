@@ -25,6 +25,7 @@ from .mutations.account import (
     AccountAddressUpdate,
     AccountDelete,
     AccountRegister,
+    AccountStreamTicketCreate,
     AccountRequestDeletion,
     AccountSetDefaultAddress,
     AccountUpdate,
@@ -70,7 +71,7 @@ from .resolvers import (
     resolve_user,
 )
 from .sorters import PermissionGroupSortingInput, UserSortingInput
-from .types import Address, AddressValidationData, Group, User
+from .types import Address, AddressValidationData, Group, User, StreamTicket
 
 
 class CustomerFilterInput(FilterInputObjectType):
@@ -236,6 +237,8 @@ class AccountMutations(graphene.ObjectType):
     account_update = AccountUpdate.Field()
     account_request_deletion = AccountRequestDeletion.Field()
     account_delete = AccountDelete.Field()
+
+    account_stream_ticket_create = AccountStreamTicketCreate.Field()
 
     account_update_meta = AccountUpdateMeta.Field(
         deprecation_reason=(
