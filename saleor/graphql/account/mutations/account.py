@@ -338,8 +338,11 @@ class AccountStreamTicketCreate(ModelMutation):
     )
 
     class Arguments:
+        user_id = graphene.ID(
+            description="ID of a user to create stream ticket for.", required=True
+        )
         input = StreamTicketInput(
-            description="Fields required to create address.", required=True
+            description="Fields required to create stream ticket.", required=True
         )
 
     class Meta:
@@ -354,15 +357,13 @@ class AccountStreamTicketCreate(ModelMutation):
 
     @classmethod
     def perform_mutation(cls, root, info, **data):
-        user = info.context.user
-        cleaned_input = cls.clean_input(
-            info=info, instance=StreamTicket(), data=data.get("input")
-        )
-        ticket = cleaned_input
-        cls.clean_instance(info, ticket)
-        cls.save(info, ticket, cleaned_input)
-        cls._save_m2m(info, ticket, cleaned_input)
-        return AccountStreamTicketCreate(user=user, ticket=ticket)
+        user_id = data["user_id"]
+        user = cls.get_node_or_error(info, user_id, field="user_id", only_type=User)
+        response = super().perform_mutation(root, info, **data)
+        if not response.errors:
+            user.stream_tickets.add(response.streamTicket)
+            response.user = user
+        return response
 
     @classmethod
     def save(cls, info, instance, cleaned_input):

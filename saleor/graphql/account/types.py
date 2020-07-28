@@ -121,6 +121,7 @@ class Address(CountableDjangoObjectType):
     def __resolve_reference(root, _info, **_kwargs):
         return graphene.Node.get_node_from_global_id(_info, root.id)
 
+@key(fields="id")
 class StreamTicket(CountableDjangoObjectType):
     stream_id = graphene.String(description="Stream ID")
     type = TicketType(description="Type of the ticket")
@@ -129,7 +130,9 @@ class StreamTicket(CountableDjangoObjectType):
     expires = graphene.types.datetime.DateTime(description="Date when the Ticket expires")
 
     class Meta:
+        description = "Stream Ticket"
         model = models.StreamTicket
+        interfaces = [relay.Node]
 
 class CustomerEvent(CountableDjangoObjectType):
     date = graphene.types.datetime.DateTime(
