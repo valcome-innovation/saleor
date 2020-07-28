@@ -10,7 +10,7 @@ from ....account.utils import create_jwt_token, decode_jwt_token
 from ....checkout import AddressType
 from ....core.utils.url import validate_storefront_url
 from ...account.enums import AddressTypeEnum, TicketType
-from ...account.types import Address, AddressInput, User, StreamTicket, StreamTicketInput
+from ...account.types import Address, AddressInput, User, StreamTicket, StreamTicketInput, AccountPermissions
 from ...core.mutations import BaseMutation, ModelDeleteMutation, ModelMutation
 from ...core.types.common import AccountError
 from ...meta.deprecated.mutations import UpdateMetaBaseMutation
@@ -348,12 +348,9 @@ class AccountStreamTicketCreate(ModelMutation):
     class Meta:
         description = "Create a new stream ticket for the customer."
         model = models.StreamTicket
+        permissions = (AccountPermissions.MANAGE_USERS,)
         error_type_class = AccountError
         error_type_field = "account_errors"
-
-    @classmethod
-    def check_permissions(cls, context):
-        return context.user.is_authenticated
 
     @classmethod
     def perform_mutation(cls, root, info, **data):
