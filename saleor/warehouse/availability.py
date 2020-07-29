@@ -36,7 +36,7 @@ def check_stock_quantity(variant: "ProductVariant", country_code: str, quantity:
     exception.
     """
     stocks = Stock.objects.get_variant_stocks_for_country(country_code, variant)
-    if not stocks:
+    if not stocks and variant.track_inventory:
         raise InsufficientStock(variant)
 
     if variant.track_inventory and quantity > _get_available_quantity(stocks):
