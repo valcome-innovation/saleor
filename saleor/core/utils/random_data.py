@@ -140,20 +140,20 @@ def create_auth_key(backend, key, password):
         site_settings = Site.objects.get_current().settings
         AuthorizationKey.objects.create(site_settings=site_settings, name=backend, key=key, password=password)
         return "Created auth key for: %s" % backend
-    return "Skipping Authorization Key creation"
+    return "Skipped Authorization Key creation"
 
 def create_app_with_token(name, token):
-    if name is not None and token is not None:
+    if name is not None:
         app = App.objects.create(name=name, is_active=True)
         manage_users = Permission.objects.get(codename=AccountPermissions.MANAGE_USERS.codename)
         app.permissions.add(manage_users)
         app.tokens.create(name="Default")
 
-        if token:
+        if token is not None:
             app.tokens.create(name=name, auth_token=token)
 
         return "Created app token: %s" % name
-    return "Skipping App creation"
+    return "Skipped App creation"
 
 def get_weight(weight):
     if not weight:
