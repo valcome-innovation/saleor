@@ -4,7 +4,9 @@ from django.apps import apps
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.db import connection
+import django.conf as conf
 
+from ....site.models import AuthenticationBackends
 from ....account.utils import create_superuser
 from ...utils.random_data import (
     add_address_to_admin,
@@ -20,6 +22,8 @@ from ...utils.random_data import (
     create_vouchers,
     create_warehouses,
     set_homepage_collection,
+    create_auth_key,
+    create_app_with_token
 )
 
 
@@ -115,6 +119,19 @@ class Command(BaseCommand):
             self.stdout.write(msg)
         for msg in create_menus():
             self.stdout.write(msg)
+
+        msg = create_auth_key(AuthenticationBackends.GOOGLE,
+                              conf.settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
+                              conf.settings.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET)
+        self.stdout.write(msg)
+
+        msg = create_auth_key(AuthenticationBackends.FACEBOOK,
+                              conf.settings.SOCIAL_AUTH_FACEBOOK_KEY,
+                              conf.settings.SOCIAL_AUTH_FACEBOOK_SECRET)
+        self.stdout.write(msg)
+
+        msg = create_app_with_token("AWS Server", conf.settings.APP_TOKEN)
+        self.stdout.write(msg)
 
         if options["createsuperuser"]:
             credentials = {"email": "dev@valcome.at", "password": "passwerd"}
