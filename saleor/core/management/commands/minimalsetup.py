@@ -32,5 +32,5 @@ class Command(BaseCommand):
                         conf.settings.SOCIAL_AUTH_FACEBOOK_SECRET)
         self.stdout.write(msg)
 
-        msg = create_app_with_token("AWS Server", conf.settings.APP_TOKEN)
+        msg = create_app_with_token(conf.settings.APP_NAME, conf.settings.APP_TOKEN)
         self.stdout.write(msg)
