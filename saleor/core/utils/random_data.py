@@ -146,7 +146,9 @@ def create_app_with_token(name, token):
     if name is not None:
         app = App.objects.create(name=name, is_active=True)
         manage_users = Permission.objects.get(codename=AccountPermissions.MANAGE_USERS.codename)
+        manage_checkouts = Permission.objects.get(codename=CheckoutPermissions.MANAGE_CHECKOUTS.codename)
         app.permissions.add(manage_users)
+        app.permissions.add(manage_checkouts)
         app.tokens.create(name="Default")
 
         if token is not None:
