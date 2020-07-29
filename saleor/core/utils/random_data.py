@@ -31,6 +31,7 @@ from ...core.permissions import (
     OrderPermissions,
     get_permissions,
 )
+from ...app.models import App, AppToken
 from ...core.utils import build_absolute_uri
 from ...core.weight import zero_weight
 from ...discount import DiscountValueType, VoucherType
@@ -44,6 +45,7 @@ from ...order.utils import update_order_status
 from ...page.models import Page
 from ...payment import gateway
 from ...payment.utils import create_payment
+from ...site.models import AuthorizationKey, AuthenticationBackends, SiteSettings
 from ...plugins.manager import get_plugins_manager
 from ...product.models import (
     AssignedProductAttribute,
@@ -133,6 +135,25 @@ CATEGORY_IMAGES = {7: "accessories.jpg", 8: "groceries.jpg", 9: "apparel.jpg"}
 
 COLLECTION_IMAGES = {1: "summer.jpg", 2: "clothing.jpg"}
 
+def create_auth_key(backend, key, password):
+    if backend is not None and key is not None and password is not None:
+        site_settings = Site.objects.get_current().settings
+        AuthorizationKey.objects.create(site_settings=site_settings, name=backend, key=key, password=password)
+        return "Created auth key for: %s" % backend
+    return "Skipping Authorization Key creation"
+
+def create_app_with_token(name, token):
+    if name is not None and token is not None:
+        app = App.objects.create(name=name, is_active=True)
+        manage_users = Permission.objects.get(codename=AccountPermissions.MANAGE_USERS.codename)
+        app.permissions.add(manage_users)
+        app.tokens.create(name="Default")
+
+        if token:
+            app.tokens.create(name=name, auth_token=token)
+
+        return "Created app token: %s" % name
+    return "Skipping App creation"
 
 def get_weight(weight):
     if not weight:

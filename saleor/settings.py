@@ -458,6 +458,9 @@ DEFAULT_PLACEHOLDER = "images/placeholder255x255.png"
 
 SEARCH_BACKEND = "saleor.search.backends.postgresql"
 
+APP_NAME = os.environ.get("APP_NAME")
+APP_TOKEN = os.environ.get("APP_TOKEN")
+
 AUTHENTICATION_BACKENDS = [
     "social_core.backends.google.GoogleOAuth2",
     "social_core.backends.facebook.FacebookOAuth2",
