@@ -808,17 +808,20 @@ class CheckoutComplete(BaseMutation):
                     {"redirect_url": error}, code=AccountErrorCode.INVALID
                 )
 
-        checkout.get_value_from_metadata('STREAM_ID')
-
         # Add Stream ticket
-        stream_ticket = StreamTicket()
-        stream_ticket.stream_id = checkout.get_value_from_metadata('STREAM_ID', '')
-        stream_ticket.league_id = checkout.get_value_from_metadata('LEAGUE_ID', '')
-        stream_ticket.team_id = checkout.get_value_from_metadata('TEAM_ID', '')
-        stream_ticket.type = "single"
-        stream_ticket.save()
-        user.stream_tickets.add(stream_ticket)
-        user.save()
+        stream_id = checkout.get_value_from_metadata('STREAM_ID', None)
+        league_id = checkout.get_value_from_metadata('LEAGUE_ID', None)
+        team_id = checkout.get_value_from_metadata('TEAM_ID', None)
+
+        if stream_id is not None or league_id is not None or team_id is not None:
+            stream_ticket = StreamTicket()
+            stream_ticket.stream_id = stream_id
+            stream_ticket.league_id = league_id
+            stream_ticket.team_id = team_id
+            stream_ticket.type = "single"
+            stream_ticket.save()
+            user.stream_tickets.add(stream_ticket)
+            user.save()
 
         order = None
         if not txn.action_required:
