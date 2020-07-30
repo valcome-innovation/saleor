@@ -18,7 +18,7 @@ from versatileimagefield.fields import VersatileImageField
 from ..core.models import ModelWithMetadata
 from ..core.permissions import AccountPermissions, BasePermissionEnum
 from ..core.utils.json_serializer import CustomJsonEncoder
-from . import CustomerEvents
+from . import CustomerEvents, TicketType
 from .validators import validate_possible_number
 
 class PossiblePhoneNumberField(PhoneNumberField):
@@ -129,15 +129,19 @@ class UserManager(BaseUserManager):
     def staff(self):
         return self.get_queryset().filter(is_staff=True)
 
+
 class StreamTicket(models.Model):
     stream_id = models.CharField(max_length=256, blank=True)
-    type = models.CharField(max_length=256, blank=True)
+    type = models.CharField(max_length=256, blank=False, choices=[
+        (type_name.upper(), type_name) for type_name, _ in TicketType.CHOICES
+    ],)
     team_id = models.CharField(max_length=256, blank=True)
     league_id = models.CharField(max_length=256, blank=True)
-    expires = models.DateTimeField(default=timezone.now, editable=True)
+    expires = models.DateTimeField(default=timezone.now, editable=True, blank=True)
 
     class Meta:
         ordering = ("expires",)
+
 
 class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
     gender = models.CharField(max_length=256, blank=True)
@@ -190,6 +194,7 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         # This method is overridden to accept perm as BasePermissionEnum
         perm_value = perm.value if hasattr(perm, "value") else perm  # type: ignore
         return super().has_perm(perm_value, obj)
+
 
 class CustomerNote(models.Model):
     user = models.ForeignKey(

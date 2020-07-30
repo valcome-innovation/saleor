@@ -8,6 +8,7 @@ from django.db.models import Prefetch
 from graphql_jwt.exceptions import PermissionDenied
 
 from ...account.error_codes import AccountErrorCode
+from ...account.models import StreamTicket
 from ...checkout import models
 from ...checkout.error_codes import CheckoutErrorCode
 from ...checkout.utils import (
@@ -806,6 +807,14 @@ class CheckoutComplete(BaseMutation):
                 raise ValidationError(
                     {"redirect_url": error}, code=AccountErrorCode.INVALID
                 )
+
+        # Add Stream ticket
+        stream_ticket = StreamTicket()
+        stream_ticket.stream_id = "Test"
+        stream_ticket.type = "single"
+        stream_ticket.save()
+        user.stream_tickets.add(stream_ticket)
+        user.save()
 
         order = None
         if not txn.action_required:

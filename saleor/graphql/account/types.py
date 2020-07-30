@@ -18,7 +18,7 @@ from ..meta.deprecated.resolvers import resolve_meta, resolve_private_meta
 from ..meta.types import ObjectWithMetadata
 from ..utils import format_permissions_for_display
 from ..wishlist.resolvers import resolve_wishlist_items_from_user
-from .enums import CountryCodeEnum, CustomerEventsEnum, TicketType
+from .enums import CountryCodeEnum, CustomerEventsEnum, TicketTypeEnum
 from .utils import can_user_manage_group, get_groups_which_user_can_manage
 
 
@@ -36,12 +36,14 @@ class AddressInput(graphene.InputObjectType):
     country_area = graphene.String(description="State or province.")
     phone = graphene.String(description="Phone number.")
 
+
 class StreamTicketInput(graphene.InputObjectType):
     stream_id = graphene.String(description="Stream ID")
-    type = TicketType(description="Type of the ticket")
+    type = TicketTypeEnum(description="Type of the ticket")
     team_id = graphene.String(description="ID of the team")
     league_id = graphene.String(description="ID of the league")
     expires = graphene.types.datetime.DateTime(description="Date when the Ticket expires")
+
 
 @key(fields="id")
 class Address(CountableDjangoObjectType):
@@ -124,7 +126,7 @@ class Address(CountableDjangoObjectType):
 @key(fields="id")
 class StreamTicket(CountableDjangoObjectType):
     stream_id = graphene.String(description="Stream ID")
-    type = TicketType(description="Type of the ticket")
+    type = TicketTypeEnum(description="Type of the ticket")
     team_id = graphene.String(description="ID of the team")
     league_id = graphene.String(description="ID of the league")
     expires = graphene.types.datetime.DateTime(description="Date when the Ticket expires")
@@ -133,6 +135,7 @@ class StreamTicket(CountableDjangoObjectType):
         description = "Stream Ticket"
         model = models.StreamTicket
         interfaces = [relay.Node]
+
 
 class CustomerEvent(CountableDjangoObjectType):
     date = graphene.types.datetime.DateTime(

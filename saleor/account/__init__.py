@@ -38,3 +38,17 @@ class CustomerEvents:
         (EMAIL_ASSIGNED, "A customer's email address was edited"),
         (NOTE_ADDED, "A note was added to the customer"),
     ]
+
+
+class TicketType:
+    SINGLE = "single"
+    DAY = "day"
+    TEAM = "team"
+    LEAGUE = "league"
+
+    CHOICES = [
+        (SINGLE, 'single'),
+        (DAY, 'day'),
+        (TEAM, 'team'),
+        (LEAGUE, 'league')
+    ]

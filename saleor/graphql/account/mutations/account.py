@@ -9,7 +9,7 @@ from ....account.error_codes import AccountErrorCode
 from ....account.utils import create_jwt_token, decode_jwt_token
 from ....checkout import AddressType
 from ....core.utils.url import validate_storefront_url
-from ...account.enums import AddressTypeEnum, TicketType
+from ...account.enums import AddressTypeEnum
 from ...account.types import Address, AddressInput, User, StreamTicket, StreamTicketInput, AccountPermissions
 from ...core.mutations import BaseMutation, ModelDeleteMutation, ModelMutation
 from ...core.types.common import AccountError
@@ -367,6 +367,7 @@ class AccountStreamTicketCreate(ModelMutation):
         super().save(info, instance, cleaned_input)
         user = info.context.user
         instance.user_stream_tickets.add(user)
+
 
 class AccountUpdateMeta(UpdateMetaBaseMutation):
     class Meta:
