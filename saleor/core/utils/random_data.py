@@ -318,9 +318,9 @@ def set_field_as_money(defaults, field):
         defaults[field] = Money(defaults[amount_field], settings.DEFAULT_CURRENCY)
 
 
-def create_products_by_schema(placeholder_dir, create_images):
+def create_products_by_schema(placeholder_dir, create_images, data_json="populatedb_data.json"):
     path = os.path.join(
-        settings.PROJECT_ROOT, "saleor", "static", "populatedb_data.json"
+        settings.PROJECT_ROOT, "saleor", "static", data_json
     )
     with open(path) as f:
         db_items = json.load(f)

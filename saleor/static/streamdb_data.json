@@ -1,0 +1,196 @@
+[
+    {
+        "model": "product.category",
+        "pk": 7,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "seo_title": "",
+            "seo_description": "",
+            "name": "Tickets",
+            "slug": "tickets",
+            "description": "",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "parent": null,
+            "background_image": "category-backgrounds/accessories_D67x97h.jpg",
+            "background_image_alt": "",
+            "lft": 1,
+            "rght": 6,
+            "tree_id": 1,
+            "level": 0
+        }
+    },
+    {
+        "model": "product.producttype",
+        "pk": 7,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {
+                "vatlayer.code": "standard",
+                "vatlayer.description": ""
+            },
+            "name": "Livestream",
+            "slug": "livestream",
+            "has_variants": false,
+            "is_shipping_required": false,
+            "is_digital": true,
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 61,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Livestream",
+            "product_type": 7,
+            "name": "Livestream Ticket",
+            "slug": "livestream-ticket",
+            "description": "Single Livestream",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Livestream",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 171,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "546451996",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 61,
+            "track_inventory": true,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 1,
+        "fields": {
+            "product": 61,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.attributeproduct",
+        "pk": 1,
+        "fields": {
+            "sort_order": null,
+            "attribute": 13,
+            "product_type": 7
+        }
+    },
+    {
+        "model": "product.attribute",
+        "pk": 13,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "slug": "stream-type",
+            "name": "Stream Type",
+            "input_type": "dropdown",
+            "value_required": true,
+            "is_variant_only": false,
+            "visible_in_storefront": true,
+            "filterable_in_storefront": true,
+            "filterable_in_dashboard": false,
+            "storefront_search_position": 0,
+            "available_in_grid": true
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 1,
+        "fields": {
+            "sort_order": 6,
+            "name": "Single",
+            "value": "",
+            "slug": "single",
+            "attribute": 13
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 2,
+        "fields": {
+            "sort_order": 7,
+            "name": "Team",
+            "value": "",
+            "slug": "team",
+            "attribute": 13
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 3,
+        "fields": {
+            "sort_order": 8,
+            "name": "League",
+            "value": "",
+            "slug": "league",
+            "attribute": 13
+        }
+    },
+    {
+        "model": "product.productimage",
+        "pk": 1,
+        "fields": {
+            "sort_order": 0,
+            "product": 61,
+            "image": "products/saleordemoproduct_paints_01_stdygda.png",
+            "ppoi": "0.5x0.5",
+            "alt": ""
+        }
+    }
+]
