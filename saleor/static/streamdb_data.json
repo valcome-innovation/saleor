@@ -105,7 +105,7 @@
             "currency": "EUR",
             "price_override_amount": "4.99",
             "product": 61,
-            "track_inventory": true,
+            "track_inventory": false,
             "quantity": 999999,
             "cost_price_amount": "4.99",
             "weight": "1.0:kg"
