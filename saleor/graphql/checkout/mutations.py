@@ -809,19 +809,13 @@ class CheckoutComplete(BaseMutation):
                 )
 
         # Add Stream ticket
-        stream_id = checkout.get_value_from_metadata('STREAM_ID', None)
-        league_id = checkout.get_value_from_metadata('LEAGUE_ID', None)
-        team_id = checkout.get_value_from_metadata('TEAM_ID', None)
-
-        if stream_id is not None or league_id is not None or team_id is not None:
-            stream_ticket = StreamTicket()
-            stream_ticket.stream_id = stream_id
-            stream_ticket.league_id = league_id
-            stream_ticket.team_id = team_id
-            stream_ticket.type = "single"
-            stream_ticket.save()
-            user.stream_tickets.add(stream_ticket)
-            user.save()
+        if has_stream_ticket_meta(checkout):
+            create_stream_ticket_for_user(
+                user,
+                checkout.get_value_from_metadata('STREAM_ID', None),
+                checkout.get_value_from_metadata('LEAGUE_ID', None),
+                checkout.get_value_from_metadata('TEAM_ID', None)
+         )
 
         order = None
         if not txn.action_required:
@@ -840,6 +834,24 @@ class CheckoutComplete(BaseMutation):
             return CheckoutComplete(order=order, confirmation_needed=False)
 
         return CheckoutComplete(order=None, confirmation_needed=True)
+
+
+def has_stream_ticket_meta(checkout):
+    stream_id = checkout.get_value_from_metadata('STREAM_ID', None)
+    league_id = checkout.get_value_from_metadata('LEAGUE_ID', None)
+    team_id = checkout.get_value_from_metadata('TEAM_ID', None)
+    return stream_id is not None or league_id is not None or team_id is not None
+
+
+def create_stream_ticket_for_user(user, stream_id, league_id, team_id):
+    stream_ticket = StreamTicket()
+    stream_ticket.stream_id = stream_id or ""
+    stream_ticket.league_id = league_id or ""
+    stream_ticket.team_id = team_id or ""
+    stream_ticket.type = "single"
+    stream_ticket.save()
+    user.stream_tickets.add(stream_ticket)
+    user.save()
 
 
 class CheckoutAddPromoCode(BaseMutation):
