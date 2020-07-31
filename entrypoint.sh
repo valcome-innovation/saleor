@@ -20,6 +20,11 @@ if [ -v STREAM_SETUP ]; then
   python3 manage.py streamsetup
 fi
 
+if [ -v CREATE_THUMBNAILS ]; then
+  echo "Populating database with dummy data..."
+  python3 manage.py create_thumbnails
+fi
+
 if [ -v PROD_MODE ]; then
   echo "Running saleor API in production mode..."
   uwsgi --ini /app/saleor/wsgi/uwsgi.ini
