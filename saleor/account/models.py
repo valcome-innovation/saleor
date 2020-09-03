@@ -131,12 +131,12 @@ class UserManager(BaseUserManager):
 
 
 class StreamTicket(models.Model):
-    stream_id = models.CharField(max_length=256, blank=True, null=True)
+    game_id = models.CharField(max_length=256, blank=True, null=True)
     type = models.CharField(max_length=256, blank=False, choices=[
         (type_name.upper(), type_name) for type_name, _ in TicketType.CHOICES
     ],)
     team_id = models.CharField(max_length=256, blank=True, null=True)
-    league_id = models.CharField(max_length=256, blank=True, null=True)
+    season_id = models.CharField(max_length=256, blank=True, null=True)
     expires = models.DateTimeField(default=timezone.now, editable=True, blank=True, null=True)
 
     class Meta:

@@ -812,8 +812,8 @@ class CheckoutComplete(BaseMutation):
         if has_stream_ticket_meta(checkout):
             create_stream_ticket_for_user(
                 user,
-                checkout.get_value_from_metadata('STREAM_ID', None),
-                checkout.get_value_from_metadata('LEAGUE_ID', None),
+                checkout.get_value_from_metadata('GAME_ID', None),
+                checkout.get_value_from_metadata('SEASON_ID', None),
                 checkout.get_value_from_metadata('TEAM_ID', None)
          )
 
@@ -837,16 +837,16 @@ class CheckoutComplete(BaseMutation):
 
 
 def has_stream_ticket_meta(checkout):
-    stream_id = checkout.get_value_from_metadata('STREAM_ID', None)
-    league_id = checkout.get_value_from_metadata('LEAGUE_ID', None)
+    game_id = checkout.get_value_from_metadata('GAME_ID', None)
+    season_id = checkout.get_value_from_metadata('SEASON_ID', None)
     team_id = checkout.get_value_from_metadata('TEAM_ID', None)
-    return stream_id is not None or league_id is not None or team_id is not None
+    return game_id is not None or season_id is not None or team_id is not None
 
 
-def create_stream_ticket_for_user(user, stream_id, league_id, team_id):
+def create_stream_ticket_for_user(user, game_id, season_id, team_id):
     stream_ticket = StreamTicket()
-    stream_ticket.stream_id = stream_id or ""
-    stream_ticket.league_id = league_id or ""
+    stream_ticket.game_id = game_id or ""
+    stream_ticket.season_id = season_id or ""
     stream_ticket.team_id = team_id or ""
     stream_ticket.type = "single"
     stream_ticket.save()

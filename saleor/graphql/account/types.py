@@ -38,10 +38,10 @@ class AddressInput(graphene.InputObjectType):
 
 
 class StreamTicketInput(graphene.InputObjectType):
-    stream_id = graphene.String(description="Stream ID")
-    type = TicketTypeEnum(description="Type of the ticket")
-    team_id = graphene.String(description="ID of the team")
-    league_id = graphene.String(description="ID of the league")
+    game_id = graphene.String(description="Game ID")
+    type = TicketTypeEnum(description="Type of the Ticket")
+    team_id = graphene.String(description="ID of the Team")
+    season_id = graphene.String(description="ID of the Season")
     expires = graphene.types.datetime.DateTime(description="Date when the Ticket expires")
 
 
@@ -125,10 +125,10 @@ class Address(CountableDjangoObjectType):
 
 @key(fields="id")
 class StreamTicket(CountableDjangoObjectType):
-    stream_id = graphene.String(description="Stream ID")
+    game_id = graphene.String(description="Game ID")
     type = TicketTypeEnum(description="Type of the ticket")
     team_id = graphene.String(description="ID of the team")
-    league_id = graphene.String(description="ID of the league")
+    season_id = graphene.String(description="ID of the season")
     expires = graphene.types.datetime.DateTime(description="Date when the Ticket expires")
 
     class Meta:
