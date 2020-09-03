@@ -137,7 +137,7 @@ class StreamTicket(models.Model):
     ],)
     team_id = models.CharField(max_length=256, blank=True, null=True)
     season_id = models.CharField(max_length=256, blank=True, null=True)
-    expires = models.DateTimeField(default=timezone.now, editable=True, blank=True, null=True)
+    expires = models.DateTimeField(default=None, editable=True, blank=True, null=True)
 
     class Meta:
         ordering = ("expires",)

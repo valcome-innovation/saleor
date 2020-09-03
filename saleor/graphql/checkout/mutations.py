@@ -4,6 +4,7 @@ import graphene
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
+from django.utils import timezone
 from django.db.models import Prefetch
 from graphql_jwt.exceptions import PermissionDenied
 
@@ -849,6 +850,7 @@ def create_stream_ticket_for_user(user, game_id, season_id, team_id):
     stream_ticket.season_id = season_id or ""
     stream_ticket.team_id = team_id or ""
     stream_ticket.type = "single"
+    stream_ticket.expires = None # TODO: set expired for day ticket
     stream_ticket.save()
     user.stream_tickets.add(stream_ticket)
     user.save()
