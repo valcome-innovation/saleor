@@ -745,6 +745,16 @@ class CheckoutComplete(BaseMutation):
         discounts = info.context.discounts
         user = info.context.user
 
+        # Add Stream ticket
+        if has_stream_ticket_meta(checkout):
+            create_stream_ticket_for_user(
+                user,
+                lines,
+                checkout.get_value_from_metadata('GAME_ID', None),
+                checkout.get_value_from_metadata('SEASON_ID', None),
+                checkout.get_value_from_metadata('TEAM_ID', None)
+         )
+
         clean_checkout_shipping(checkout, lines, discounts, CheckoutErrorCode)
         clean_checkout_payment(checkout, lines, discounts, CheckoutErrorCode)
 
@@ -809,15 +819,6 @@ class CheckoutComplete(BaseMutation):
                     {"redirect_url": error}, code=AccountErrorCode.INVALID
                 )
 
-        # Add Stream ticket
-        if has_stream_ticket_meta(checkout):
-            create_stream_ticket_for_user(
-                user,
-                checkout.get_value_from_metadata('GAME_ID', None),
-                checkout.get_value_from_metadata('SEASON_ID', None),
-                checkout.get_value_from_metadata('TEAM_ID', None)
-         )
-
         order = None
         if not txn.action_required:
             # create the order into the database
@@ -841,19 +842,51 @@ def has_stream_ticket_meta(checkout):
     game_id = checkout.get_value_from_metadata('GAME_ID', None)
     season_id = checkout.get_value_from_metadata('SEASON_ID', None)
     team_id = checkout.get_value_from_metadata('TEAM_ID', None)
+    # expires = checkout.get_value_from_metadata('EXPIRES', None)
     return game_id is not None or season_id is not None or team_id is not None
 
 
-def create_stream_ticket_for_user(user, game_id, season_id, team_id):
+def create_stream_ticket_for_user(user, lines, game_id, season_id, team_id):
     stream_ticket = StreamTicket()
-    stream_ticket.game_id = game_id or ""
-    stream_ticket.season_id = season_id or ""
-    stream_ticket.team_id = team_id or ""
-    stream_ticket.type = "single"
-    stream_ticket.expires = None # TODO: set expired for day ticket
+    stream_ticket.game_id = game_id or None
+    stream_ticket.season_id = season_id or None
+    stream_ticket.team_id = team_id or None
+    stream_ticket.expires = None # TODO: set expires for day ticket
+    stream_ticket.type = determine_ticket_type(stream_ticket)
+    validate_stream_ticket_with_product(stream_ticket, lines)
     stream_ticket.save()
     user.stream_tickets.add(stream_ticket)
     user.save()
+
+
+def determine_ticket_type(ticket):
+    if ticket.game_id is not None and ticket.season_id is None and ticket.team_id is None:
+        return 'single'
+    elif ticket.season_id is not None and ticket.team_id is not None and ticket.game_id is None:
+        return 'team'
+    elif ticket.season_id is not None and ticket.team_id is None and ticket.game_id is None:
+        return 'league'
+    elif ticket.expires is not None and ticket.season_id is None and ticket.team_id is None and ticket.game_id is None:
+        return 'day'
+    else:
+        raise ValidationError(
+            "Could not determine TicketType from input parameters",
+            code=AccountErrorCode.INVALID
+        )
+
+
+def validate_stream_ticket_with_product(stream_ticket, lines):
+    if len(lines) == 1 and lines[0].variant.product.attributes.count() == 1:
+        attribute = lines[0].variant.product.attributes.first()
+        if attribute.values.count() == 1:
+            product_ticket_type = attribute.values.first().slug
+            stream_ticket_type = stream_ticket.type
+            if product_ticket_type == stream_ticket_type:
+                return True
+
+    raise ValidationError(
+        "Checkout is not a valid StreamTicket purchase", code=AccountErrorCode.INVALID
+    )
 
 
 class CheckoutAddPromoCode(BaseMutation):
