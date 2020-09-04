@@ -16,7 +16,7 @@ if [ -v POPULATE ]; then
 fi
 
 if [ -v STREAM_SETUP ]; then
-  echo "Populating database with dummy data..."
+  echo "Setting up stream data..."
   python3 manage.py streamsetup
 fi
 
