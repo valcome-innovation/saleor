@@ -10,6 +10,7 @@ from ....site.models import AuthenticationBackends
 from ...utils.random_data import (
     add_address_to_admin,
     create_auth_key,
+    create_page,
     create_app_with_token,
     create_products_by_schema
 )
@@ -19,17 +20,15 @@ class Command(BaseCommand):
     placeholders_dir = "saleor/static/placeholders/"
 
     def handle(self, *args, **options):
-        credentials = {"email": "dev@valcome.at", "password": "passwerd"}
+        credentials = {"email": "dev@valcome.tv", "password": "passwerd"}
         self.stdout.write(create_superuser(credentials))
         add_address_to_admin(credentials["email"])
-
+        self.create_info_pages()
         self.create_auth_keys()
         self.create_app_with_token()
         create_products_by_schema(placeholder_dir=self.placeholders_dir,
                                   create_images=False,
                                   data_json="streamdb_data.json")
-
-
 
 
     def create_auth_keys(self):
@@ -46,3 +45,11 @@ class Command(BaseCommand):
     def create_app_with_token(self):
         msg = create_app_with_token(conf.settings.APP_NAME, conf.settings.APP_TOKEN)
         self.stdout.write(msg)
+
+    def create_info_pages(self):
+        for msg in create_page("Impressum", "about"):
+            self.stdout.write(msg)
+        for msg in create_page("Datenschutzerklärung", "privacy"):
+            self.stdout.write(msg)
+        for msg in create_page("AGB", "terms"):
+            self.stdout.write(msg)
