@@ -3,6 +3,7 @@ import logging
 from decimal import Decimal
 from typing import Dict
 
+from dateutil.parser import parser
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
@@ -25,6 +26,7 @@ ALLOWED_GATEWAY_KINDS = {choices[0] for choices in TransactionKind.CHOICES}
 def create_payment_information(
     payment: Payment,
     payment_token: str = None,
+    payment_intent: str = None,
     amount: Decimal = None,
     customer_id: str = None,
     store_source: bool = False,
@@ -50,6 +52,7 @@ def create_payment_information(
 
     return PaymentData(
         token=payment_token,
+        payment_intent=payment_intent,
         amount=amount or payment.total,
         currency=payment.currency,
         billing=billing_address,
@@ -69,6 +72,7 @@ def create_payment(
     email: str,
     customer_ip_address: str = "",
     payment_token: str = "",
+    payment_intent: str = "",
     extra_data: Dict = None,
     checkout: Checkout = None,
     order: Order = None,
@@ -87,6 +91,7 @@ def create_payment(
         "customer_ip_address": customer_ip_address,
         "extra_data": extra_data,
         "token": payment_token,
+        "payment_intent": payment_intent,
     }
 
     if checkout:
@@ -146,6 +151,9 @@ def create_transaction(
             error=error_msg,
             raw_response={},
         )
+
+    print(gateway_response)
+    print(gateway_response.__dir__)
 
     txn = Transaction.objects.create(
         payment=payment,

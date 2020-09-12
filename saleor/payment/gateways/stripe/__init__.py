@@ -43,18 +43,33 @@ def authorize(
         else None
     )
 
+
     try:
-        intent = client.PaymentIntent.create(
-            payment_method=payment_information.token,
-            amount=stripe_amount,
-            currency=currency,
-            confirmation_method="manual",
-            confirm=True,
-            capture_method=capture_method,
-            setup_future_usage=future_use,
-            customer=customer_id,
-            shipping=shipping,
-        )
+        if payment_information.payment_intent is not None:
+            intent = client.PaymentIntent.modify(
+                payment_information.payment_intent,
+                payment_method=payment_information.token,
+                amount=stripe_amount,
+                currency=currency,
+                confirmation_method="manual",
+                confirm=True,
+                capture_method=capture_method,
+                setup_future_usage=future_use,
+                customer=customer_id,
+                shipping=shipping,
+            )
+        else:
+            intent = client.PaymentIntent.create(
+                payment_method=payment_information.token,
+                amount=stripe_amount,
+                currency=currency,
+                confirmation_method="manual",
+                confirm=True,
+                capture_method=capture_method,
+                setup_future_usage=future_use,
+                customer=customer_id,
+                shipping=shipping,
+            )
         if config.store_customer and not customer_id:
             customer = client.Customer.create(payment_method=intent.payment_method)
             customer_id = customer.id

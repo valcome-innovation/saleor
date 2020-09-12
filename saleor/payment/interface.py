@@ -66,6 +66,7 @@ class PaymentData:
     customer_ip_address: Optional[str]
     customer_email: str
     token: Optional[str] = None
+    payment_intent: Optional[str] = None
     customer_id: Optional[str] = None
     reuse_source: bool = False
 
