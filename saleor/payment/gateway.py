@@ -62,7 +62,8 @@ def process_payment(
 ) -> Transaction:
     plugin_manager = get_plugins_manager()
     payment_data = create_payment_information(
-        payment=payment, payment_token=token, payment_intent=payment_intent, store_source=store_source
+        payment=payment, payment_token=token,
+        payment_intent=payment_intent, store_source=store_source
     )
     response, error = _fetch_gateway_response(
         plugin_manager.process_payment, payment.gateway, payment_data

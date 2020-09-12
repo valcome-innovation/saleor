@@ -30,6 +30,7 @@ def get_client_token(**_):
 def authorize(
     payment_information: PaymentData, config: GatewayConfig
 ) -> GatewayResponse:
+    print("auth")
     kind = TransactionKind.CAPTURE if config.auto_capture else TransactionKind.AUTH
     client = _get_client(**config.connection_params)
     capture_method = "automatic" if config.auto_capture else "manual"
@@ -43,20 +44,10 @@ def authorize(
         else None
     )
 
-
     try:
         if payment_information.payment_intent is not None:
-            intent = client.PaymentIntent.modify(
-                payment_information.payment_intent,
-                payment_method=payment_information.token,
-                amount=stripe_amount,
-                currency=currency,
-                confirmation_method="manual",
-                confirm=True,
-                capture_method=capture_method,
-                setup_future_usage=future_use,
-                customer=customer_id,
-                shipping=shipping,
+            intent = client.PaymentIntent.retrieve(
+                payment_information.payment_intent
             )
         else:
             intent = client.PaymentIntent.create(
@@ -77,11 +68,17 @@ def authorize(
     except stripe.error.StripeError as exc:
         response = _error_response(kind=kind, exc=exc, payment_info=payment_information)
     else:
-        success = intent.status in ("succeeded", "requires_capture", "requires_action")
+        # TODO check if this is valid
+        if "sofort" in intent.payment_method_types:
+            success = intent.status in ("processing", "succeeded", "requires_capture", "requires_action")
+        else:
+            success = intent.status in ("succeeded", "requires_capture", "requires_action")
+
         response = _success_response(
             intent=intent, kind=kind, success=success, customer_id=customer_id
         )
-        response = fill_card_details(intent, response)
+
+        response = fill_payment_details(intent, response)
     return response
 
 
@@ -105,7 +102,7 @@ def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
             kind=TransactionKind.CAPTURE,
             success=capture.status in ("succeeded", "requires_action"),
         )
-        response = fill_card_details(intent, response)
+        response = fill_payment_details(intent, response)
     return response
 
 
@@ -124,7 +121,7 @@ def confirm(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
             kind=TransactionKind.CONFIRM,
             success=intent.status == "succeeded",
         )
-        response = fill_card_details(intent, response)
+        response = fill_payment_details(intent, response)
     return response
 
 
@@ -242,14 +239,16 @@ def _success_response(
     )
 
 
-def fill_card_details(intent: stripe.PaymentIntent, response: GatewayResponse):
+def fill_payment_details(intent: stripe.PaymentIntent, response: GatewayResponse):
     charges = intent.charges["data"]
     if charges:
-        card = intent.charges["data"][-1]["payment_method_details"]["card"]
-        response.card_info = CreditCardInfo(
-            last_4=card["last4"],
-            exp_year=card["exp_year"],
-            exp_month=card["exp_month"],
-            brand=card["brand"],
-        )
+        payment_details = intent.charges["data"][-1]["payment_method_details"]
+        if hasattr(payment_details, "card"):
+            card = payment_details["card"]
+            response.card_info = CreditCardInfo(
+                last_4=card["last4"],
+                exp_year=card["exp_year"],
+                exp_month=card["exp_month"],
+                brand=card["brand"],
+            )
     return response

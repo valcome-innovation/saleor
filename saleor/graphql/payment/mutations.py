@@ -134,7 +134,7 @@ class CheckoutPaymentCreate(BaseMutation, I18nMixin):
         payment = create_payment(
             gateway=data["gateway"],
             payment_token=data["token"],
-            payment_intent=data["payment_intent"],
+            payment_intent=data.get("payment_intent", None),
             total=amount,
             currency=settings.DEFAULT_CURRENCY,
             email=checkout.email,

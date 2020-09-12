@@ -91,7 +91,7 @@ def create_payment(
         "customer_ip_address": customer_ip_address,
         "extra_data": extra_data,
         "token": payment_token,
-        "payment_intent": payment_intent,
+        "payment_intent": payment_intent
     }
 
     if checkout:
