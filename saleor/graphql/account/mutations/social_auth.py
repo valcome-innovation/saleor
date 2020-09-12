@@ -1,15 +1,19 @@
 import graphene
+import logging
 from functools import wraps
-from django.conf import settings
-from django.contrib.auth import authenticate, get_user_model
+
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 import django.conf as conf
 
 from promise import Promise, is_thenable
 from django.dispatch import Signal
+
+from ....account.error_codes import AccountErrorCode
+
 token_issued = Signal(providing_args=['request', 'user'])
 
-from graphql_jwt.exceptions import JSONWebTokenError, PermissionDenied
+from graphql_jwt.exceptions import JSONWebTokenError
 from graphql_jwt.mixins import ResolveMixin, ObtainJSONWebTokenMixin
 from graphql_jwt.decorators import setup_jwt_cookie
 from graphql_jwt.settings import jwt_settings
@@ -20,8 +24,9 @@ from social_django.compat import reverse
 
 from ..types import User
 from ...core.types import Error
-from ...shop.types import AuthorizationKeyType
 from ....site.models import AuthorizationKey
+
+LOG = logging.getLogger(__name__)
 
 def token_auth(f):
     @wraps(f)
@@ -53,6 +58,7 @@ def token_auth(f):
             conf.settings.SOCIAL_AUTH_FACEBOOK_SECRET = authorization_key.password
 
         context.social_strategy = load_strategy(context)
+
         # backward compatibility in attribute name, only if not already
         # defined
         if not hasattr(context, 'strategy'):
@@ -60,11 +66,14 @@ def token_auth(f):
         uri = reverse('social:complete', args=(backend,))
         context.backend = load_backend(context.social_strategy, backend, uri)
 
-        user = context.backend.do_auth(token)
+        user_data = context.backend.user_data(token)
 
-        if user is None:
-            raise JSONWebTokenError(
-                _('Please, enter valid credentials'))
+        if not user_data or not (user_data["email"] and user_data["email"].strip()) or not user_data["id"]:
+            LOG.error('Empty email or id from social login received')
+            LOG.error(user_data)
+            raise JSONWebTokenError(_('Please, enter valid credentials'))
+
+        user = context.backend.do_auth(token)
 
         if hasattr(context, 'user'):
             context.user = user
@@ -110,6 +119,7 @@ class CreateOAuthToken(ResolveMixin, JSONWebTokenMutation):
     @classmethod
     def resolve(cls, root, info, **kwargs):
         return cls(user=info.context.user, errors=[])
+
 
 class OAuthMutations(graphene.ObjectType):
     oauth_token_create = CreateOAuthToken.Field()

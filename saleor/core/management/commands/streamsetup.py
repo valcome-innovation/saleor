@@ -20,8 +20,8 @@ class Command(BaseCommand):
     placeholders_dir = "saleor/static/placeholders/"
 
     def handle(self, *args, **options):
-        credentials = {"email": "dev@valcome.tv", "password": "passwerd"}
-        self.stdout.write(create_superuser(credentials))
+        credentials = {"email": "dev@valcome.tv", "password": "m5$ktVp$3cRv%8DtvR"}
+        create_superuser(credentials)
         add_address_to_admin(credentials["email"])
         self.create_info_pages()
         self.create_auth_keys()
