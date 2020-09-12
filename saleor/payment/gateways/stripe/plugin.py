@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, List
 
+from django.conf import settings
 from saleor.plugins.base_plugin import BasePlugin, ConfigurationTypeField
 
 from . import (
@@ -31,11 +32,12 @@ def require_active_plugin(fn):
 
 
 class StripeGatewayPlugin(BasePlugin):
-    PLUGIN_NAME = GATEWAY_NAME
     PLUGIN_ID = "mirumee.payments.stripe"
+    PLUGIN_NAME = GATEWAY_NAME
+    DEFAULT_ACTIVE = settings.STRIPE_PLUGIN_ACTIVE
     DEFAULT_CONFIGURATION = [
-        {"name": "Public API key", "value": None},
-        {"name": "Secret API key", "value": None},
+        {"name": "Public API key", "value": settings.STRIPE_PUBLIC_KEY},
+        {"name": "Secret API key", "value": settings.STRIPE_PRIVATE_KEY},
         {"name": "Store customers card", "value": False},
         {"name": "Automatic payment capture", "value": True},
     ]

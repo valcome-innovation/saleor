@@ -33,6 +33,12 @@ class PaymentInput(graphene.InputObjectType):
             "billing data in a secure manner."
         ),
     )
+    payment_intent = graphene.String(
+        required=False,
+        description=(
+            "Pre created payment intent for payments like SOFORT"
+        ),
+    )
     amount = Decimal(
         required=False,
         description=(
@@ -128,6 +134,7 @@ class CheckoutPaymentCreate(BaseMutation, I18nMixin):
         payment = create_payment(
             gateway=data["gateway"],
             payment_token=data["token"],
+            payment_intent=data.get("payment_intent", None),
             total=amount,
             currency=settings.DEFAULT_CURRENCY,
             email=checkout.email,

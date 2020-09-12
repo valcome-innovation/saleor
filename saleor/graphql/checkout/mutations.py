@@ -745,16 +745,6 @@ class CheckoutComplete(BaseMutation):
         discounts = info.context.discounts
         user = info.context.user
 
-        # Add Stream ticket
-        if has_stream_ticket_meta(checkout):
-            create_stream_ticket_for_user(
-                user,
-                lines,
-                checkout.get_value_from_metadata('GAME_ID', None),
-                checkout.get_value_from_metadata('SEASON_ID', None),
-                checkout.get_value_from_metadata('TEAM_ID', None)
-         )
-
         clean_checkout_shipping(checkout, lines, discounts, CheckoutErrorCode)
         clean_checkout_payment(checkout, lines, discounts, CheckoutErrorCode)
 
@@ -797,7 +787,8 @@ class CheckoutComplete(BaseMutation):
                 txn = gateway.confirm(payment)
             else:
                 txn = gateway.process_payment(
-                    payment=payment, token=payment.token, store_source=store_source
+                    payment=payment, token=payment.token,
+                    payment_intent=payment.payment_intent, store_source=store_source
                 )
 
             if not txn.is_success:
@@ -818,6 +809,16 @@ class CheckoutComplete(BaseMutation):
                 raise ValidationError(
                     {"redirect_url": error}, code=AccountErrorCode.INVALID
                 )
+
+        # Add Stream ticket
+        if has_stream_ticket_meta(checkout):
+            create_stream_ticket_for_user(
+                user,
+                lines,
+                checkout.get_value_from_metadata('GAME_ID', None),
+                checkout.get_value_from_metadata('SEASON_ID', None),
+                checkout.get_value_from_metadata('TEAM_ID', None)
+        )
 
         order = None
         if not txn.action_required:

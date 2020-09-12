@@ -105,6 +105,7 @@ class Payment(CountableDjangoObjectType):
             "created",
             "modified",
             "token",
+            "payment_intent",
             "checkout",
             "order",
             "billing_email",

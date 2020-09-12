@@ -38,6 +38,7 @@ class Payment(models.Model):
         max_length=20, choices=ChargeStatus.CHOICES, default=ChargeStatus.NOT_CHARGED
     )
     token = models.CharField(max_length=128, blank=True, default="")
+    payment_intent = models.CharField(max_length=128, blank=True, default=None, null=True)
     total = models.DecimalField(
         max_digits=settings.DEFAULT_MAX_DIGITS,
         decimal_places=settings.DEFAULT_DECIMAL_PLACES,
