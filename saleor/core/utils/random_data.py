@@ -81,6 +81,11 @@ IMAGES_MAPPING = {
     63: ["saleordemoproduct_paints_03.png"],
     64: ["saleordemoproduct_paints_04.png"],
     65: ["saleordemoproduct_paints_05.png"],
+    66: ["saleordemoproduct_paints_05.png"], # FIXME STREAMSETUP
+    67: ["saleordemoproduct_paints_05.png"], # FIXME STREAMSETUP
+    68: ["saleordemoproduct_paints_05.png"], # FIXME STREAMSETUP
+    69: ["saleordemoproduct_paints_05.png"], # FIXME STREAMSETUP
+    70: ["saleordemoproduct_paints_05.png"], # FIXME STREAMSETUP
     71: ["saleordemoproduct_fd_juice_06.png"],
     72: ["saleordemoproduct_fd_juice_06.png"],  # FIXME inproper image
     73: ["saleordemoproduct_fd_juice_05.png"],

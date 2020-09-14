@@ -51,107 +51,6 @@
         }
     },
     {
-        "model": "product.product",
-        "pk": 61,
-        "fields": {
-            "publication_date": null,
-            "is_published": true,
-            "private_metadata": {},
-            "metadata": {
-                "taxes": {
-                    "vatlayer": {
-                        "code": "standard",
-                        "description": ""
-                    }
-                }
-            },
-            "seo_title": "",
-            "seo_description": "Single Ticket - SWL",
-            "product_type": 7,
-            "name": "Single Ticket - SWL",
-            "slug": "single-ticket-swl",
-            "description": "Single Ticket - SWL",
-            "description_json": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - SWL",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
-            },
-            "category": 7,
-            "currency": "EUR",
-            "price_amount": "4.99",
-            "minimal_variant_price_amount": "4.99",
-            "updated_at": "2020-04-17T14:22:48.130Z",
-            "charge_taxes": true,
-            "weight": "0.0:kg"
-        }
-    },
-    {
-        "model": "product.productvariant",
-        "pk": 171,
-        "fields": {
-            "private_metadata": {},
-            "metadata": {},
-            "sku": "546451996",
-            "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
-            "product": 61,
-            "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
-            "weight": "1.0:kg"
-        }
-    },
-    {
-        "model": "product.assignedproductattribute",
-        "pk": 1,
-        "fields": {
-            "product": 61,
-            "assignment": 1,
-            "values": [
-                1
-            ]
-        }
-    },
-    {
-        "model": "product.assignedproductattribute",
-        "pk": 2,
-        "fields": {
-            "product": 61,
-            "assignment": 2,
-            "values": [
-                10
-            ]
-        }
-    },
-    {
-        "model": "product.attributeproduct",
-        "pk": 1,
-        "fields": {
-            "sort_order": null,
-            "attribute": 13,
-            "product_type": 7
-        }
-    },
-    {
-        "model": "product.attributeproduct",
-        "pk": 2,
-        "fields": {
-            "sort_order": null,
-            "attribute": 14,
-            "product_type": 7
-        }
-    },
-    {
         "model": "product.attribute",
         "pk": 13,
         "fields": {
@@ -188,7 +87,7 @@
             "name": "Team",
             "value": "",
             "slug": "team",
-            "attribute": 14
+            "attribute": 13
         }
     },
     {
@@ -397,14 +296,1349 @@
         }
     },
     {
-        "model": "product.productimage",
+        "model": "product.attributeproduct",
         "pk": 1,
         "fields": {
             "sort_order": 0,
-            "product": 61,
-            "image": "products/saleordemoproduct_paints_01_stdygda.png",
-            "ppoi": "0.5x0.5",
-            "alt": ""
+            "attribute": 13,
+            "product_type": 7
+        }
+    },
+    {
+        "model": "product.attributeproduct",
+        "pk": 2,
+        "fields": {
+            "sort_order": 1,
+            "attribute": 14,
+            "product_type": 7
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 62,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - ASH",
+            "product_type": 7,
+            "name": "Single Ticket - ASH",
+            "slug": "single-ticket-ash",
+            "description": "Single Ticket - ASH",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - ASH",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 172,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "100",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 62,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 3,
+        "fields": {
+            "product": 62,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 4,
+        "fields": {
+            "product": 62,
+            "assignment": 2,
+            "values": [
+                4
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 63,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - ECB",
+            "product_type": 7,
+            "name": "Single Ticket - ECB",
+            "slug": "single-ticket-ecb",
+            "description": "Single Ticket - ECB",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - ECB",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 173,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "101",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 63,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 5,
+        "fields": {
+            "product": 63,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 6,
+        "fields": {
+            "product": 63,
+            "assignment": 2,
+            "values": [
+                5
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 64,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - EHC",
+            "product_type": 7,
+            "name": "Single Ticket - EHC",
+            "slug": "single-ticket-ehc",
+            "description": "Single Ticket - EHC",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - EHC",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 174,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "102",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 64,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 7,
+        "fields": {
+            "product": 64,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 8,
+        "fields": {
+            "product": 64,
+            "assignment": 2,
+            "values": [
+                6
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 65,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - FAS",
+            "product_type": 7,
+            "name": "Single Ticket - FAS",
+            "slug": "single-ticket-fas",
+            "description": "Single Ticket - FAS",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - FAS",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 175,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "103",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 65,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 9,
+        "fields": {
+            "product": 65,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 10,
+        "fields": {
+            "product": 65,
+            "assignment": 2,
+            "values": [
+                7
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 66,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - GHE",
+            "product_type": 7,
+            "name": "Single Ticket - GHE",
+            "slug": "single-ticket-ghe",
+            "description": "Single Ticket - GHE",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - GHE",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 176,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "104",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 66,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 11,
+        "fields": {
+            "product": 66,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 12,
+        "fields": {
+            "product": 66,
+            "assignment": 2,
+            "values": [
+                8
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 67,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - JES",
+            "product_type": 7,
+            "name": "Single Ticket - JES",
+            "slug": "single-ticket-jes",
+            "description": "Single Ticket - JES",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - JES",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 177,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "105",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 67,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 13,
+        "fields": {
+            "product": 67,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 14,
+        "fields": {
+            "product": 67,
+            "assignment": 2,
+            "values": [
+                9
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 68,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - SWL",
+            "product_type": 7,
+            "name": "Single Ticket - SWL",
+            "slug": "single-ticket-swl",
+            "description": "Single Ticket - SWL",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - SWL",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 178,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "106",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 68,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 15,
+        "fields": {
+            "product": 68,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 16,
+        "fields": {
+            "product": 68,
+            "assignment": 2,
+            "values": [
+                10
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 69,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - KA2",
+            "product_type": 7,
+            "name": "Single Ticket - KA2",
+            "slug": "single-ticket-ka2",
+            "description": "Single Ticket - KA2",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - KA2",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 179,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "107",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 69,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 17,
+        "fields": {
+            "product": 69,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 18,
+        "fields": {
+            "product": 69,
+            "assignment": 2,
+            "values": [
+                11
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 70,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - KEC",
+            "product_type": 7,
+            "name": "Single Ticket - KEC",
+            "slug": "single-ticket-kec",
+            "description": "Single Ticket - KEC",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - KEC",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 180,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "108",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 70,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 19,
+        "fields": {
+            "product": 70,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 20,
+        "fields": {
+            "product": 70,
+            "assignment": 2,
+            "values": [
+                12
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 71,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - PUS",
+            "product_type": 7,
+            "name": "Single Ticket - PUS",
+            "slug": "single-ticket-pus",
+            "description": "Single Ticket - PUS",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - PUS",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 181,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "109",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 71,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 21,
+        "fields": {
+            "product": 71,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 22,
+        "fields": {
+            "product": 71,
+            "assignment": 2,
+            "values": [
+                13
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 72,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - RBJ",
+            "product_type": 7,
+            "name": "Single Ticket - RBJ",
+            "slug": "single-ticket-rbj",
+            "description": "Single Ticket - RBJ",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - RBJ",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 182,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "110",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 72,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 23,
+        "fields": {
+            "product": 72,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 24,
+        "fields": {
+            "product": 72,
+            "assignment": 2,
+            "values": [
+                14
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 73,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - RIT",
+            "product_type": 7,
+            "name": "Single Ticket - RIT",
+            "slug": "single-ticket-rit",
+            "description": "Single Ticket - RIT",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - RIT",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 183,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "111",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 73,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 25,
+        "fields": {
+            "product": 73,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 26,
+        "fields": {
+            "product": 73,
+            "assignment": 2,
+            "values": [
+                15
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 74,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - SGC",
+            "product_type": 7,
+            "name": "Single Ticket - SGC",
+            "slug": "single-ticket-sgc",
+            "description": "Single Ticket - SGC",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - SGC",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 184,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "112",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 74,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 27,
+        "fields": {
+            "product": 74,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 28,
+        "fields": {
+            "product": 74,
+            "assignment": 2,
+            "values": [
+                16
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 75,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - VEU",
+            "product_type": 7,
+            "name": "Single Ticket - VEU",
+            "slug": "single-ticket-veu",
+            "description": "Single Ticket - VEU",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - VEU",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 185,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "113",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 75,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 29,
+        "fields": {
+            "product": 75,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 30,
+        "fields": {
+            "product": 75,
+            "assignment": 2,
+            "values": [
+                17
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 76,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - WSV",
+            "product_type": 7,
+            "name": "Single Ticket - WSV",
+            "slug": "single-ticket-wsv",
+            "description": "Single Ticket - WSV",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - WSV",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 186,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "114",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 76,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 31,
+        "fields": {
+            "product": 76,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 32,
+        "fields": {
+            "product": 76,
+            "assignment": 2,
+            "values": [
+                18
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 77,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - HKO",
+            "product_type": 7,
+            "name": "Single Ticket - HKO",
+            "slug": "single-ticket-hko",
+            "description": "Single Ticket - HKO",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - HKO",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "4.99",
+            "minimal_variant_price_amount": "4.99",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 187,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "115",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 77,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 33,
+        "fields": {
+            "product": 77,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 34,
+        "fields": {
+            "product": 77,
+            "assignment": 2,
+            "values": [
+                19
+            ]
         }
     }
 ]
