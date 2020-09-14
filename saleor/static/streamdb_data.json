@@ -66,17 +66,17 @@
                 }
             },
             "seo_title": "",
-            "seo_description": "Single Livestream",
+            "seo_description": "Single Ticket - SWL",
             "product_type": 7,
-            "name": "Livestream Ticket",
-            "slug": "livestream-ticket",
-            "description": "Single Livestream",
+            "name": "Single Ticket - SWL",
+            "slug": "single-ticket-swl",
+            "description": "Single Ticket - SWL",
             "description_json": {
                 "blocks": [
                     {
                         "key": "",
                         "data": {},
-                        "text": "Single Livestream",
+                        "text": "Single Ticket - SWL",
                         "type": "unstyled",
                         "depth": 0,
                         "entityRanges": [],
@@ -123,11 +123,31 @@
         }
     },
     {
+        "model": "product.assignedproductattribute",
+        "pk": 2,
+        "fields": {
+            "product": 61,
+            "assignment": 2,
+            "values": [
+                10
+            ]
+        }
+    },
+    {
         "model": "product.attributeproduct",
         "pk": 1,
         "fields": {
             "sort_order": null,
             "attribute": 13,
+            "product_type": 7
+        }
+    },
+    {
+        "model": "product.attributeproduct",
+        "pk": 2,
+        "fields": {
+            "sort_order": null,
+            "attribute": 14,
             "product_type": 7
         }
     },
@@ -168,7 +188,7 @@
             "name": "Team",
             "value": "",
             "slug": "team",
-            "attribute": 13
+            "attribute": 14
         }
     },
     {
@@ -180,6 +200,200 @@
             "value": "",
             "slug": "league",
             "attribute": 13
+        }
+    },
+    {
+        "model": "product.attribute",
+        "pk": 14,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "slug": "team",
+            "name": "Team",
+            "input_type": "dropdown",
+            "value_required": true,
+            "is_variant_only": false,
+            "visible_in_storefront": true,
+            "filterable_in_storefront": true,
+            "filterable_in_dashboard": false,
+            "storefront_search_position": 1,
+            "available_in_grid": true
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 4,
+        "fields": {
+            "sort_order": 9,
+            "name": "ASH",
+            "value": "",
+            "slug": "ash",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 5,
+        "fields": {
+            "sort_order": 10,
+            "name": "ECB",
+            "value": "",
+            "slug": "ecb",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 6,
+        "fields": {
+            "sort_order": 11,
+            "name": "EHC",
+            "value": "",
+            "slug": "ehc",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 7,
+        "fields": {
+            "sort_order": 12,
+            "name": "FAS",
+            "value": "",
+            "slug": "fas",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 8,
+        "fields": {
+            "sort_order": 13,
+            "name": "GHE",
+            "value": "",
+            "slug": "ghe",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 9,
+        "fields": {
+            "sort_order": 14,
+            "name": "JES",
+            "value": "",
+            "slug": "jes",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 10,
+        "fields": {
+            "sort_order": 15,
+            "name": "SWL",
+            "value": "",
+            "slug": "swl",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 11,
+        "fields": {
+            "sort_order": 16,
+            "name": "KA2",
+            "value": "",
+            "slug": "ka2",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 12,
+        "fields": {
+            "sort_order": 17,
+            "name": "KEC",
+            "value": "",
+            "slug": "kec",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 13,
+        "fields": {
+            "sort_order": 18,
+            "name": "PUS",
+            "value": "",
+            "slug": "pus",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 14,
+        "fields": {
+            "sort_order": 19,
+            "name": "RBJ",
+            "value": "",
+            "slug": "rbj",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 15,
+        "fields": {
+            "sort_order": 20,
+            "name": "RIT",
+            "value": "",
+            "slug": "rit",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 16,
+        "fields": {
+            "sort_order": 21,
+            "name": "SGC",
+            "value": "",
+            "slug": "sgc",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 17,
+        "fields": {
+            "sort_order": 22,
+            "name": "VEU",
+            "value": "",
+            "slug": "veu",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 18,
+        "fields": {
+            "sort_order": 23,
+            "name": "WSV",
+            "value": "",
+            "slug": "wsv",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 19,
+        "fields": {
+            "sort_order": 24,
+            "name": "HKO",
+            "value": "",
+            "slug": "hko",
+            "attribute": 14
         }
     },
     {
