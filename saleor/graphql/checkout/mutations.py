@@ -877,9 +877,10 @@ def determine_ticket_type(ticket):
 
 
 def validate_stream_ticket_with_product(stream_ticket, lines):
-    if len(lines) == 1 and lines[0].variant.product.attributes.count() == 1:
-        attribute = lines[0].variant.product.attributes.first()
-        if attribute.values.count() == 1:
+    if len(lines) == 1 and lines[0].variant.product.attributes.count() >= 1:
+        attributes = lines[0].variant.product.attributes.all()
+        attribute = get_stream_type_attribute(attributes)
+        if attribute.values.count() == 1 and has_team_attribute(attributes):
             product_ticket_type = attribute.values.first().slug
             stream_ticket_type = stream_ticket.type
             if product_ticket_type == stream_ticket_type:
@@ -889,6 +890,18 @@ def validate_stream_ticket_with_product(stream_ticket, lines):
         "Checkout is not a valid StreamTicket purchase", code=AccountErrorCode.INVALID
     )
 
+
+def get_stream_type_attribute(attributes):
+    for attr in attributes:
+        if attr.values.count() == 1 and attr.attribute.slug == 'stream-type':
+            return attr
+
+
+def has_team_attribute(attributes):
+    for attr in attributes:
+        if attr.values.count() == 1 and attr.attribute.slug == 'team':
+            return True
+    return False
 
 class CheckoutAddPromoCode(BaseMutation):
     checkout = graphene.Field(
