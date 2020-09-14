@@ -15,6 +15,11 @@ if [ -v POPULATE ]; then
   python3 manage.py populatedb --createsuperuser
 fi
 
+if [ -v DEV_USER ]; then
+  echo "Setup DEV Account..."
+  python3 manage.py createdevuser
+fi
+
 if [ -v STREAM_SETUP ]; then
   echo "Setting up stream data..."
   python3 manage.py streamsetup
