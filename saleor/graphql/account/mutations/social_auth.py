@@ -1,5 +1,7 @@
 import graphene
 import logging
+import jwt
+from datetime import datetime
 from functools import wraps
 
 from django.core.exceptions import ValidationError
@@ -8,6 +10,7 @@ import django.conf as conf
 
 from promise import Promise, is_thenable
 from django.dispatch import Signal
+from django.utils import timezone
 
 from ....account.error_codes import AccountErrorCode
 
@@ -114,6 +117,10 @@ class CreateOAuthToken(ResolveMixin, JSONWebTokenMutation):
         except JSONWebTokenError as e:
             return CreateOAuthToken(errors=[Error(message=str(e))])
         else:
+            decodedToken = jwt.decode(result.token, None, None)
+            user = result.user
+            user.last_jwt_iat = datetime.fromtimestamp(decodedToken['origIat'], tz=timezone.utc)
+            user.save(update_fields=["last_jwt_iat"])
             return result
 
     @classmethod

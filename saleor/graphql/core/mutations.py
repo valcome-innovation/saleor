@@ -2,6 +2,8 @@ from itertools import chain
 from typing import Tuple, Union
 
 import graphene
+import jwt
+from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.core.exceptions import (
     NON_FIELD_ERRORS,
@@ -647,9 +649,11 @@ class CreateToken(ObtainJSONWebToken):
             errors = validation_error_to_error_type(e)
             return cls.handle_typed_errors(errors)
         else:
+            decodedToken = jwt.decode(result.token, None, None)
             user = result.user
+            user.last_jwt_iat = datetime.fromtimestamp(decodedToken['origIat'], tz=timezone.utc)
             user.last_login = timezone.now()
-            user.save(update_fields=["last_login"])
+            user.save(update_fields=["last_login", "last_jwt_iat"])
             return result
 
     @classmethod
