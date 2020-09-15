@@ -45,7 +45,7 @@ def do_additional_token_verification(token):
     token_iat = datetime.fromtimestamp(token['origIat'], tz=timezone.utc)
     user = User.objects.get(email=token['email'])
 
-    if user.last_jwt_iat > token_iat:
+    if user.last_jwt_iat is not None and user.last_jwt_iat > token_iat:
         raise JSONWebTokenError(INVALID_TOKEN)
 
 
