@@ -71,7 +71,7 @@ def token_auth(f):
 
         user_data = context.backend.user_data(token)
 
-        if not user_data or not (user_data["email"] and user_data["email"].strip()) or not user_data["id"]:
+        if not user_data or not (user_data["email"] and user_data["email"].strip()):
             LOG.error('Empty email or id from social login received')
             LOG.error(user_data)
             raise JSONWebTokenError(_('Please, enter valid credentials'))
