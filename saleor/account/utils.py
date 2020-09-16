@@ -49,8 +49,24 @@ def change_user_default_address(user, address, address_type):
         set_user_default_shipping_address(user, address)
 
 
-def create_superuser(credentials):
+def create_user(credentials):
+    user, created = User.objects.get_or_create(
+        email=credentials["email"],
+        defaults={"is_active": True, "is_staff": False, "is_superuser": False},
+    )
+    if created:
+        user.set_password(credentials["password"])
+        user.save()
+        create_thumbnails(
+            pk=user.pk, model=User, size_set="user_avatars", image_attr="avatar"
+        )
+        msg = "User - %(email)s/%(password)s" % credentials
+    else:
+        msg = "User already exists - %(email)s" % credentials
+    return msg
 
+
+def create_superuser(credentials):
     user, created = User.objects.get_or_create(
         email=credentials["email"],
         defaults={"is_active": True, "is_staff": True, "is_superuser": True},
