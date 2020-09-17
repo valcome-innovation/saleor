@@ -173,17 +173,17 @@ class CountryAwareAddressForm(AddressForm):
                 self.add_error(field, ValidationError(error_msg, code=error_code))
 
     def validate_address(self, data):
-        try:
-            data["country_code"] = data.get("country", "")
-            if data["street_address_1"] or data["street_address_2"]:
-                data["street_address"] = "%s\n%s" % (
-                    data["street_address_1"],
-                    data["street_address_2"],
-                )
-            data = i18naddress.normalize_address(data)
-            del data["sorting_code"]
-        except i18naddress.InvalidAddress as exc:
-            self.add_field_errors(exc.errors)
+        # try:
+        #     data["country_code"] = data.get("country", "")
+        #     if data["street_address_1"] or data["street_address_2"]:
+        #         data["street_address"] = "%s\n%s" % (
+        #             data["street_address_1"],
+        #             data["street_address_2"],
+        #         )
+        #     data = i18naddress.normalize_address(data)
+        #     del data["sorting_code"]
+        # except i18naddress.InvalidAddress as exc:
+        #     self.add_field_errors(exc.errors)
         return data
 
     def clean(self):
@@ -227,7 +227,8 @@ def update_base_fields(form_class, i18n_rules):
         field.placeholder = placeholder_value
 
     if i18n_rules.country_area_choices:
-        required = "country_area" in i18n_rules.required_fields
+        # required = "country_area" in i18n_rules.required_fields
+        required = False
         form_class.base_fields["country_area"] = CountryAreaChoiceField(
             choices=i18n_rules.country_area_choices, required=required
         )
