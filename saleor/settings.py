@@ -244,6 +244,7 @@ INSTALLED_APPS = [
     "saleor.payment",
     "saleor.warehouse",
     "saleor.webhook",
+    "saleor.stripe_webhooks",
     "saleor.wishlist",
     "saleor.app",
     # External apps
