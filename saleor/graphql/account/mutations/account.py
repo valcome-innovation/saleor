@@ -10,7 +10,7 @@ from ....account.utils import create_jwt_token, decode_jwt_token
 from ....checkout import AddressType
 from ....core.utils.url import validate_storefront_url
 from ...account.enums import AddressTypeEnum
-from ...account.types import Address, AddressInput, User, StreamTicket, StreamTicketInput, AccountPermissions
+from ...account.types import Address, AddressInput, User, StreamTicketInput, AccountPermissions
 from ...core.mutations import BaseMutation, ModelDeleteMutation, ModelMutation
 from ...core.types.common import AccountError
 from ...meta.deprecated.mutations import UpdateMetaBaseMutation

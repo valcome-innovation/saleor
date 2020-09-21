@@ -68,7 +68,7 @@ from .resolvers import (
     resolve_customers,
     resolve_permission_groups,
     resolve_staff_users,
-    resolve_user,
+    resolve_user, resolve_stream_tickets,
 )
 from .sorters import PermissionGroupSortingInput, UserSortingInput
 from .types import Address, AddressValidationData, Group, User, StreamTicket
@@ -162,11 +162,15 @@ class AccountQueries(graphene.ObjectType):
             "Use the `app` query instead. This field will be removed after 2020-07-31."
         ),
     )
-
     user = graphene.Field(
         User,
         id=graphene.Argument(graphene.ID, description="ID of the user.", required=True),
         description="Look up a user by ID.",
+    )
+    stream_tickets = graphene.List(
+        StreamTicket,
+        game_id=graphene.Argument(graphene.String, description="ID of the game to get the existing tickets", required=True),
+        description="Get all Stream Tickets for a single game"
     )
 
     def resolve_address_validation_rules(
@@ -213,6 +217,12 @@ class AccountQueries(graphene.ObjectType):
     )
     def resolve_user(self, info, id):
         return resolve_user(info, id)
+
+    @one_of_permissions_required(
+        [AccountPermissions.MANAGE_STAFF, AccountPermissions.MANAGE_USERS]
+    )
+    def resolve_stream_tickets(self, info, game_id):
+        return resolve_stream_tickets(info, game_id)
 
     def resolve_address(self, info, id):
         return resolve_address(info, id)

@@ -7,6 +7,7 @@ from graphql_jwt.exceptions import PermissionDenied
 from i18naddress import get_validation_rules
 
 from ...account import models
+from ...account.models import StreamTicket
 from ...core.permissions import AccountPermissions
 from ...payment import gateway
 from ...payment.utils import fetch_customer_id
@@ -62,6 +63,12 @@ def resolve_user(info, id):
             return models.User.objects.staff().filter(pk=user_pk).first()
         if requester.has_perm(AccountPermissions.MANAGE_USERS):
             return models.User.objects.customers().filter(pk=user_pk).first()
+    return PermissionDenied()
+
+
+def resolve_stream_tickets(info, game_id):
+    if get_user_or_app_from_context(info.context):
+        return StreamTicket.objects.filter(game_id=game_id).all()
     return PermissionDenied()
 
 
