@@ -68,7 +68,6 @@ def authorize(
     except stripe.error.StripeError as exc:
         response = _error_response(kind=kind, exc=exc, payment_info=payment_information)
     else:
-        # TODO check if this is valid
         if "sofort" in intent.payment_method_types:
             success = intent.status in ("processing", "succeeded", "requires_capture", "requires_action")
         else:

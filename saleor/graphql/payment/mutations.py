@@ -112,10 +112,7 @@ class CheckoutPaymentCreate(BaseMutation, I18nMixin):
             )
 
     @classmethod
-    def perform_mutation(cls, _root, info, checkout_id, **data):
-        checkout_id = from_global_id_strict_type(
-            checkout_id, only_type=Checkout, field="checkout_id"
-        )
+    def create_payment_from_checkout(cls, info, checkout_id, data):
         checkout = models.Checkout.objects.prefetch_related(
             "lines__variant__product__collections"
         ).get(pk=checkout_id)
@@ -142,6 +139,17 @@ class CheckoutPaymentCreate(BaseMutation, I18nMixin):
             customer_ip_address=get_client_ip(info.context),
             checkout=checkout,
         )
+
+        return payment
+
+    @classmethod
+    def perform_mutation(cls, _root, info, checkout_id, **data):
+        checkout_id = from_global_id_strict_type(
+            checkout_id, only_type=Checkout, field="checkout_id"
+        )
+
+        payment = cls.create_payment_from_checkout(info, checkout_id, **data)
+
         return CheckoutPaymentCreate(payment=payment)
 
 
