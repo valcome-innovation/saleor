@@ -180,24 +180,19 @@ class Payment(CountableDjangoObjectType):
 
 
 class StripePaymentMeta(graphene.ObjectType):
-    gateway = graphene.Field(
-        graphene.String,
-        description="A gateway to use with that payment.",
-        required=True,
-    )
-    checkout_token = graphene.String(
+    checkoutToken = graphene.String(
         required=True,
         description=(
             "Checkout token"
         ),
     )
-    checkout_params = graphene.String(
+    checkoutParams = graphene.String(
         required=True,
         description=(
             "Checkout params"
         ),
     )
-    redirect_id = graphene.String(
+    redirectId = graphene.String(
         required=False,
         description=(
             "Redirect ID"

@@ -19,9 +19,6 @@ def stripe_webhook(request):
     except ValueError as e:
         return HttpResponse(status=400)
 
-    print(payment_intent)
-    print("here")
-
     if hasattr(payment_intent, "payment_method_types") \
             and "sofort" in payment_intent.payment_method_types:
         if event.type == 'payment_intent.processing':

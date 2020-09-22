@@ -34,7 +34,6 @@ class PaymentQueries(graphene.ObjectType):
     def resolve_payments(self, info, query=None, **_kwargs):
         return resolve_payments(info, query)
 
-    @permission_required(CheckoutPermissions.MANAGE_CHECKOUTS)
     def resolve_payment_meta(self, info, **data):
         return resolve_payment_meta(data.get("id"))
 

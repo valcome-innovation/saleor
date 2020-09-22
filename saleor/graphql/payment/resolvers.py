@@ -1,5 +1,6 @@
 import stripe
 
+from ... import settings
 from ...payment import gateway as payment_gateway, models
 from ...payment.utils import fetch_customer_id
 from ..utils.filters import filter_by_query_param
@@ -18,5 +19,5 @@ def resolve_payments(info, query):
 
 
 def resolve_payment_meta(payment_intent_id):
-    payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id, stripe.api_key)
+    payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id, settings.STRIPE_PRIVATE_KEY)
     return payment_intent.metadata

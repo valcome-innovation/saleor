@@ -20,7 +20,6 @@ def handle_sofort(payment_intent, info):
     }
 
     global_checkout_id = to_global_id(Checkout._meta.name, checkout_id)
-    print(global_checkout_id)
 
     payment = checkout_payment_create.create_payment_from_checkout(info, checkout_id, data)
 
