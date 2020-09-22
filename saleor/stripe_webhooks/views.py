@@ -19,7 +19,11 @@ def stripe_webhook(request):
     except ValueError as e:
         return HttpResponse(status=400)
 
-    if "sofort" in payment_intent.payment_method_types:
+    print(payment_intent)
+    print("here")
+
+    if hasattr(payment_intent, "payment_method_types") \
+            and "sofort" in payment_intent.payment_method_types:
         if event.type == 'payment_intent.processing':
                 info = Info(request)
                 handle_sofort(payment_intent, info)
