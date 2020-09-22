@@ -246,7 +246,7 @@ class PaymentSecureConfirm(BaseMutation):
         return PaymentSecureConfirm(payment=payment)
 
 
-class StripePaymentMeta(graphene.InputObjectType):
+class StripePaymentMetaInput(graphene.InputObjectType):
     gateway = graphene.Field(
         graphene.String,
         description="A gateway to use with that payment.",
@@ -276,7 +276,7 @@ class StripePaymentIntentCreate(BaseMutation):
     client_secret = graphene.String()
 
     class Arguments:
-        payment_meta = graphene.Argument(StripePaymentMeta, required=True, description="The payment intent metadata")
+        payment_meta = graphene.Argument(StripePaymentMetaInput, required=True, description="The payment intent metadata")
 
     class Meta:
         description = "Creates a payment intent for stripe"

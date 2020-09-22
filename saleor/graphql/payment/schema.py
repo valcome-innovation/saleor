@@ -1,14 +1,22 @@
 import graphene
 
-from ...core.permissions import OrderPermissions
+from ...core.permissions import OrderPermissions, CheckoutPermissions
 from ..core.fields import PrefetchingConnectionField
 from ..decorators import permission_required
 from .mutations import PaymentCapture, PaymentRefund, PaymentSecureConfirm, PaymentVoid, StripePaymentIntentCreate
-from .resolvers import resolve_payments
-from .types import Payment
+from .resolvers import resolve_payments, resolve_payment_meta
+from .types import Payment, StripePaymentMeta
 
 
 class PaymentQueries(graphene.ObjectType):
+    payment_meta = graphene.Field(
+        StripePaymentMeta,
+        description="Look up a payment meta by payment intent ID",
+        id=graphene.Argument(
+            graphene.ID, description="ID of the payment intent", required=True
+        )
+    )
+
     payment = graphene.Field(
         Payment,
         description="Look up a payment by ID.",
@@ -25,6 +33,10 @@ class PaymentQueries(graphene.ObjectType):
     @permission_required(OrderPermissions.MANAGE_ORDERS)
     def resolve_payments(self, info, query=None, **_kwargs):
         return resolve_payments(info, query)
+
+    @permission_required(CheckoutPermissions.MANAGE_CHECKOUTS)
+    def resolve_payment_meta(self, info, **data):
+        return resolve_payment_meta(data.get("id"))
 
 
 class PaymentMutations(graphene.ObjectType):
