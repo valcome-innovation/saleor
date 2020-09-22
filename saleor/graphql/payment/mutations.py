@@ -150,7 +150,7 @@ class CheckoutPaymentCreate(BaseMutation, I18nMixin):
             checkout_id, only_type=Checkout, field="checkout_id"
         )
 
-        payment = cls.create_payment_from_checkout(info, checkout_id, **data)
+        payment = cls.create_payment_from_checkout(info, checkout_id, data)
 
         return CheckoutPaymentCreate(payment=payment)
 
