@@ -265,8 +265,8 @@ def create_sofort_payment_intent(config: GatewayConfig, amount, currency, meta):
         confirmation_method='automatic',
         capture_method='automatic',
         metadata={
-            "checkout_token": meta.checkout_token,
-            "checkout_params": meta.checkout_params,
-            "redirect_id": meta.redirect_id
+            "checkoutToken": meta.checkout_token,
+            "checkoutParams": meta.checkout_params,
+            "redirectId": meta.redirect_id
         }
     )
