@@ -133,8 +133,3 @@ class StripeGatewayPlugin(BasePlugin):
     def create_payment_intent(self, amount, currency, meta, previous_value):
         config = self._get_gateway_config()
         return create_sofort_payment_intent(config, amount, currency, meta)
-
-
-    # def create_sofort_payment_intent(self, amount, currency):
-    #     config = self._get_gateway_config()
-    #     return create_sofort_payment_intent(config, amount, currency)

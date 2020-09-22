@@ -195,10 +195,6 @@ def confirm(payment: Payment) -> Transaction:
 def create_payment_intent(gateway: str, amount, currency: str, meta):
     plugin_manager = get_plugins_manager()
     return plugin_manager.create_payment_intent(gateway, amount, currency, meta)
-    # response, error = _fetch_gateway_response(
-    #     plugin_manager.create_payment_intent, gateway, amount, currency
-    # )
-    # return response, error
 
 
 def list_payment_sources(gateway: str, customer_id: str) -> List["CustomerSource"]:
