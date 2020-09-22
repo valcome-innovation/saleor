@@ -552,6 +552,11 @@ STRIPE_PLUGIN_ACTIVE = get_bool_from_env("STRIPE_PLUGIN_ACTIVE", False)
 STRIPE_PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY", None)
 STRIPE_PRIVATE_KEY = os.environ.get("STRIPE_PRIVATE_KEY", None)
 
+# PayPal
+PAYPAL_PLUGIN_ACTIVE = get_bool_from_env("PAYPAL_PLUGIN_ACTIVE", False)
+PAYPAL_PUBLIC_KEY = os.environ.get("PAYPAL_PUBLIC_KEY", None)
+PAYPAL_PRIVATE_KEY = os.environ.get("PAYPAL_PRIVATE_KEY", None)
+
 # Vatlayer
 VATLAYER_PLUGIN_ACTIVE = get_bool_from_env("VATLAYER_PLUGIN_ACTIVE", False)
 VATLAYER_ACCESS_KEY = os.environ.get("VATLAYER_ACCESS_KEY", None)

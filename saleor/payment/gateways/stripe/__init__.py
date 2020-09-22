@@ -255,7 +255,6 @@ def fill_payment_details(intent: stripe.PaymentIntent, response: GatewayResponse
 
 
 def create_sofort_payment_intent(config: GatewayConfig, amount, currency, meta):
-    print("STRIPE_PLUGIN")
     client = _get_client(**config.connection_params)
     cents = get_amount_for_stripe(amount, currency)
     return client.PaymentIntent.create(
