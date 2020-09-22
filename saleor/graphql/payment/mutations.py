@@ -1,7 +1,9 @@
 import graphene
+import stripe
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
+from ...payment.gateways.stripe.plugin import StripeGatewayPlugin
 from ...checkout import calculations
 from ...core.permissions import OrderPermissions
 from ...core.taxes import zero_taxed_money
@@ -234,3 +236,56 @@ class PaymentSecureConfirm(BaseMutation):
         except PaymentError as e:
             raise ValidationError(str(e), code=PaymentErrorCode.PAYMENT_ERROR)
         return PaymentSecureConfirm(payment=payment)
+
+
+class StripePaymentMeta(graphene.InputObjectType):
+    gateway = graphene.Field(
+        graphene.String,
+        description="A gateway to use with that payment.",
+        required=True,
+    )
+    checkout_token = graphene.String(
+        required=True,
+        description=(
+            "Checkout token"
+        ),
+    )
+    checkout_params = graphene.String(
+        required=True,
+        description=(
+            "Checkout params"
+        ),
+    )
+    redirect_id = graphene.String(
+        required=False,
+        description=(
+            "Redirect ID"
+        ),
+    )
+
+
+class StripePaymentIntentCreate(BaseMutation):
+    client_secret = graphene.String()
+
+    class Arguments:
+        payment_meta = graphene.Argument(StripePaymentMeta, required=True, description="The payment intent metadata")
+
+    class Meta:
+        description = "Creates a payment intent for stripe"
+        error_type_class = common_types.PaymentError
+        error_type_field = "payment_errors"
+
+    @classmethod
+    def perform_mutation(cls, _root, info, payment_meta):
+        checkout = models.Checkout.objects.filter(token=payment_meta.checkout_token).first()
+        total_price = get_total_price(checkout)
+        intent = gateway.create_payment_intent(payment_meta.gateway, total_price, checkout.currency, payment_meta)
+        print(intent)
+        return StripePaymentIntentCreate(client_secret=intent.client_secret)
+
+
+def get_total_price(checkout) -> int:
+    total_price = 0
+    for line in checkout.lines.all():
+        total_price += (line.quantity * line.variant.price_override_amount)
+    return total_price
