@@ -723,7 +723,7 @@ class CheckoutComplete(BaseMutation):
         error_type_field = "checkout_errors"
 
     @classmethod
-    def perform_mutation(cls, _root, info, checkout_id, store_source, **data):
+    def complete_checkout(cls, info, checkout_id, store_source, data):
         checkout = cls.get_node_or_error(
             info,
             checkout_id,
@@ -818,7 +818,7 @@ class CheckoutComplete(BaseMutation):
                 checkout.get_value_from_metadata('GAME_ID', None),
                 checkout.get_value_from_metadata('SEASON_ID', None),
                 checkout.get_value_from_metadata('TEAM_ID', None)
-        )
+            )
 
         order = None
         if not txn.action_required:
@@ -837,6 +837,10 @@ class CheckoutComplete(BaseMutation):
             return CheckoutComplete(order=order, confirmation_needed=False)
 
         return CheckoutComplete(order=None, confirmation_needed=True)
+
+    @classmethod
+    def perform_mutation(cls, _root, info, checkout_id, store_source, **data):
+        return cls.complete_checkout(info, checkout_id, store_source, data)
 
 
 def has_stream_ticket_meta(checkout):
