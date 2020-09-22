@@ -30,7 +30,6 @@ def get_client_token(**_):
 def authorize(
     payment_information: PaymentData, config: GatewayConfig
 ) -> GatewayResponse:
-    print("auth")
     kind = TransactionKind.CAPTURE if config.auto_capture else TransactionKind.AUTH
     client = _get_client(**config.connection_params)
     capture_method = "automatic" if config.auto_capture else "manual"
@@ -43,7 +42,7 @@ def authorize(
         if payment_information.shipping
         else None
     )
-
+    print('AUTHORIZE')
     try:
         if payment_information.payment_intent is not None:
             intent = client.PaymentIntent.retrieve(
@@ -82,6 +81,7 @@ def authorize(
 
 
 def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
+    print('CAPTURE')
     client = _get_client(**config.connection_params)
     intent = None
     try:
@@ -106,6 +106,7 @@ def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
 
 
 def confirm(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
+    print('CONFIRM')
     client = _get_client(**config.connection_params)
     try:
         intent = client.PaymentIntent(id=payment_information.token)
@@ -251,3 +252,20 @@ def fill_payment_details(intent: stripe.PaymentIntent, response: GatewayResponse
                 brand=card["brand"],
             )
     return response
+
+
+def create_sofort_payment_intent(config: GatewayConfig, amount, currency, meta):
+    client = _get_client(**config.connection_params)
+    cents = get_amount_for_stripe(amount, currency)
+    return client.PaymentIntent.create(
+        payment_method_types=['sofort'],
+        amount=cents,
+        currency=currency,
+        confirmation_method='automatic',
+        capture_method='automatic',
+        metadata={
+            "checkoutToken": meta.checkout_token,
+            "checkoutParams": meta.checkout_params,
+            "redirectId": meta.redirect_id
+        }
+    )

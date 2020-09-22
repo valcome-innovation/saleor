@@ -304,6 +304,14 @@ class PluginsManager(PaymentInterface):
             )
         raise Exception(f"Payment plugin {gateway} is inaccessible!")
 
+    def create_payment_intent(self, gateway: str, amount, currency: str, meta):
+        gtw = self.get_plugin(gateway)
+        default_value = None
+        if gtw is not None:
+            return self.__run_method_on_single_plugin(
+                gtw, "create_payment_intent", default_value, amount=amount, currency=currency, meta=meta
+            )
+
     def get_active_plugins(self, plugins=None) -> List["BasePlugin"]:
         if plugins is None:
             plugins = self.plugins

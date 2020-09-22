@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from django.conf import settings
 from django.utils.translation import pgettext_lazy
 
 from saleor.plugins.base_plugin import BasePlugin, ConfigurationTypeField
@@ -26,10 +27,11 @@ def require_active_plugin(fn):
 class PaypalGatewayPlugin(BasePlugin):
     PLUGIN_NAME = GATEWAY_NAME
     PLUGIN_ID = "mirumee.payments.paypal"
+    DEFAULT_ACTIVE = settings.PAYPAL_PLUGIN_ACTIVE
     DEFAULT_CONFIGURATION = [
         {"name": "Sandbox mode", "value": True},
-        {"name": "Client ID", "value": ""},
-        {"name": "Secret API key", "value": ""},
+        {"name": "Client ID", "value": settings.PAYPAL_PUBLIC_KEY},
+        {"name": "Secret API key", "value": settings.PAYPAL_PRIVATE_KEY},
     ]
     CONFIG_STRUCTURE = {
         "Client ID": {

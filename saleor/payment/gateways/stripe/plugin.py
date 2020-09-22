@@ -11,6 +11,7 @@ from . import (
     process_payment,
     refund,
     void,
+    create_sofort_payment_intent
 )
 
 GATEWAY_NAME = "Stripe"
@@ -127,3 +128,13 @@ class StripeGatewayPlugin(BasePlugin):
             {"field": "api_key", "value": config.connection_params["public_key"]},
             {"field": "store_customer_card", "value": config.store_customer},
         ]
+
+    @require_active_plugin
+    def create_payment_intent(self, amount, currency, meta, previous_value):
+        config = self._get_gateway_config()
+        return create_sofort_payment_intent(config, amount, currency, meta)
+
+
+    # def create_sofort_payment_intent(self, amount, currency):
+    #     config = self._get_gateway_config()
+    #     return create_sofort_payment_intent(config, amount, currency)
