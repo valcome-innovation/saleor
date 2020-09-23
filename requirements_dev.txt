@@ -179,3 +179,4 @@ webencodings==0.5.1
 wrapt==1.12.1
 yarl==1.4.2; python_version >= "3.6"
 social-auth-app-django==4.0.0
+get-docker-secret==1.0.1

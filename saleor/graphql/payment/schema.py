@@ -9,6 +9,7 @@ from .types import Payment, StripePaymentMeta
 
 
 class PaymentQueries(graphene.ObjectType):
+    # This is only for stripe !!!
     payment_meta = graphene.Field(
         StripePaymentMeta,
         description="Look up a payment meta by payment intent ID",

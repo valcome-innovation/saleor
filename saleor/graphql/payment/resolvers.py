@@ -1,5 +1,7 @@
 import stripe
 
+from ...payment.gateways.stripe.plugin import StripeGatewayPlugin
+from ...plugins import manager
 from ... import settings
 from ...payment import gateway as payment_gateway, models
 from ...payment.utils import fetch_customer_id
@@ -19,5 +21,6 @@ def resolve_payments(info, query):
 
 
 def resolve_payment_meta(payment_intent_id):
-    payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id, settings.STRIPE_PRIVATE_KEY)
-    return payment_intent.metadata
+    stripe_plugin = manager.get_plugins_manager().get_plugin("mirumee.payments.stripe")
+    if isinstance(stripe_plugin, StripeGatewayPlugin):
+        return stripe_plugin.get_payment_meta(payment_intent_id)
