@@ -273,6 +273,5 @@ def create_sofort_payment_intent(config: GatewayConfig, amount, currency, meta):
 
 def get_payment_meta(config: GatewayConfig, payment_intent_id):
     client = _get_client(**config.connection_params)
-    print("FETCH_META")
     payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id, client.api_key)
     return payment_intent.metadata

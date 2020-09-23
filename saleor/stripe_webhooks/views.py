@@ -12,7 +12,6 @@ class Info:
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
-
     try:
         event = stripe.Event.construct_from(json.loads(payload), stripe.api_key)
         payment_intent = event.data.object
