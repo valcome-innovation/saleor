@@ -543,7 +543,10 @@ def create_fulfillments(order):
 
 
 def create_fake_order(discounts, max_order_lines=5):
-    customers = User.objects.filter(is_superuser=False).order_by("?")
+    customers = User.objects.filter(is_superuser=False)\
+        .exclude(email="unit.test@example.com")\
+        .order_by("?")
+
     customer = random.choice([None, customers.first()])
     return create_fake_order_with_customer(customer, discounts, max_order_lines)
 
@@ -614,6 +617,8 @@ def create_permission_groups():
     yield f"Group: {group}"
 
     staff_users = create_staff_users()
+    unit_test_users = create_unit_test_user(100)
+    staff_users.extend(unit_test_users)
     customer_support_codenames = [
         perm.codename
         for enum in [CheckoutPermissions, OrderPermissions, GiftcardPermissions]
@@ -641,13 +646,26 @@ def create_staff_users(how_many=2, superuser=False):
         staff_user = create_stuff_user(address, address.first_name, address.last_name, superuser)
         users.append(staff_user)
 
-    test_user = create_stuff_user(create_address(), "unit", "test", superuser)
+    return users
+
+
+def create_unit_test_user(how_many):
+    users = []
+
+    test_user = create_stuff_user(create_address(), "unit", "test", False)
+    users.append(test_user)
+
     discounts = fetch_discounts(timezone.now())
     for _ in range(15):
         create_fake_order_with_customer(test_user, discounts)
 
-    users.append(test_user)
+    for number in range(how_many):
+        test_user = create_stuff_user(create_address(), "unit",
+                                      "test" + str(number + 1), False)
+        users.append(test_user)
+
     return users
+
 
 def create_stuff_user(address, first_name, last_name, superuser=False):
     return User.objects.create_user(
@@ -662,6 +680,7 @@ def create_stuff_user(address, first_name, last_name, superuser=False):
         is_active=True,
         is_superuser=superuser,
     )
+
 
 def create_orders(how_many=10):
     discounts = fetch_discounts(timezone.now())

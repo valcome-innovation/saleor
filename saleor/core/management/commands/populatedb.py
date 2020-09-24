@@ -105,6 +105,8 @@ class Command(BaseCommand):
             self.stdout.write(msg)
         for msg in create_users(20):
             self.stdout.write(msg)
+        for msg in create_permission_groups():
+            self.stdout.write(msg)
         for msg in create_orders(20):
             self.stdout.write(msg)
         for msg in set_homepage_collection():
@@ -140,6 +142,3 @@ class Command(BaseCommand):
             add_address_to_admin(credentials["email"])
         if not options["skipsequencereset"]:
             self.sequence_reset()
-
-        for msg in create_permission_groups():
-            self.stdout.write(msg)

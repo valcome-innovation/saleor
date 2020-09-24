@@ -2,7 +2,7 @@ from typing import Optional
 
 import opentracing
 import opentracing.tags
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.utils.functional import SimpleLazyObject
