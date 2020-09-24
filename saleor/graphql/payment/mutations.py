@@ -288,12 +288,12 @@ class StripePaymentIntentCreate(BaseMutation):
         checkout = models.Checkout.objects.filter(token=payment_meta.checkout_token).first()
         total_price = get_total_price(checkout)
         intent = gateway.create_payment_intent(payment_meta.gateway, total_price, checkout.currency, payment_meta)
-        print(intent)
         return StripePaymentIntentCreate(client_secret=intent.client_secret)
 
 
 def get_total_price(checkout) -> int:
     total_price = 0
     for line in checkout.lines.all():
-        total_price += (line.quantity * line.variant.price_override_amount)
+        amount = line.variant.get_price().amount
+        total_price += (line.quantity * amount)
     return total_price
