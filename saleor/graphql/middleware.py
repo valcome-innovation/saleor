@@ -1,5 +1,6 @@
 from typing import Optional
 
+import logging
 import opentracing
 import opentracing.tags
 from datetime import datetime
@@ -20,6 +21,7 @@ from ..core.exceptions import ReadOnlyException
 from ..core.tracing import should_trace
 from .views import API_PATH, GraphQLView
 
+logger = logging.getLogger(__name__ + ": ")
 
 class JWTMiddleware(JSONWebTokenMiddleware):
     def resolve(self, next, root, info, **kwargs):
@@ -45,7 +47,14 @@ def do_additional_token_verification(token):
     token_iat = datetime.fromtimestamp(token['origIat'], tz=timezone.utc)
     user = User.objects.get(email=token['email'])
 
-    if user.last_jwt_iat is not None and user.last_jwt_iat > token_iat:
+    if not hasattr(user, "last_jwt_iat"):
+        logger.warning("User without last_jwt_iat detected!")
+        logger.warning("Email => " + user.email)
+
+    if hasattr(user, "last_jwt_iat") and \
+            user.last_jwt_iat is not None and \
+            user.last_jwt_iat > token_iat:
+        logger.warning("User account sharing detected. Terminating request.")
         raise JSONWebTokenError(INVALID_TOKEN)
 
 
