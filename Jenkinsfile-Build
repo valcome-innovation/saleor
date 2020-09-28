@@ -1,0 +1,35 @@
+def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'warning', 'ABORTED': 'danger']
+
+pipeline {
+    agent {
+        label 'master'
+    }
+    stages {
+        stage('Build API Image') {
+            environment {
+                AWS_ACCESS_KEY_ID = credentials('AWS_DOCKER_REGISTRY_ACCESS_KEY_ID')
+                AWS_SECRET_ACCESS_KEY = credentials('AWS_DOCKER_REGISTRY_SECRET_KEY')
+                REGISTRY = '487554623251.dkr.ecr.eu-central-1.amazonaws.com'
+            }
+            steps {
+                /*
+                sh 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"'
+                sh 'unzip awscliv2.zip -y'
+                sh './aws/install'
+                */
+                sh 'aws --version'
+                sh 'aws configure set aws_access_key_id "${AWS_ACCESS_KEY_ID}"'
+                sh 'aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}"'
+                sh 'aws configure set default.region eu-central-1'
+                sh 'aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin ${REGISTRY}'
+                sh 'docker build -f Dockerfile --build-arg API_URI=${API_URI} -t ${REGISTRY}/${REPOSITORY}:${VERSION} .'
+                sh 'docker push ${REGISTRY}/${REPOSITORY}:${VERSION}'
+            }
+        }
+    }
+     post {
+        always {
+            slackSend channel: '#jenkins', color: COLOR_MAP[currentBuild.currentResult], message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n See: ${env.BUILD_URL}"
+        }
+    }
+}
