@@ -9,6 +9,7 @@ import django_cache_url
 import jaeger_client
 import jaeger_client.config
 import sentry_sdk
+from get_docker_secret import get_docker_secret
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.utils import get_random_secret_key
 from django_prices.utils.formatting import get_currency_fraction
@@ -59,6 +60,15 @@ if not ALLOWED_CLIENT_HOSTS:
 ALLOWED_CLIENT_HOSTS = get_list(ALLOWED_CLIENT_HOSTS)
 
 INTERNAL_IPS = get_list(os.environ.get("INTERNAL_IPS", "127.0.0.1"))
+
+DB_USER = get_docker_secret('saleor_db_user', secrets_dir="/run/secrets")
+DB_PASSWORD =  get_docker_secret('saleor_db_password', secrets_dir="/run/secrets")
+DB_HOST = os.environ.get("DB_HOST")
+DB_NAME = os.environ.get("DB_NAME")
+if DB_PASSWORD is not None and DB_USER is not None and DB_NAME is not None and DB_HOST is not None:
+    os.environ['DATABASE_URL'] = "postgres://%s:%s@%s/%s" % (
+        DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
+    )
 
 DATABASES = {
     "default": dj_database_url.config(
@@ -127,10 +137,17 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 EMAIL_URL = os.environ.get("EMAIL_URL")
 SENDGRID_USERNAME = os.environ.get("SENDGRID_USERNAME")
 SENDGRID_PASSWORD = os.environ.get("SENDGRID_PASSWORD")
+AWS_SMTP_USER = get_docker_secret("aws_smtp_user", secrets_dir="/run/secrets")
+AWS_SMTP_PASSWORD = get_docker_secret("aws_smtp_password", secrets_dir="/run/secrets")
 if not EMAIL_URL and SENDGRID_USERNAME and SENDGRID_PASSWORD:
     EMAIL_URL = "smtp://%s:%s@smtp.sendgrid.net:587/?tls=True" % (
         SENDGRID_USERNAME,
         SENDGRID_PASSWORD,
+    )
+elif not EMAIL_URL and AWS_SMTP_USER and AWS_SMTP_PASSWORD:
+    EMAIL_URL = "smtp://%s:%s@email-smtp.eu-central-1.amazonaws.com:587/?tls=True" % (
+        AWS_SMTP_USER,
+        AWS_SMTP_PASSWORD,
     )
 email_config = dj_email_url.parse(
     EMAIL_URL or "console://demo@example.com:console@example/"
@@ -196,7 +213,7 @@ TEMPLATES = [
 ]
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = get_docker_secret("saleor_secret_key", secrets_dir="/run/secrets", default=os.environ.get('SECRET_KEY', None))
 
 if not SECRET_KEY and DEBUG:
     warnings.warn("SECRET_KEY not configured, using a random temporary key.")
@@ -460,7 +477,7 @@ DEFAULT_PLACEHOLDER = "images/placeholder255x255.png"
 SEARCH_BACKEND = "saleor.search.backends.postgresql"
 
 APP_NAME = os.environ.get("APP_NAME")
-APP_TOKEN = os.environ.get("APP_TOKEN")
+APP_TOKEN = get_docker_secret("saleor_app_token", secrets_dir="/run/secrets", default=os.environ.get("APP_TOKEN", None))
 
 AUTHENTICATION_BACKENDS = [
     "social_core.backends.google.GoogleOAuth2",
@@ -484,11 +501,11 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_by_email',
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", None)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", None)
 
-SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get("SOCIAL_AUTH_FACEBOOK_KEY")
-SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get("SOCIAL_AUTH_FACEBOOK_SECRET")
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get("SOCIAL_AUTH_FACEBOOK_KEY", None)
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get("SOCIAL_AUTH_FACEBOOK_SECRET", None)
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
