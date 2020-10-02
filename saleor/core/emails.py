@@ -9,6 +9,7 @@ def get_email_context():
     email_template_context = {
         "domain": site.domain,
         "site_name": site.name,
+        "company_address": site.settings.company_address
     }
     return send_email_kwargs, email_template_context
 

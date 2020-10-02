@@ -167,7 +167,7 @@ msgstr "Ihre Bestellung %(order)s wurde versandt."
 msgctxt "Fulfillment confirmation email text"
 msgid ""
 "\n"
-"Thank you for your order. Below is the list of fulfilled products.\n"
+"Thank you for your order. You can find the details of your order below.\n"
 msgstr ""
 "\n"
 "Vielen Dank für Ihre Bestellung. Nachfolgend die Liste der versandten Produkte.\n"
@@ -191,7 +191,8 @@ msgctxt "Order confirmation e-mail text"
 msgid ""
 "\n"
 "Thank you for your order. Below is the list of ordered products.\n"
-msgstr ""
+msgstr "Vielen Dank für Ihre Bestellung. Unten stehend ist eine Liste aller "
+"bestellten Produkte."
 
 #: templates/templated_email/order/confirm_order.email:15
 #: templates/templated_email/order/staff_confirm_order.email:15
@@ -376,7 +377,7 @@ msgstr ""
 
 #: templates/templated_email/source/confirm_fulfillment.mjml:16
 msgctxt "Fulfillment confirmation email text"
-msgid "Thank you for your order. Below is the list of fulfilled products."
+msgid "Thank you for your order. You can find the details of your order below."
 msgstr ""
 "Vielen dankf für Ihre Bestellung. Nachfolgend finden Sie die Liste der "
 "verschickten Produkte."

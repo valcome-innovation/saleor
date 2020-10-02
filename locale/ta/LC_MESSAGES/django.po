@@ -145,7 +145,7 @@ msgstr ""
 msgctxt "Fulfillment confirmation email text"
 msgid ""
 "\n"
-"Thank you for your order. Below is the list of fulfilled products.\n"
+"Thank you for your order. You can find the details of your order below.\n"
 msgstr ""
 
 #: templates/templated_email/order/confirm_fulfillment.email:15
@@ -343,7 +343,7 @@ msgstr ""
 
 #: templates/templated_email/source/confirm_fulfillment.mjml:16
 msgctxt "Fulfillment confirmation email text"
-msgid "Thank you for your order. Below is the list of fulfilled products."
+msgid "Thank you for your order. You can find the details of your order below."
 msgstr ""
 
 #: templates/templated_email/source/confirm_fulfillment.mjml:21

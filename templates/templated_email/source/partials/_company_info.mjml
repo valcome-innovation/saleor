@@ -1,0 +1,8 @@
+<mj-section>
+    <mj-column>
+        <mj-text padding-bottom="0" font-weight="bold">{{ company_address.company_name }}</mj-text>
+        <mj-text padding-bottom="0">{{ company_address.street_address_1 }}</mj-text>
+        <mj-text padding-bottom="0">{{ company_address.postal_code }}, {{ company_address.city }}</mj-text>
+        <mj-text padding-bottom="0">{{ company_address.country }}</mj-text>
+    </mj-column>
+</mj-section>

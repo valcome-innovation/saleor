@@ -163,7 +163,7 @@ msgstr "Vše objednávka %(order)s byla zpracována"
 msgctxt "Fulfillment confirmation email text"
 msgid ""
 "\n"
-"Thank you for your order. Below is the list of fulfilled products.\n"
+"Thank you for your order. You can find the details of your order below.\n"
 msgstr ""
 "\n"
 "Děkujeme za Vaši objednávku. Níže je seznam zpracovaných položek.\n"
@@ -369,7 +369,7 @@ msgstr ""
 
 #: templates/templated_email/source/confirm_fulfillment.mjml:16
 msgctxt "Fulfillment confirmation email text"
-msgid "Thank you for your order. Below is the list of fulfilled products."
+msgid "Thank you for your order. You can find the details of your order below."
 msgstr "Děkujeme za Vaši objednávku. Níže je seznam zpracovaných položek."
 
 #: templates/templated_email/source/confirm_fulfillment.mjml:27

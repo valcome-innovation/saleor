@@ -1,17 +1,17 @@
-<mj-section>
+<mj-section background-color="#F2F2F2" >
   <mj-column>
-    <mj-text>
+    <mj-text align="center">
       {% blocktrans trimmed context "Base email text" %}
         This is an automatically generated e-mail, please do not reply.
       {% endblocktrans %}
     </mj-text>
   </mj-column>
 </mj-section>
-<mj-section background-color="#F2F2F2">
+<mj-section background-color="#F2F2F2" css-class="no-display">
   <mj-column>
     <mj-text align="center">
       {% blocktrans trimmed context "Base email footer" %}
-        Sincerely, {{ site_name }}
+        {{ site_name }}
       {% endblocktrans %}
     </mj-text>
   </mj-column>

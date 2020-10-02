@@ -56,10 +56,10 @@
       </tfoot>
       <thead class="table-header-row">
         <tr>
-          <th>{% trans "Item" context "Ordered item name" %}</th>
-          <th>{% trans "Quantity" context "Quantity ordered of a product" %}</th>
-          <th>{% trans "Per unit" context "Unit price of a product" %}</th>
-          <th>{% trans "Subtotal" context "Ordered item subtotal (unit price * quantity)" %}</th>
+          <th align="left">{% trans "Item" context "Ordered item name" %}</th>
+          <th align="right">{% trans "Quantity" context "Quantity ordered of a product" %}</th>
+          <th align="right">{% trans "Per unit" context "Unit price of a product" %}</th>
+          <th align="right">{% trans "Subtotal" context "Ordered item subtotal (unit price * quantity)" %}</th>
         </tr>
       </thead>
       <tbody>

@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib.parse import urlencode
 
 from templated_email import send_templated_mail
@@ -8,6 +9,7 @@ from ..core.emails import get_email_context, prepare_url
 from ..seo.schema.email import get_order_confirmation_markup
 from . import events
 from .models import Fulfillment, Order
+from django.utils.translation import activate, deactivate
 
 CONFIRM_ORDER_TEMPLATE = "order/confirm_order"
 STAFF_CONFIRM_ORDER_TEMPLATE = "order/staff_confirm_order"
@@ -42,6 +44,7 @@ def collect_data_for_email(
         prepare_order_details_url(order, redirect_url) if redirect_url else ""
     )
     email_context["order"] = order
+    email_context["order_number"] = get_order_number(order_pk)
 
     # Order confirmation template requires additional information
     if template in [CONFIRM_ORDER_TEMPLATE, STAFF_CONFIRM_ORDER_TEMPLATE]:
@@ -54,6 +57,12 @@ def collect_data_for_email(
         "context": email_context,
         **send_kwargs,
     }
+
+
+# TODO: temporary until invoicing is implemented
+def get_order_number(order_pk: int) -> str:
+    number_confusion = 7293
+    return f'{(number_confusion + order_pk):05}/{datetime.now().year}'
 
 
 def prepare_order_details_url(order: Order, redirect_url: str) -> str:
@@ -81,6 +90,7 @@ def collect_data_for_fulfillment_email(order_pk, template, fulfillment_pk):
 @app.task
 def send_order_confirmation(order_pk, redirect_url, user_pk=None):
     """Send order confirmation email."""
+    # activate('de') TODO: implement dynamically
     email_data = collect_data_for_email(order_pk, CONFIRM_ORDER_TEMPLATE, redirect_url)
     send_templated_mail(**email_data)
     events.email_sent_event(
@@ -89,6 +99,7 @@ def send_order_confirmation(order_pk, redirect_url, user_pk=None):
         user_pk=user_pk,
         email_type=events.OrderEventsEmails.ORDER,
     )
+    # deactivate()
 
 
 @app.task

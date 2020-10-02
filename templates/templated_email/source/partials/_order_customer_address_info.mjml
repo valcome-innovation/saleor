@@ -1,0 +1,34 @@
+<mj-raw>
+  {% load i18n %}
+  {% load i18n_address_tags %}
+</mj-raw>
+<mj-section>
+  <mj-column>
+    <mj-table>
+      <thead class="table-header-row">
+        <tr>
+          <th align="left">{% trans "Billing address" context "Order confirmation e-mail billing address" %}</th>
+          <th align="left">{% trans "Shipping address" context "Order confirmation e-mail shipping address" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="address">
+            {% if order.billing_address %}
+              {% format_address order.billing_address %}
+            {% else %}
+              {% trans "No billing address" context "Order confirmation e-mail text" %}
+            {% endif %}
+          </td>
+          <td css-class="address">
+            {% if order.shipping_address %}
+              {% format_address order.shipping_address %}
+            {% else %}
+              {% trans "No shipping required" context "Order confirmation e-mail text" %}
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </mj-table>
+  </mj-column>
+</mj-section>

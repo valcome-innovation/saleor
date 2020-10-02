@@ -4,7 +4,6 @@ import jwt
 from datetime import datetime
 from functools import wraps
 
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 import django.conf as conf
 
@@ -12,7 +11,6 @@ from promise import Promise, is_thenable
 from django.dispatch import Signal
 from django.utils import timezone
 
-from ....account.error_codes import AccountErrorCode
 
 token_issued = Signal(providing_args=['request', 'user'])
 
