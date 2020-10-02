@@ -36,10 +36,10 @@
         </mj-column>
         <mj-column>
             <mj-text mj-class="py-0" padding-bottom="0">
-                <span class="bold">Rechnungsnummer: </span><span>{{ order_number }}</span>
+                <span class="bold">Order No.: </span><span>{{ order_number }}</span>
             </mj-text>
             <mj-text mj-class="py-0">
-                <span class="bold">Rechnungsdatum: </span><span>{{ order.created|date }}</span>
+                <span class="bold">Order Date: </span><span>{{ order.created|date }}</span>
             </mj-text>
         </mj-column>
     </mj-section>
