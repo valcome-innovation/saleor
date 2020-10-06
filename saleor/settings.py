@@ -62,7 +62,7 @@ ALLOWED_CLIENT_HOSTS = get_list(ALLOWED_CLIENT_HOSTS)
 INTERNAL_IPS = get_list(os.environ.get("INTERNAL_IPS", "127.0.0.1"))
 
 DB_USER = get_docker_secret('saleor_db_user', secrets_dir="/run/secrets")
-DB_PASSWORD =  get_docker_secret('saleor_db_password', secrets_dir="/run/secrets")
+DB_PASSWORD = get_docker_secret('saleor_db_password', secrets_dir="/run/secrets")
 DB_HOST = os.environ.get("DB_HOST")
 DB_NAME = os.environ.get("DB_NAME")
 if DB_PASSWORD is not None and DB_USER is not None and DB_NAME is not None and DB_HOST is not None:
