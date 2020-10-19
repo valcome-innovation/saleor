@@ -380,13 +380,21 @@ DEFAULT_MAX_EMAIL_DISPLAY_NAME_LENGTH = 78
 # note: having multiple currencies is not supported yet
 AVAILABLE_CURRENCIES = [DEFAULT_CURRENCY]
 
-if get_bool_from_env("EUROPE_ONLY", False):
+COUNTRY_MODE = os.environ.get("COUNTRY_MODE", None)
+if COUNTRY_MODE == 'ICE':
     COUNTRIES_ONLY = [
         "AL", "AD", "AT", "BY", "BE", "BA", "BG", "CY", "CZ", "DK",
         "EE", "ES", "FO", "FI", "FR", "GB", "GE", "GI", "GR", "HU",
         "HR", "IE", "IS", "IT", "LT", "LV", "MC", "MK", "MT", "NO",
         "NL", "PL", "PT", "RO", "RU", "SE", "SI", "SK", "SM", "TR",
         "UA", "VA"]
+elif COUNTRY_MODE == 'AHL':
+    COUNTRIES_ONLY = [
+        "AL", "AD", "AT", "BY", "BE", "BA", "BG", "CY", "CZ", "DK",
+        "EE", "ES", "FO", "FI", "FR", "GB", "GE", "GI", "GR", "HU",
+        "HR", "IE", "IS", "IT", "LT", "LV", "MC", "MK", "MT", "NO",
+        "NL", "PL", "PT", "RO", "RU", "SE", "SI", "SK", "SM", "TR",
+        "UA", "VA", "DE", "CH", "LU", "LI"]
 
 COUNTRIES_OVERRIDE = {"EU": "European Union"}
 
