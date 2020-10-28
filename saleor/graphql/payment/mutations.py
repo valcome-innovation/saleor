@@ -287,6 +287,7 @@ class StripePaymentIntentCreate(BaseMutation):
     def perform_mutation(cls, _root, info, payment_meta):
         checkout = models.Checkout.objects.filter(token=payment_meta.checkout_token).first()
         total_price = get_total_price(checkout)
+
         intent = gateway.create_payment_intent(payment_meta.gateway, total_price, checkout.currency, payment_meta)
         return StripePaymentIntentCreate(client_secret=intent.client_secret)
 

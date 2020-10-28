@@ -2,6 +2,7 @@ from typing import List
 
 import stripe
 
+from django.conf import settings
 from ... import TransactionKind
 from ...interface import (
     CreditCardInfo,
@@ -266,7 +267,8 @@ def create_sofort_payment_intent(config: GatewayConfig, amount, currency, meta):
         metadata={
             "checkoutToken": meta.checkout_token,
             "checkoutParams": meta.checkout_params,
-            "redirectId": meta.redirect_id
+            "redirectId": meta.redirect_id,
+            "appId": settings.APP_ID
         }
     )
 

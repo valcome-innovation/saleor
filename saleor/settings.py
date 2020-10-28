@@ -573,6 +573,8 @@ GRAPHENE = {
     ],
 }
 
+APP_ID = os.environ.get("APP_ID", None)
+
 # Braintree
 BRAINTREE_PLUGIN_ACTIVE = get_bool_from_env("BRAINTREE_PLUGIN_ACTIVE", False)
 BRAINTREE_SANDBOX_MODE = get_bool_from_env("BRAINTREE_SANDBOX_MODE", True)
