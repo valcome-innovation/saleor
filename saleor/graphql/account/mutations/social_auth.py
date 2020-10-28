@@ -113,6 +113,7 @@ class CreateOAuthToken(ResolveMixin, JSONWebTokenMutation):
         try:
             result = super().mutate(root, info, **kwargs)
         except JSONWebTokenError as e:
+            print(e)
             return CreateOAuthToken(errors=[Error(message=str(e))])
         else:
             decodedToken = jwt.decode(result.token, None, None)
