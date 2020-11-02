@@ -550,6 +550,7 @@ def create_fake_order(discounts, max_order_lines=5):
     customer = random.choice([None, customers.first()])
     return create_fake_order_with_customer(customer, discounts, max_order_lines)
 
+
 def create_fake_order_with_customer(customer, discounts, max_order_lines=5):
     if customer:
         address = customer.default_shipping_address
