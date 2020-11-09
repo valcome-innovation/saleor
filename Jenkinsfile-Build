@@ -23,8 +23,17 @@ pipeline {
         }
     }
      post {
-        always {
-            slackSend channel: '#jenkins', color: COLOR_MAP[currentBuild.currentResult], message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n See: ${env.BUILD_URL}"
+        aborted {
+            slackSend channel: '#jenkins', color: COLOR_MAP[currentBuild.currentResult],
+            message: ":gollum: *${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n *Image:* ${REPOSITORY}:${VERSION}"
+        }
+        failure {
+            slackSend channel: '#jenkins', color: COLOR_MAP[currentBuild.currentResult],
+            message: ":oblivion: *${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n *Image:* ${REPOSITORY}:${VERSION}"
+        }
+        success {
+            slackSend channel: '#jenkins', color: COLOR_MAP[currentBuild.currentResult],
+            message: ":etherwood: *${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n *Image:* ${REPOSITORY}:${VERSION}"
         }
     }
 }
