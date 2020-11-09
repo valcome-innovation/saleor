@@ -68,7 +68,9 @@ from .resolvers import (
     resolve_customers,
     resolve_permission_groups,
     resolve_staff_users,
-    resolve_user, resolve_stream_tickets,
+    resolve_user,
+    resolve_stream_tickets,
+    resolve_bulked_stream_tickets
 )
 from .sorters import PermissionGroupSortingInput, UserSortingInput
 from .types import Address, AddressValidationData, Group, User, StreamTicket
@@ -87,6 +89,11 @@ class PermissionGroupFilterInput(FilterInputObjectType):
 class StaffUserInput(FilterInputObjectType):
     class Meta:
         filterset_class = StaffUserFilter
+
+
+class GameTicketCount(graphene.ObjectType):
+    game_id = graphene.String()
+    total = graphene.Int()
 
 
 class AccountQueries(graphene.ObjectType):
@@ -167,10 +174,17 @@ class AccountQueries(graphene.ObjectType):
         id=graphene.Argument(graphene.ID, description="ID of the user.", required=True),
         description="Look up a user by ID.",
     )
-    stream_tickets = graphene.List(
-        StreamTicket,
-        game_id=graphene.Argument(graphene.String, description="ID of the game to get the existing tickets", required=True),
-        description="Get all Stream Tickets for a single game"
+    stream_tickets = graphene.Field(
+        graphene.Int,
+        game_id=graphene.Argument(graphene.String, description="ID of the game to get the ticket count", required=True),
+        description="Get amount of all stream tickets for a single game"
+    )
+    bulked_stream_tickets = graphene.List(
+        GameTicketCount,
+        game_ids=graphene.Argument(graphene.List(
+            graphene.String
+        ), description="IDs of the games to get the ticket count", required=True),
+        description="Get amount of all stream tickets for a given games"
     )
 
     def resolve_address_validation_rules(
@@ -223,6 +237,12 @@ class AccountQueries(graphene.ObjectType):
     )
     def resolve_stream_tickets(self, info, game_id):
         return resolve_stream_tickets(info, game_id)
+
+    @one_of_permissions_required(
+        [AccountPermissions.MANAGE_STAFF, AccountPermissions.MANAGE_USERS]
+    )
+    def resolve_bulked_stream_tickets(self, info, game_ids):
+        return resolve_bulked_stream_tickets(info, game_ids)
 
     def resolve_address(self, info, id):
         return resolve_address(info, id)
