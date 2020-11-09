@@ -43,7 +43,6 @@ def authorize(
         if payment_information.shipping
         else None
     )
-    print('AUTHORIZE')
     try:
         if payment_information.payment_intent is not None:
             intent = client.PaymentIntent.retrieve(
@@ -107,7 +106,6 @@ def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
 
 
 def confirm(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
-    print('CONFIRM')
     client = _get_client(**config.connection_params)
     try:
         intent = client.PaymentIntent(id=payment_information.token)

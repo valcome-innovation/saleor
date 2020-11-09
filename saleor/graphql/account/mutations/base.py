@@ -208,7 +208,9 @@ class PasswordChange(BaseMutation):
         old_password = data["old_password"]
         new_password = data["new_password"]
 
-        if not user.check_password(old_password):
+        check_password = not (cls.is_empty_password(user.password) and cls.is_empty_password(old_password))
+
+        if check_password and not user.check_password(old_password):
             raise ValidationError(
                 {
                     "old_password": ValidationError(
@@ -226,6 +228,10 @@ class PasswordChange(BaseMutation):
         user.save(update_fields=["password"])
         account_events.customer_password_changed_event(user=user)
         return PasswordChange(user=user)
+
+    @classmethod
+    def is_empty_password(cls, password: str) -> bool:
+        return password is None or password == ""
 
 
 class BaseAddressUpdate(ModelMutation, I18nMixin):
