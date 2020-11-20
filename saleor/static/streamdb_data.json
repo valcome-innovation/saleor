@@ -296,6 +296,28 @@
         }
     },
     {
+        "model": "product.attributevalue",
+        "pk": 20,
+        "fields": {
+            "sort_order": 25,
+            "name": "KAC",
+            "value": "",
+            "slug": "kac",
+            "attribute": 14
+        }
+    },
+    {
+        "model": "product.attributevalue",
+        "pk": 21,
+        "fields": {
+            "sort_order": 26,
+            "name": "HCB",
+            "value": "",
+            "slug": "hcb",
+            "attribute": 14
+        }
+    },
+    {
         "model": "product.attributeproduct",
         "pk": 1,
         "fields": {
@@ -1638,6 +1660,172 @@
             "assignment": 2,
             "values": [
                 19
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 78,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - KAC",
+            "product_type": 7,
+            "name": "Single Ticket - KAC",
+            "slug": "single-ticket-kac",
+            "description": "Single Ticket - KAC",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - KAC",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "6.90",
+            "minimal_variant_price_amount": "6.90",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 188,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "116",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "4.99",
+            "product": 78,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "4.99",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 35,
+        "fields": {
+            "product": 78,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 36,
+        "fields": {
+            "product": 78,
+            "assignment": 2,
+            "values": [
+                20
+            ]
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 79,
+        "fields": {
+            "publication_date": null,
+            "is_published": true,
+            "private_metadata": {},
+            "metadata": {
+                "taxes": {
+                    "vatlayer": {
+                        "code": "standard",
+                        "description": ""
+                    }
+                }
+            },
+            "seo_title": "",
+            "seo_description": "Single Ticket - HCB",
+            "product_type": 7,
+            "name": "Single Ticket - HCB",
+            "slug": "single-ticket-hcb",
+            "description": "Single Ticket - HCB",
+            "description_json": {
+                "blocks": [
+                    {
+                        "key": "",
+                        "data": {},
+                        "text": "Single Ticket - HCB",
+                        "type": "unstyled",
+                        "depth": 0,
+                        "entityRanges": [],
+                        "inlineStyleRanges": []
+                    }
+                ],
+                "entityMap": {}
+            },
+            "category": 7,
+            "currency": "EUR",
+            "price_amount": "6.90",
+            "minimal_variant_price_amount": "6.90",
+            "updated_at": "2020-04-17T14:22:48.130Z",
+            "charge_taxes": true,
+            "weight": "0.0:kg"
+        }
+    },
+    {
+        "model": "product.productvariant",
+        "pk": 189,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "sku": "117",
+            "name": "Single",
+            "currency": "EUR",
+            "price_override_amount": "6.90",
+            "product": 79,
+            "track_inventory": false,
+            "quantity": 999999,
+            "cost_price_amount": "6.90",
+            "weight": "1.0:kg"
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 37,
+        "fields": {
+            "product": 79,
+            "assignment": 1,
+            "values": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "product.assignedproductattribute",
+        "pk": 38,
+        "fields": {
+            "product": 79,
+            "assignment": 2,
+            "values": [
+                21
             ]
         }
     }
