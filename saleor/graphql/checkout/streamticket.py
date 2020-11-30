@@ -19,8 +19,7 @@ def create_stream_ticket_from_checkout(user, checkout):
     game_id = from_meta('GAME_ID', checkout)
     season_id = from_meta('SEASON_ID', checkout)
     team_id = from_meta('TEAM_ID', checkout)
-    expires = None
-    create_stream_ticket_for_user(user, lines, game_id, season_id, team_id, expires)
+    create_stream_ticket_for_user(user, lines, game_id, season_id, team_id, None)
 
 
 def create_stream_ticket_for_user(user, lines, game_id, season_id, team_id, expires):

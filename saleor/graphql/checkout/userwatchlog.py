@@ -15,8 +15,7 @@ def create_user_watch_log_from_checkout(user, checkout):
     game_id = from_meta('GAME_ID', checkout)
     season_id = from_meta('SEASON_ID', checkout)
     team_id = from_meta('TEAM_ID', checkout)
-    expires = None
-    ticket_type = determine_ticket_type(game_id, season_id, team_id, expires)
+    ticket_type = determine_ticket_type(game_id, season_id, team_id, None)
     send_user_watch_log_to_kinesis_stream_silent(user, game_id, ticket_type)
 
 
