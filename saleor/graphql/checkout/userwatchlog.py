@@ -22,8 +22,8 @@ def create_user_watch_log_from_checkout(user, checkout):
 def send_user_watch_log_to_kinesis_stream_silent(user, game_id, ticket_type):
     try:
         send_user_watch_log_to_kinesis_stream(user, game_id, ticket_type)
-    except boto3.exceptions.Boto3Error:
-        logger.error(f"[AWS Kinesis] Couldn't create user watch log user_id={user.id}, game_id={game_id}, type={ticket_type}")
+    except Exception as exc:
+        logger.exception(f"[AWS Kinesis] Couldn't create user watch log user_id={user.id}, game_id={game_id}, type={ticket_type}", exc_info=exc)
 
 
 def send_user_watch_log_to_kinesis_stream(user, game_id, ticket_type):
