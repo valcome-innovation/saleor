@@ -4,12 +4,11 @@ import graphene
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
-from django.utils import timezone
 from django.db.models import Prefetch
 from graphql_jwt.exceptions import PermissionDenied
-
+from .streamticket import has_stream_meta, create_stream_ticket_from_checkout
+from .userwatchlog import create_user_watch_log_from_checkout
 from ...account.error_codes import AccountErrorCode
-from ...account.models import StreamTicket
 from ...checkout import models
 from ...checkout.error_codes import CheckoutErrorCode
 from ...checkout.utils import (
@@ -25,6 +24,8 @@ from ...checkout.utils import (
     recalculate_checkout_discount,
     remove_promo_code_from_checkout,
 )
+
+
 from ...core import analytics
 from ...core.exceptions import InsufficientStock, ProductNotPublished
 from ...core.permissions import OrderPermissions
@@ -47,6 +48,7 @@ from ..order.types import Order
 from ..product.types import ProductVariant
 from ..shipping.types import ShippingMethod
 from .types import Checkout, CheckoutLine
+
 
 ERROR_DOES_NOT_SHIP = "This checkout doesn't need shipping"
 
@@ -810,15 +812,9 @@ class CheckoutComplete(BaseMutation):
                     {"redirect_url": error}, code=AccountErrorCode.INVALID
                 )
 
-        # Add Stream ticket
-        if has_stream_ticket_meta(checkout):
-            create_stream_ticket_for_user(
-                user,
-                lines,
-                checkout.get_value_from_metadata('GAME_ID', None),
-                checkout.get_value_from_metadata('SEASON_ID', None),
-                checkout.get_value_from_metadata('TEAM_ID', None)
-            )
+        if has_stream_meta(checkout):
+            create_stream_ticket_from_checkout(user, checkout)
+            create_user_watch_log_from_checkout(user, checkout)
 
         order = None
         if not txn.action_required:
@@ -842,70 +838,6 @@ class CheckoutComplete(BaseMutation):
     def perform_mutation(cls, _root, info, checkout_id, store_source, **data):
         return cls.complete_checkout(info, checkout_id, store_source, data)
 
-
-def has_stream_ticket_meta(checkout):
-    game_id = checkout.get_value_from_metadata('GAME_ID', None)
-    season_id = checkout.get_value_from_metadata('SEASON_ID', None)
-    team_id = checkout.get_value_from_metadata('TEAM_ID', None)
-    # expires = checkout.get_value_from_metadata('EXPIRES', None)
-    return game_id is not None or season_id is not None or team_id is not None
-
-
-def create_stream_ticket_for_user(user, lines, game_id, season_id, team_id):
-    stream_ticket = StreamTicket()
-    stream_ticket.game_id = game_id or None
-    stream_ticket.season_id = season_id or None
-    stream_ticket.team_id = team_id or None
-    stream_ticket.expires = None # TODO: set expires for day ticket
-    stream_ticket.type = determine_ticket_type(stream_ticket)
-    validate_stream_ticket_with_product(stream_ticket, lines)
-    stream_ticket.save()
-    user.stream_tickets.add(stream_ticket)
-    user.save()
-
-
-def determine_ticket_type(ticket):
-    if ticket.game_id is not None and ticket.season_id is None and ticket.team_id is None:
-        return 'single'
-    elif ticket.season_id is not None and ticket.team_id is not None and ticket.game_id is None:
-        return 'team'
-    elif ticket.season_id is not None and ticket.team_id is None and ticket.game_id is None:
-        return 'league'
-    elif ticket.expires is not None and ticket.season_id is None and ticket.team_id is None and ticket.game_id is None:
-        return 'day'
-    else:
-        raise ValidationError(
-            "Could not determine TicketType from input parameters",
-            code=AccountErrorCode.INVALID
-        )
-
-
-def validate_stream_ticket_with_product(stream_ticket, lines):
-    if len(lines) == 1 and lines[0].variant.product.attributes.count() >= 1:
-        attributes = lines[0].variant.product.attributes.all()
-        attribute = get_stream_type_attribute(attributes)
-        if attribute.values.count() == 1 and has_team_attribute(attributes):
-            product_ticket_type = attribute.values.first().slug
-            stream_ticket_type = stream_ticket.type
-            if product_ticket_type == stream_ticket_type:
-                return True
-
-    raise ValidationError(
-        "Checkout is not a valid StreamTicket purchase", code=AccountErrorCode.INVALID
-    )
-
-
-def get_stream_type_attribute(attributes):
-    for attr in attributes:
-        if attr.values.count() == 1 and attr.attribute.slug == 'stream-type':
-            return attr
-
-
-def has_team_attribute(attributes):
-    for attr in attributes:
-        if attr.values.count() == 1 and attr.attribute.slug == 'team':
-            return True
-    return False
 
 class CheckoutAddPromoCode(BaseMutation):
     checkout = graphene.Field(
