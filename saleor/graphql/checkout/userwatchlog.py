@@ -61,7 +61,8 @@ def create_user_watch_log(user_id: str, game_id: str, ticket_type: str):
         'id': f'{game_id}_{global_user_id}',
         'gameId': f'{game_id}',
         'userId': f'{global_user_id}',
-        'type': f'{ticket_type}'
+        'type': f'{ticket_type}',
+        'watchDuration': 0
     }
 
 
