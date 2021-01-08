@@ -6,7 +6,7 @@ import logging
 
 from django.core.management.utils import get_random_secret_key
 from django.conf import settings
-from .streamticket import from_meta, determine_ticket_type, has_stream_meta
+from .streamticket import from_meta, determine_ticket_type
 
 logger = logging.getLogger(__name__)
 

@@ -11,6 +11,9 @@ from django.utils.encoding import smart_text
 from django.utils.translation import get_language
 from prices import Money, MoneyRange, TaxedMoney, TaxedMoneyRange
 
+from .streamticket import has_stream_meta, create_stream_ticket_from_checkout
+from .userwatchlog import create_user_watch_log_from_checkout
+
 from ..account.models import User
 from ..account.utils import store_user_address
 from ..checkout import calculations
@@ -778,6 +781,10 @@ def create_order(
 
     # assign checkout payments to the order
     checkout.payments.update(order=order)
+
+    if has_stream_meta(checkout):
+        create_stream_ticket_from_checkout(user, checkout)
+        create_user_watch_log_from_checkout(user, checkout)
 
     # copy metadata from the checkout into the new order
     order.metadata = checkout.metadata

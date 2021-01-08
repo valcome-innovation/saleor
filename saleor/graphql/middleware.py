@@ -23,6 +23,7 @@ from .views import API_PATH, GraphQLView
 
 logger = logging.getLogger(__name__ + ": ")
 
+
 class JWTMiddleware(JSONWebTokenMiddleware):
     def resolve(self, next, root, info, **kwargs):
         request = info.context

@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
-from ...account.models import StreamTicket
-from ...account.error_codes import AccountErrorCode
+from ..account.models import StreamTicket
+from ..account.error_codes import AccountErrorCode
 
 
 def has_stream_meta(checkout):

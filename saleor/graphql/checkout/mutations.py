@@ -6,8 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from django.db.models import Prefetch
 from graphql_jwt.exceptions import PermissionDenied
-from .streamticket import has_stream_meta, create_stream_ticket_from_checkout
-from .userwatchlog import create_user_watch_log_from_checkout
+# from .streamticket import has_stream_meta, create_stream_ticket_from_checkout
+# from .userwatchlog import create_user_watch_log_from_checkout
 from ...account.error_codes import AccountErrorCode
 from ...checkout import models
 from ...checkout.error_codes import CheckoutErrorCode
@@ -811,10 +811,6 @@ class CheckoutComplete(BaseMutation):
                 raise ValidationError(
                     {"redirect_url": error}, code=AccountErrorCode.INVALID
                 )
-
-        if has_stream_meta(checkout):
-            create_stream_ticket_from_checkout(user, checkout)
-            create_user_watch_log_from_checkout(user, checkout)
 
         order = None
         if not txn.action_required:
