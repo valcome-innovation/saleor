@@ -247,7 +247,6 @@ class GraphQLView(View):
         if content_type == "application/graphql":
             return {"query": request.body.decode("utf-8")}
         if content_type == "application/json":
-            print(request.body)
             body = request.body.decode("utf-8")
             return json.loads(body)
         if content_type in ["application/x-www-form-urlencoded", "multipart/form-data"]:
