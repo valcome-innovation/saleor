@@ -253,7 +253,12 @@ class User(CountableDjangoObjectType):
     )
     stream_tickets = graphene.List(
         "saleor.graphql.account.types.StreamTicket",
-        description="List of stored payment sources.")
+        description="List of stored payment sources."
+    )
+    favorite_team = graphene.String(
+        description="The favorite Team ID of the customer",
+        required=False
+    )
 
     class Meta:
         description = "Represents user data."

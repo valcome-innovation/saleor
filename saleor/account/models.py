@@ -166,6 +166,7 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
     stream_tickets = models.ManyToManyField(
         StreamTicket, blank=True, related_name="user_stream_tickets"
     )
+    favorite_team = models.CharField(max_length=256, blank=True, null=True)
 
     USERNAME_FIELD = "email"
 

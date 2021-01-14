@@ -332,6 +332,35 @@ class AccountSetDefaultAddress(BaseMutation):
         utils.change_user_default_address(user, address, address_type)
         return cls(user=user)
 
+
+class AccountFavoriteTeamUpdate(ModelMutation):
+    user = graphene.Field(
+        User, description="A user instance for which the ticket was created."
+    )
+
+    class Arguments:
+        user_id = graphene.ID(
+            description="ID of a user to create stream ticket for.", required=True
+        )
+        favorite_team = graphene.String(
+            description="The users favorite team ID", required=False
+        )
+
+    class Meta:
+        description = "Update the favorite team of the user"
+        model = models.User
+        error_type_class = AccountError
+        error_type_field = "account_errors"
+
+    @classmethod
+    def perform_mutation(cls, root, info, **data):
+        user_id = data["user_id"]
+        user = cls.get_node_or_error(info, user_id, field="user_id", only_type=User)
+        user.favorite_team = data.get("favorite_team", None)
+        user.save(update_fields=["favorite_team"])
+        return AccountFavoriteTeamUpdate(user=user)
+
+
 class AccountStreamTicketCreate(ModelMutation):
     user = graphene.Field(
         User, description="A user instance for which the ticket was created."

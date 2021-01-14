@@ -26,6 +26,7 @@ from .mutations.account import (
     AccountDelete,
     AccountRegister,
     AccountStreamTicketCreate,
+    AccountFavoriteTeamUpdate,
     AccountRequestDeletion,
     AccountSetDefaultAddress,
     AccountUpdate,
@@ -268,6 +269,8 @@ class AccountMutations(graphene.ObjectType):
     account_request_deletion = AccountRequestDeletion.Field()
     account_delete = AccountDelete.Field()
 
+    # Stream stuff
+    account_favorite_team_update = AccountFavoriteTeamUpdate.Field()
     account_stream_ticket_create = AccountStreamTicketCreate.Field()
 
     account_update_meta = AccountUpdateMeta.Field(
