@@ -353,6 +353,10 @@ class AccountFavoriteTeamUpdate(ModelMutation):
         error_type_field = "account_errors"
 
     @classmethod
+    def check_permissions(cls, context):
+        return context.user.is_authenticated
+
+    @classmethod
     def perform_mutation(cls, root, info, **data):
         user_id = data["user_id"]
         user = cls.get_node_or_error(info, user_id, field="user_id", only_type=User)
