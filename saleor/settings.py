@@ -519,6 +519,7 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 GRAPHQL_JWT = {
     "JWT_PAYLOAD_HANDLER": "saleor.graphql.utils.create_jwt_payload",
     "JWT_EXPIRATION_DELTA": timedelta(minutes=5),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
     "JWT_VERIFY_EXPIRATION": get_bool_from_env("JWT_VERIFY_EXPIRATION", False),
 }
 
