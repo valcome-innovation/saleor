@@ -69,6 +69,7 @@ class PaymentData:
     payment_intent: Optional[str] = None
     customer_id: Optional[str] = None
     reuse_source: bool = False
+    return_url: str = None
 
 
 @dataclass

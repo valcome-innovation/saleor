@@ -6,6 +6,10 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from django.db.models import Prefetch
 from graphql_jwt.exceptions import PermissionDenied
+
+from .mutation import checkout_complete
+from .mutation.checkout_complete import do_complete_checkout
+from ..payment.types import Payment
 from ...account.error_codes import AccountErrorCode
 from ...checkout import models
 from ...checkout.error_codes import CheckoutErrorCode
@@ -693,6 +697,13 @@ class CheckoutComplete(BaseMutation):
             " before checkout is complete."
         ),
     )
+    next_action = graphene.JSONString(
+        required=False,
+        default_value=None,
+        description=(
+            "Payment data returned from the PSP"
+        ),
+    )
 
     class Arguments:
         checkout_id = graphene.ID(description="Checkout ID.", required=True)
@@ -724,109 +735,10 @@ class CheckoutComplete(BaseMutation):
 
     @classmethod
     def complete_checkout(cls, info, checkout_id, store_source, data):
-        checkout = cls.get_node_or_error(
-            info,
-            checkout_id,
-            only_type=Checkout,
-            field="checkout_id",
-            qs=models.Checkout.objects.prefetch_related(
-                "gift_cards",
-                "lines",
-                Prefetch(
-                    "payments",
-                    queryset=payment_models.Payment.objects.prefetch_related(
-                        "order", "order__lines"
-                    ),
-                ),
-            ).select_related("shipping_method", "shipping_method__shipping_zone"),
+        order, action_required, next_action = do_complete_checkout(cls, info, checkout_id, store_source, data)
+        return CheckoutComplete(
+            order=order, confirmation_needed=action_required, next_action=next_action
         )
-        lines = list(checkout)
-
-        discounts = info.context.discounts
-        user = info.context.user
-
-        clean_checkout_shipping(checkout, lines, discounts, CheckoutErrorCode)
-        clean_checkout_payment(checkout, lines, discounts, CheckoutErrorCode)
-
-        payment = checkout.get_last_active_payment()
-
-        with transaction.atomic():
-            try:
-                order_data = prepare_order_data(
-                    checkout=checkout,
-                    lines=lines,
-                    tracking_code=analytics.get_client_id(info.context),
-                    discounts=discounts,
-                )
-            except InsufficientStock as e:
-                raise ValidationError(
-                    f"Insufficient product stock: {e.item}", code=e.code
-                )
-            except voucher_model.NotApplicable:
-                raise ValidationError(
-                    "Voucher not applicable",
-                    code=CheckoutErrorCode.VOUCHER_NOT_APPLICABLE,
-                )
-            except TaxError as tax_error:
-                raise ValidationError(
-                    "Unable to calculate taxes - %s" % str(tax_error),
-                    code=CheckoutErrorCode.TAX_ERROR,
-                )
-
-        billing_address = order_data["billing_address"]
-        shipping_address = order_data.get("shipping_address", None)
-
-        billing_address = AddressData(**billing_address.as_data())
-
-        if shipping_address is not None:
-            shipping_address = AddressData(**shipping_address.as_data())
-
-        payment_confirmation = payment.to_confirm
-        try:
-            if payment_confirmation:
-                txn = gateway.confirm(payment)
-            else:
-                txn = gateway.process_payment(
-                    payment=payment, token=payment.token,
-                    payment_intent=payment.payment_intent, store_source=store_source
-                )
-
-            if not txn.is_success:
-                raise PaymentError(txn.error)
-
-        except PaymentError as e:
-            abort_order_data(order_data)
-            raise ValidationError(str(e), code=CheckoutErrorCode.PAYMENT_ERROR)
-
-        if txn.customer_id and user.is_authenticated:
-            store_customer_id(user, payment.gateway, txn.customer_id)
-
-        redirect_url = data.get("redirect_url", "")
-        if redirect_url:
-            try:
-                validate_storefront_url(redirect_url)
-            except ValidationError as error:
-                raise ValidationError(
-                    {"redirect_url": error}, code=AccountErrorCode.INVALID
-                )
-
-        order = None
-        if not txn.action_required:
-            # create the order into the database
-            order = create_order(
-                checkout=checkout,
-                order_data=order_data,
-                user=user,
-                redirect_url=redirect_url,
-            )
-
-            # remove checkout after order is successfully paid
-            checkout.delete()
-
-            # return the success response with the newly created order data
-            return CheckoutComplete(order=order, confirmation_needed=False)
-
-        return CheckoutComplete(order=None, confirmation_needed=True)
 
     @classmethod
     def perform_mutation(cls, _root, info, checkout_id, store_source, **data):

@@ -58,12 +58,15 @@ def require_active_payment(fn: Callable) -> Callable:
 @raise_payment_error
 @require_active_payment
 def process_payment(
-    payment: Payment, token: str, payment_intent: str = None, store_source: bool = False
+    payment: Payment, token: str, payment_intent: str = None, store_source: bool = False, return_url: str = None
 ) -> Transaction:
     plugin_manager = get_plugins_manager()
     payment_data = create_payment_information(
-        payment=payment, payment_token=token,
-        payment_intent=payment_intent, store_source=store_source
+        payment=payment,
+        payment_token=token,
+        payment_intent=payment_intent,
+        store_source=store_source,
+        return_url=return_url
     )
     response, error = _fetch_gateway_response(
         plugin_manager.process_payment, payment.gateway, payment_data

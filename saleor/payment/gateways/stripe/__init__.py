@@ -51,6 +51,7 @@ def authorize(
         else:
             intent = client.PaymentIntent.create(
                 payment_method=payment_information.token,
+                return_url=payment_information.return_url,
                 amount=stripe_amount,
                 currency=currency,
                 confirmation_method="manual",

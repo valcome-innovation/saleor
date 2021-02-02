@@ -30,6 +30,7 @@ def create_payment_information(
     amount: Decimal = None,
     customer_id: str = None,
     store_source: bool = False,
+    return_url:str = None
 ) -> PaymentData:
     """Extract order information along with payment details.
 
@@ -62,6 +63,7 @@ def create_payment_information(
         customer_id=customer_id,
         customer_email=payment.billing_email,
         reuse_source=store_source,
+        return_url=return_url
     )
 
 
