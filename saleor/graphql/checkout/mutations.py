@@ -697,7 +697,7 @@ class CheckoutComplete(BaseMutation):
             " before checkout is complete."
         ),
     )
-    next_action = graphene.JSONString(
+    confirmation_action = graphene.JSONString(
         required=False,
         default_value=None,
         description=(
@@ -735,9 +735,9 @@ class CheckoutComplete(BaseMutation):
 
     @classmethod
     def complete_checkout(cls, info, checkout_id, store_source, data):
-        order, action_required, next_action = do_complete_checkout(cls, info, checkout_id, store_source, data)
+        order, action_required, confirmation_action = do_complete_checkout(cls, info, checkout_id, store_source, data)
         return CheckoutComplete(
-            order=order, confirmation_needed=action_required, next_action=next_action
+            order=order, confirmation_needed=action_required, confirmation_action=confirmation_action
         )
 
     @classmethod
