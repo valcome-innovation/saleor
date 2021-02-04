@@ -52,8 +52,6 @@ def do_complete_checkout(cls: BaseMutation, info, checkout_id: str, store_source
     if txn.customer_id and user.is_authenticated:
         store_customer_id(user, payment.gateway, txn.customer_id)
 
-
-
     if not txn.action_required:
         order = create_order_and_delete_checkout(checkout, order_data, user, redirect_url)
     else:
