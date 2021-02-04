@@ -82,7 +82,6 @@ def authorize(
 
 
 def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
-    print('CAPTURE')
     client = _get_client(**config.connection_params)
     intent = None
     try:
