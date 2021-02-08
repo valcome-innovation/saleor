@@ -7,6 +7,7 @@ from . import (
     GatewayConfig,
     authorize,
     capture,
+    confirm,
     list_client_sources,
     process_payment,
     refund,
@@ -113,6 +114,12 @@ class StripeGatewayPlugin(BasePlugin):
         self, payment_information: "PaymentData", previous_value
     ) -> "GatewayResponse":
         return process_payment(payment_information, self._get_gateway_config())
+
+    @require_active_plugin
+    def confirm_payment(
+            self, payment_information: "PaymentData", previous_value
+    ) -> "GatewayResponse":
+        return confirm(payment_information, self._get_gateway_config())
 
     @require_active_plugin
     def list_payment_sources(
