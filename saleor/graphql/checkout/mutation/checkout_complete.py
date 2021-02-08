@@ -112,7 +112,7 @@ def get_shipping_address(order_data):
     return shipping_address
 
 
-def execute_payment_transaction(payment: Payment, order_data, store_source: bool, return_url: str= None):
+def execute_payment_transaction(payment: Payment, order_data, store_source: bool, return_url: str = None):
     try:
         if payment.to_confirm:
             txn = gateway.confirm(payment)
