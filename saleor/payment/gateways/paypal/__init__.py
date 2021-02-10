@@ -60,7 +60,6 @@ def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
     client = get_paypal_client(**config.connection_params)
     request = OrdersCaptureRequest(payment_information.token)
     try:
-        print(payment_information)
         response = client.execute(request)
     except IOError as ioe:
         # Limit message length not to incur in db write error
