@@ -82,6 +82,11 @@ msgid ""
 msgstr ""
 
 #: templates/templated_email/account/password_reset.email:4
+msgctxt "Password reset e-mail action"
+msgid "Reset Password"
+msgstr ""
+
+#: templates/templated_email/account/password_reset.email:4
 msgctxt "Password reset e-mail subject"
 msgid "Password reset e-mail"
 msgstr ""
@@ -328,6 +333,16 @@ msgstr ""
 #: templates/templated_email/source/update_fulfillment.mjml:13
 msgctxt "Standard e-mail greeting"
 msgid "Hi!"
+msgstr ""
+
+#: templates/templated_email/source/confirm.mjml:13
+msgctxt "e-mail confirmation"
+msgid "Confirm E-Mail Address"
+msgstr ""
+
+#: templates/templated_email/source/confirm.mjml:13
+msgctxt "e-mail confirmation needed"
+msgid "Confirmation needed"
 msgstr ""
 
 #: templates/templated_email/source/account_delete.mjml:16

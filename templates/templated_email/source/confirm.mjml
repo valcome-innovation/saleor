@@ -10,7 +10,7 @@
     <mj-section>
       <mj-column>
         <mj-text font-size="16px">
-          {% trans "Hi!" context "Standard e-mail greeting" %}
+          {% trans "Confirm your E-Mail Address" context "e-mail confirmation needed" %}
         </mj-text>
         <mj-text>
           {% blocktrans trimmed context "Account confirmation e-mail text" %}
@@ -18,11 +18,13 @@
             Please click the link below to do so and log into your account.
           {% endblocktrans %}
         </mj-text>
+        <mj-text></mj-text>
         <mj-text>
-          <a href="{{ confirm_url | safe }}">
-            {{ confirm_url | safe }}
+          <a href="{{ confirm_url | safe }}" class="link-button">
+            {% trans "Confirm E-Mail Address" context "e-mail confirmation" %}
           </a>
         </mj-text>
+        <mj-text height="100px"></mj-text>
       </mj-column>
     </mj-section>
     <mj-include path="./shared/footer.mjml" />

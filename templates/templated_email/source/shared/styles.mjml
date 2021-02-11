@@ -22,6 +22,12 @@
   .bold {
     font-weight: bold;
   }
+  .link-button {
+    color: #ffffff;
+    background-color: #000000;
+    padding: 10px;
+    text-decoration: none;
+  }
 </mj-style>
 <mj-style>
   address {
