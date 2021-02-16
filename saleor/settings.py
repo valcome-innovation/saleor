@@ -72,7 +72,7 @@ if DB_PASSWORD is not None and DB_USER is not None and DB_NAME is not None and D
 
 DATABASES = {
     "default": dj_database_url.config(
-        default="postgres://saleor:saleor@localhost:5432/saleor", conn_max_age=600
+        default="postgres://saleor:saleor@localhost:5442/saleor", conn_max_age=600
     )
 }
 
