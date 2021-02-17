@@ -27,15 +27,15 @@ def get_event_type_and_payment_intent(request):
 
 
 def handle_stripe_webhook_event(request, event_type, payment_intent):
-    if has_correct_app_id(payment_intent) and has_sofort_payment_method(payment_intent):
+    if has_matching_app_id(payment_intent) and has_sofort_payment_method(payment_intent):
         return process_sofort_webhook_event(request, event_type, payment_intent)
     else:
-        return HttpResponse(status=200) # skip webhooks not meant for this app
+        return HttpResponse(status=200)  # skip webhooks not meant for this app
 
 
-def has_correct_app_id(payment_intent):
-    return hasattr(payment_intent.metadata, "appId") \
-           and payment_intent.metadata.appId == settings.APP_ID
+def has_matching_app_id(payment_intent):
+    return not hasattr(payment_intent.metadata, "appId") \
+           or payment_intent.metadata.appId == settings.APP_ID
 
 
 def has_sofort_payment_method(payment_intent):
