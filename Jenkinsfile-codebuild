@@ -94,7 +94,7 @@ def get_message() {
 ${currentBuild.currentResult} ${get_emoji()}
 
 *Image*
-${PROJECT}
+saleor
 
 *Version*
 ${VERSION}
