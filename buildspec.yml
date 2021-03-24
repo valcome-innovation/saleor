@@ -1,0 +1,24 @@
+version: 0.2
+
+env:
+  variables:
+    REPOSITORY: 487554623251.dkr.ecr.eu-central-1.amazonaws.com
+phases:
+  install:
+    runtime-versions:
+      docker: 19
+    commands:
+      - docker login -u $dockerhub_username -p $dockerhub_password
+  pre_build:
+    commands:
+      - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $REPOSITORY
+      - docker pull $REPOSITORY/$IMAGE:cache || true
+  build:
+    commands:
+      - DOCKER_BUILDKIT=1 docker build --cache-from $REPOSITORY/$IMAGE:cache --build-arg STATIC_URL=$STATIC_URL -t $IMAGE:$TAG .
+      - docker tag $IMAGE:$TAG $REPOSITORY/$IMAGE:$TAG
+      - docker tag $IMAGE:$TAG $REPOSITORY/$IMAGE:cache
+  post_build:
+    commands:
+      - docker push $REPOSITORY/$IMAGE:$TAG
+      - docker push $REPOSITORY/$IMAGE:cache
