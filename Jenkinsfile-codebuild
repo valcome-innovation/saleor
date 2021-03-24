@@ -83,13 +83,30 @@ def get_remote(user, password) {
 
 def notify_slack() {
     def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'warning', 'ABORTED': 'danger']
-    def EMOJI_MAP = ['SUCCESS': ':etherwood:', 'FAILURE': ':rotating_light:', 'UNSTABLE': ':oblivion:', 'ABORTED': ':gollum:']
-
-    def emoji = EMOJI_MAP[currentBuild.currentResult]
     def color = COLOR_MAP[currentBuild.currentResult]
 
-    slackSend channel: '#jenkins', color: color, message: """
-    ${emoji} *${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}
-    *Image:* saleor:${VERSION}
-    """
+    slackSend channel: '#jenkins', color: color, message: get_message()
+}
+
+def get_message() {
+    return """
+*${env.JOB_BASE_NAME} #${env.BUILD_NUMBER}*
+${currentBuild.currentResult} ${get_emoji()}
+
+*Image*
+${PROJECT}
+
+*Version*
+${VERSION}
+
+*Branch*
+${BRANCH}
+
+_finished in ${currentBuild.durationString}_
+"""
+}
+
+def get_emoji() {
+    def EMOJI_MAP = ['SUCCESS': ':etherwood:', 'FAILURE': ':rotating_light:', 'UNSTABLE': ':oblivion:', 'ABORTED': ':gollum:']
+    return EMOJI_MAP[currentBuild.currentResult]
 }
