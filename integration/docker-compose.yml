@@ -1,0 +1,82 @@
+version: '3.5'
+
+services:
+  saleor:
+    ports:
+      - 8020:8000
+    container_name: saleor
+    build:
+      context: ../
+      dockerfile: Dockerfile
+      args:
+        STATIC_URL: 'https://valcometv-media.s3.eu-central-1.amazonaws.com/statics/valcometv/'
+    restart: unless-stopped
+    networks:
+      - live-int-backend
+    depends_on:
+      - db
+      - redis
+    user: saleor
+    volumes:
+      - saleor-int-media:/app/media
+    env_file: integration.env
+    environment:
+      - MIGRATE=true
+      - COLLECT_STATIC=true
+      - POPULATE=true
+      - JAEGER_AGENT_HOST=jaeger
+      - DASHBOARD_URL=http://localhost:9001/
+
+  db:
+    image: library/postgres:11.1-alpine
+    command: postgres -c config_file=/etc/postgresql.conf
+    container_name: saleor-int-db
+    restart: unless-stopped
+    networks:
+      - live-int-backend
+    volumes:
+      - saleor-int-db:/var/lib/postgresql
+      - ./postgresql.conf/:/etc/postgresql.conf
+    environment:
+      - POSTGRES_USER=saleor
+      - POSTGRES_PASSWORD=saleor
+
+  redis:
+    image: library/redis:5.0-alpine
+    container_name: saleor-int-redis
+    restart: unless-stopped
+    networks:
+      - live-int-backend
+    volumes:
+      - saleor-int-redis:/data
+
+  worker:
+    image: saleor-worker:live
+    build:
+      context: ../
+      dockerfile: Dockerfile
+      args:
+        STATIC_URL: 'https://valcometv-media.s3.eu-central-1.amazonaws.com/statics/valcometv/'
+    container_name: saleor-int-worker
+    command: celery -A saleor worker --app=saleor.celeryconf:app --loglevel=info
+    restart: unless-stopped
+    networks:
+      - live-int-backend
+    env_file: integration.env
+    depends_on:
+      - redis
+    user: saleor
+    volumes:
+      - saleor-int-media:/app/media
+
+volumes:
+  saleor-int-db:
+    driver: local
+  saleor-int-redis:
+    driver: local
+  saleor-int-media:
+    driver: local
+
+networks:
+  live-int-backend:
+    external: true
