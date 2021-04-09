@@ -29,14 +29,15 @@ services:
 
   db:
     image: library/postgres:11.1-alpine
-    command: postgres -c config_file=/etc/postgresql.conf
+    ports:
+      - 5432:5432
+    command: postgres
     container_name: saleor-int-db
     restart: unless-stopped
     networks:
       - live-int-backend
     volumes:
       - saleor-int-db:/var/lib/postgresql
-      - ./postgresql.conf/:/etc/postgresql.conf
     environment:
       - POSTGRES_USER=saleor
       - POSTGRES_PASSWORD=saleor
