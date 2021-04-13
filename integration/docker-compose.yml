@@ -1,10 +1,10 @@
-version: '3.5'
+version: '3.8'
 
 services:
   saleor:
     ports:
       - 8020:8000
-    container_name: saleor
+    container_name: saleor-int-api
     build:
       context: ../
       dockerfile: Dockerfile
@@ -30,7 +30,7 @@ services:
   db:
     image: library/postgres:11.1-alpine
     ports:
-      - 5432:5432
+      - 5452:5432
     command: postgres
     container_name: saleor-int-db
     restart: unless-stopped
