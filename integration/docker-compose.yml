@@ -27,7 +27,7 @@ services:
       - JAEGER_AGENT_HOST=jaeger
       - DASHBOARD_URL=http://localhost:9001/
 
-  bouncer:
+  db:
     image: edoburu/pgbouncer:1.11.0
     user: postgres
     container_name: saleor-int-bouncer
@@ -39,7 +39,7 @@ services:
       - DB_NAME=saleor
       - DB_USER=saleor
       - DB_PASSWORD=saleor
-      - DB_HOST=db
+      - DB_HOST=postgres
       - POOL_MODE=session
       - MAX_CLIENT_CONN=750
       - POOL_SIZE=75
@@ -48,7 +48,7 @@ services:
       - RESERVE_POOL_SIZE=25
       - RESERVE_POOL_TIMEOUT=3
 
-  db:
+  postgres:
     image: library/postgres:11.1-alpine
     command: postgres
     container_name: saleor-int-db
