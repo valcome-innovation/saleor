@@ -47,6 +47,11 @@ services:
       - DEFAULT_POOL_SIZE=75
       - RESERVE_POOL_SIZE=25
       - RESERVE_POOL_TIMEOUT=3
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost"]
+      retries: 30
+      interval: 5s
+      start_period: 3s
 
   postgres:
     image: library/postgres:11.1-alpine
@@ -61,6 +66,11 @@ services:
     environment:
       - POSTGRES_USER=saleor
       - POSTGRES_PASSWORD=saleor
+    healthcheck:
+      test: [ "CMD", "pg_isready"]
+      retries: 30
+      interval: 5s
+      start_period: 3s
 
   redis:
     image: library/redis:5.0-alpine
@@ -70,6 +80,10 @@ services:
       - live-int-backend
     volumes:
       - saleor-int-redis:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      retries: 30
+      interval: 5s
 
   worker:
     image: saleor-worker:live
