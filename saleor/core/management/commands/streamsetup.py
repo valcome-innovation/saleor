@@ -17,6 +17,7 @@ from ...utils.random_data import (
     create_products_by_schema
 )
 
+
 class Command(BaseCommand):
     help = "Configure Salor with minimal data"
     placeholders_dir = "saleor/static/placeholders/"

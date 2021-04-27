@@ -48,7 +48,7 @@ services:
       - RESERVE_POOL_SIZE=25
       - RESERVE_POOL_TIMEOUT=3
     healthcheck:
-      test: ["CMD", "pg_isready", "-h", "localhost"]
+      test: ["CMD", "pg_isready", "-h", "localhost", "-U", "saleor"]
       retries: 30
       interval: 5s
       start_period: 3s
@@ -67,7 +67,7 @@ services:
       - POSTGRES_USER=saleor
       - POSTGRES_PASSWORD=saleor
     healthcheck:
-      test: [ "CMD", "pg_isready"]
+      test: [ "CMD", "pg_isready", "-U", "saleor"]
       retries: 30
       interval: 5s
       start_period: 3s
