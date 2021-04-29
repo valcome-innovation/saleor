@@ -27,8 +27,7 @@ class Command(BaseCommand):
         create_superuser(credentials)
 
         user = User.objects.filter(email="dev@valcome.tv").first()
-        user.stream_tickets.add(self.create_stream_ticket())
-        user.save()
+        self.create_stream_ticket(user)
 
         add_address_to_admin(credentials["email"])
         self.create_info_pages()
@@ -62,8 +61,9 @@ class Command(BaseCommand):
         for msg in create_page("AGB", "terms"):
             self.stdout.write(msg)
 
-    def create_stream_ticket(self):
+    def create_stream_ticket(self, user):
         stream_ticket = StreamTicket()
+        stream_ticket.user = user
         stream_ticket.game_id = "14"
         stream_ticket.season_id = "3"
         stream_ticket.team_id = "6"

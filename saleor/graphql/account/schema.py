@@ -68,12 +68,10 @@ from .resolvers import (
     resolve_customers,
     resolve_permission_groups,
     resolve_staff_users,
-    resolve_user,
-    resolve_stream_tickets,
-    resolve_bulked_stream_tickets
+    resolve_user
 )
 from .sorters import PermissionGroupSortingInput, UserSortingInput
-from .types import Address, AddressValidationData, Group, User, StreamTicket
+from .types import Address, AddressValidationData, Group, User
 
 
 class CustomerFilterInput(FilterInputObjectType):
@@ -231,18 +229,6 @@ class AccountQueries(graphene.ObjectType):
     )
     def resolve_user(self, info, id):
         return resolve_user(info, id)
-
-    @one_of_permissions_required(
-        [AccountPermissions.MANAGE_STAFF, AccountPermissions.MANAGE_USERS]
-    )
-    def resolve_stream_tickets(self, info, game_id):
-        return resolve_stream_tickets(info, game_id)
-
-    @one_of_permissions_required(
-        [AccountPermissions.MANAGE_STAFF, AccountPermissions.MANAGE_USERS]
-    )
-    def resolve_bulked_stream_tickets(self, info, game_ids):
-        return resolve_bulked_stream_tickets(info, game_ids)
 
     def resolve_address(self, info, id):
         return resolve_address(info, id)

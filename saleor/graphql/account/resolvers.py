@@ -67,22 +67,6 @@ def resolve_user(info, id):
     return PermissionDenied()
 
 
-def resolve_stream_tickets(info, game_id):
-    if get_user_or_app_from_context(info.context):
-        return StreamTicket.objects.filter(game_id=game_id).count()
-    return PermissionDenied()
-
-
-def resolve_bulked_stream_tickets(info, game_ids):
-    if get_user_or_app_from_context(info.context):
-        result = StreamTicket.objects \
-            .values('game_id')\
-            .annotate(total=Count('game_id'))
-
-        return list(result)
-    return PermissionDenied()
-
-
 def resolve_address_validation_rules(
     info,
     country_code: str,

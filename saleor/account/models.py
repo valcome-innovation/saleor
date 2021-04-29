@@ -130,19 +130,6 @@ class UserManager(BaseUserManager):
         return self.get_queryset().filter(is_staff=True)
 
 
-class StreamTicket(models.Model):
-    game_id = models.CharField(max_length=256, blank=True, null=True)
-    type = models.CharField(max_length=256, blank=False, choices=[
-        (type_name.upper(), type_name) for type_name, _ in TicketType.CHOICES
-    ],)
-    team_id = models.CharField(max_length=256, blank=True, null=True)
-    season_id = models.CharField(max_length=256, blank=True, null=True)
-    expires = models.DateTimeField(default=None, editable=True, blank=True, null=True)
-
-    class Meta:
-        ordering = ("expires",)
-
-
 class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
     gender = models.CharField(max_length=256, blank=True)
     email = models.EmailField(unique=True)
@@ -163,9 +150,6 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         Address, related_name="+", null=True, blank=True, on_delete=models.SET_NULL
     )
     avatar = VersatileImageField(upload_to="user-avatars", blank=True, null=True)
-    stream_tickets = models.ManyToManyField(
-        StreamTicket, blank=True, related_name="user_stream_tickets"
-    )
     favorite_team = models.CharField(max_length=256, blank=True, null=True)
 
     USERNAME_FIELD = "email"
@@ -196,6 +180,23 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         # This method is overridden to accept perm as BasePermissionEnum
         perm_value = perm.value if hasattr(perm, "value") else perm  # type: ignore
         return super().has_perm(perm_value, obj)
+
+
+class StreamTicket(models.Model):
+    type = models.CharField(max_length=256, blank=False, choices=[
+        (type_name.upper(), type_name) for type_name, _ in TicketType.CHOICES
+    ],)
+    user = models.ForeignKey(
+        User, related_name="+", null=True, on_delete=models.SET_NULL
+    )
+    version = models.IntegerField(default=1)
+    game_id = models.CharField(max_length=256, blank=True, null=True)
+    team_id = models.CharField(max_length=256, blank=True, null=True)
+    season_id = models.CharField(max_length=256, blank=True, null=True)
+    expires = models.DateTimeField(default=None, editable=True, blank=True, null=True)
+
+    class Meta:
+        ordering = ("expires",)
 
 
 class CustomerNote(models.Model):

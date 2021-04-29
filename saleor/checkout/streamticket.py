@@ -24,6 +24,7 @@ def create_stream_ticket_from_checkout(user, checkout):
 
 def create_stream_ticket_for_user(user, lines, game_id, season_id, team_id, expires):
     stream_ticket = StreamTicket()
+    stream_ticket.user = user
     stream_ticket.game_id = game_id or None
     stream_ticket.season_id = season_id or None
     stream_ticket.team_id = team_id or None
@@ -31,8 +32,6 @@ def create_stream_ticket_for_user(user, lines, game_id, season_id, team_id, expi
     stream_ticket.type = determine_ticket_type(game_id, season_id, team_id, expires)
     validate_stream_ticket_with_product(stream_ticket, lines)
     stream_ticket.save()
-    user.stream_tickets.add(stream_ticket)
-    user.save()
 
 
 def determine_ticket_type(game_id, season_id, team_id, expires):
