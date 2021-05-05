@@ -1,5 +1,4 @@
 from django.core.exceptions import ValidationError
-from django_redis import get_redis_connection
 from ..account.models import StreamTicket
 from ..account.error_codes import AccountErrorCode
 
@@ -33,7 +32,6 @@ def create_stream_ticket_for_user(user, lines, game_id, season_id, team_id, expi
     stream_ticket.type = determine_ticket_type(game_id, season_id, team_id, expires)
     validate_stream_ticket_with_product(stream_ticket, lines)
     stream_ticket.save()
-    delete_cache_keys()
 
 
 def determine_ticket_type(game_id, season_id, team_id, expires):
@@ -78,13 +76,3 @@ def has_team_attribute(attributes):
         if attr.values.count() == 1 and attr.attribute.slug == 'team':
             return True
     return False
-
-
-def delete_cache_keys():
-    try:
-        redis = get_redis_connection("default")
-        for key in redis.scan_iter("StreamTicket:*"):
-            print(f"Deleted cache key = {key}")
-            redis.delete(key)
-    except:
-        print("Couldn't delete StreamTicket cache keys")
