@@ -1,7 +1,5 @@
 from typing import Union
 
-from django_redis import get_redis_connection
-from django.db.models.signals import post_save
 from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -199,19 +197,6 @@ class StreamTicket(models.Model):
 
     class Meta:
         ordering = ("expires",)
-
-    @staticmethod
-    def post_save(sender, **kwargs):
-        try:
-            redis = get_redis_connection("default")
-            for key in redis.scan_iter("StreamTicket:*"):
-                print(f"Deleted cache key = {key}")
-                redis.delete(key)
-        except:
-            print("Couldn't delete StreamTicket cache keys")
-
-
-post_save.connect(StreamTicket.post_save, sender=StreamTicket)
 
 
 class CustomerNote(models.Model):
