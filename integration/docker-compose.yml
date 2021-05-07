@@ -76,6 +76,8 @@ services:
     image: library/redis:5.0-alpine
     container_name: saleor-int-redis
     restart: unless-stopped
+    ports:
+      - 6379:6379
     networks:
       - live-int-backend
     volumes:
