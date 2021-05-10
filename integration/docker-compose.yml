@@ -3,7 +3,7 @@ version: '3.8'
 services:
   saleor:
     ports:
-      - 8010:8000
+      - 8020:8000
     container_name: saleor-int-api
     build:
       context: ../
