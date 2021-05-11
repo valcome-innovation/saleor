@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  saleor:
+    ports:
+      - 8020:8000
+    container_name: saleor-int-api
+    build:
+      context: ../
+      dockerfile: Dockerfile
+      args:
+        STATIC_URL: 'https://valcometv-media.s3.eu-central-1.amazonaws.com/statics/valcometv/'
+    restart: unless-stopped
+    networks:
+      - live-int-backend
+    depends_on:
+      - db
+      - redis
+    user: saleor
+    volumes:
+      - saleor-int-media:/app/media
+    env_file: integration.env
+    environment:
+      - MIGRATE=true
+      - COLLECT_STATIC=true
+      - POPULATE=true
+      - JAEGER_AGENT_HOST=jaeger
+      - DASHBOARD_URL=http://localhost:9001/
+
+  db:
+    image: edoburu/pgbouncer:1.11.0
+    user: postgres
+    container_name: saleor-int-bouncer
+    ports:
+      - 5452:5432
+    networks:
+      - live-int-backend
+    environment:
+      - DB_NAME=saleor
+      - DB_USER=saleor
+      - DB_PASSWORD=saleor
+      - DB_HOST=postgres
+      - POOL_MODE=session
+      - MAX_CLIENT_CONN=750
+      - POOL_SIZE=75
+      - RESERVE_POOL=25
+      - DEFAULT_POOL_SIZE=75
+      - RESERVE_POOL_SIZE=25
+      - RESERVE_POOL_TIMEOUT=3
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost", "-U", "saleor"]
+      retries: 30
+      interval: 5s
+      start_period: 3s
+
+  postgres:
+    image: library/postgres:11.1-alpine
+    command: postgres
+    container_name: saleor-int-db
+    restart: unless-stopped
+    user: postgres
+    networks:
+      - live-int-backend
+    volumes:
+      - saleor-int-db:/var/lib/postgresql
+    environment:
+      - POSTGRES_USER=saleor
+      - POSTGRES_PASSWORD=saleor
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "saleor"]
+      retries: 30
+      interval: 5s
+      start_period: 3s
+
+  redis:
+    image: library/redis:5.0-alpine
+    container_name: saleor-int-redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    networks:
+      - live-int-backend
+    volumes:
+      - saleor-int-redis:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      retries: 30
+      interval: 5s
+
+  worker:
+    image: saleor-worker:live
+    build:
+      context: ../
+      dockerfile: Dockerfile
+      args:
+        STATIC_URL: 'https://valcometv-media.s3.eu-central-1.amazonaws.com/statics/valcometv/'
+    container_name: saleor-int-worker
+    command: celery -A saleor --app=saleor.celeryconf:app worker --loglevel=info
+    restart: unless-stopped
+    networks:
+      - live-int-backend
+    env_file: integration.env
+    depends_on:
+      - redis
+    user: saleor
+    volumes:
+      - saleor-int-media:/app/media
+
+volumes:
+  saleor-int-db:
+    driver: local
+  saleor-int-redis:
+    driver: local
+  saleor-int-media:
+    driver: local
+
+networks:
+  live-int-backend:
+    external: true
