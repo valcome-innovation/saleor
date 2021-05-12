@@ -11,6 +11,8 @@ import jaeger_client.config
 import pkg_resources
 import sentry_sdk
 import sentry_sdk.utils
+from .streaming import streaming
+from get_docker_secret import get_docker_secret
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.utils import get_random_secret_key
 from graphql.utils import schema_printer
@@ -27,13 +29,7 @@ def get_list(text):
 
 
 def get_bool_from_env(name, default_value):
-    if name in os.environ:
-        value = os.environ[name]
-        try:
-            return ast.literal_eval(value)
-        except ValueError as e:
-            raise ValueError("{} is an invalid value for {}".format(value, name)) from e
-    return default_value
+    return streaming.get_bool_from_env(name, default_value)
 
 
 DEBUG = get_bool_from_env("DEBUG", True)
@@ -66,6 +62,7 @@ ALLOWED_CLIENT_HOSTS = get_list(ALLOWED_CLIENT_HOSTS)
 
 INTERNAL_IPS = get_list(os.environ.get("INTERNAL_IPS", "127.0.0.1"))
 
+streaming.setup_database_url()
 DATABASES = {
     "default": dj_database_url.config(
         default="postgres://saleor:saleor@localhost:5432/saleor", conn_max_age=600
@@ -134,6 +131,7 @@ USE_TZ = True
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 EMAIL_URL = os.environ.get("EMAIL_URL")
+EMAIL_URL = streaming.get_aws_email_url(email_url=EMAIL_URL)
 SENDGRID_USERNAME = os.environ.get("SENDGRID_USERNAME")
 SENDGRID_PASSWORD = os.environ.get("SENDGRID_PASSWORD")
 if not EMAIL_URL and SENDGRID_USERNAME and SENDGRID_PASSWORD:
@@ -206,7 +204,9 @@ TEMPLATES = [
 ]
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = get_docker_secret("saleor_secret_key",
+                               secrets_dir="/run/secrets",
+                               default=os.environ.get('SECRET_KEY', None))
 
 if not SECRET_KEY and DEBUG:
     warnings.warn("SECRET_KEY not configured, using a random temporary key.")
@@ -222,6 +222,7 @@ MIDDLEWARE = [
     "saleor.core.middleware.plugins",
     "saleor.core.middleware.jwt_refresh_token_middleware",
 ]
+streaming.add_middlewares(MIDDLEWARE)
 
 INSTALLED_APPS = [
     # External apps that need to go before django's
@@ -268,6 +269,7 @@ INSTALLED_APPS = [
     "django_filters",
     "phonenumber_field",
 ]
+streaming.add_apps(INSTALLED_APPS)
 
 ENABLE_DJANGO_EXTENSIONS = get_bool_from_env("ENABLE_DJANGO_EXTENSIONS", False)
 if ENABLE_DJANGO_EXTENSIONS:
@@ -402,6 +404,7 @@ PLAYGROUND_ENABLED = get_bool_from_env("PLAYGROUND_ENABLED", True)
 ALLOWED_HOSTS = get_list(os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1"))
 ALLOWED_GRAPHQL_ORIGINS = get_list(os.environ.get("ALLOWED_GRAPHQL_ORIGINS", "*"))
 
+USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Amazon S3 configuration
@@ -478,7 +481,27 @@ DEFAULT_PLACEHOLDER = "images/placeholder255x255.png"
 AUTHENTICATION_BACKENDS = [
     "saleor.core.auth_backend.JSONWebTokenBackend",
     "saleor.core.auth_backend.PluginBackend",
+    "saleor.core.auth_backend.JSONWebTokenBackend",
+    "saleor.core.auth_backend.PluginBackend",
 ]
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'social_core.pipeline.social_auth.associate_by_email',
+)
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_APPSECRET_PROOF = False
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id,name,email',
+}
 
 # CELERY SETTINGS
 CELERY_TIMEZONE = TIME_ZONE
@@ -493,7 +516,7 @@ CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", None)
 
 # Change this value if your application is running behind a proxy,
 # e.g. HTTP_CF_Connecting_IP for Cloudflare or X_FORWARDED_FOR
-REAL_IP_ENVIRON = os.environ.get("REAL_IP_ENVIRON", "REMOTE_ADDR")
+REAL_IP_ENVIRON = os.environ.get("X_FORWARDED_FOR", "REMOTE_ADDR")
 
 # Slugs for menus precreated in Django migrations
 DEFAULT_MENUS = {"top_menu_name": "navbar", "bottom_menu_name": "footer"}
@@ -536,6 +559,7 @@ PLUGINS = [
     "saleor.plugins.admin_email.plugin.AdminEmailPlugin",
     "saleor.plugins.sendgrid.plugin.SendgridEmailPlugin",
 ]
+streaming.add_plugins(PLUGINS)
 
 # Plugin discovery
 installed_plugins = pkg_resources.iter_entry_points("saleor.plugins")

@@ -14,8 +14,9 @@ services:
     restart: unless-stopped
     networks:
       - live-local-backend
-    user: saleor
     env_file: local.env
+    user: saleor
+
 
   dashboard:
     image: saleor-dashboard:live
