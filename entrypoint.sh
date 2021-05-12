@@ -30,4 +30,4 @@ if [ -v CREATE_THUMBNAILS ]; then
   python3 manage.py create_thumbnails
 fi
 
-gunicorn --bind :8000 --workers 4 --worker-class uvicorn.workers.UvicornWorker saleor.asgi:application
+gunicorn --bind :8000 --workers "$UVICORN_WORKERS" --threads "$UVICORN_THREADS" --worker-class uvicorn.workers.UvicornWorker saleor.asgi:application
