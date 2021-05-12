@@ -46,9 +46,7 @@ def add_apps(installed_apps):
 
 
 def add_plugins(plugins):
-    # TODO: PayPal plugin
-    # https://valcome-analytics.atlassian.net/browse/NWS-717?atlOrigin=eyJpIjoiYTQ3MzBmYjdkMmVlNDI1ZGE0MmE1N2Q4Mzc3MTJhZWEiLCJwIjoiaiJ9
-    # plugins.append("saleor.payment.gateways.paypal.plugin.PaypalGatewayPlugin")
+    plugins.append("saleor.payment.gateways.paypal.plugin.PaypalGatewayPlugin")
     return
 
 

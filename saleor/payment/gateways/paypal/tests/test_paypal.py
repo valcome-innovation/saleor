@@ -4,10 +4,10 @@ from math import isclose
 
 import pytest
 
-from saleor.payment import ChargeStatus, TransactionKind
-from saleor.payment.gateways.paypal import authorize, get_paypal_order_id, refund
-from saleor.payment.interface import GatewayConfig
-from saleor.payment.utils import create_payment_information
+from .....payment import ChargeStatus, TransactionKind
+from .....payment.gateways.paypal import authorize, get_paypal_order_id, refund
+from .....payment.interface import GatewayConfig
+from .....payment.utils import create_payment_information
 
 TRANSACTION_AMOUNT = Decimal(42.42)
 TRANSACTION_REFUND_AMOUNT = Decimal(24.24)

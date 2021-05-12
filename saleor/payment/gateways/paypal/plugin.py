@@ -2,9 +2,11 @@ from typing import TYPE_CHECKING
 
 from django.utils.translation import pgettext_lazy
 
-from saleor.plugins.base_plugin import BasePlugin, ConfigurationTypeField
+from ....plugins.base_plugin import BasePlugin, ConfigurationTypeField
 
+from ..utils import get_supported_currencies, require_active_plugin
 from . import GatewayConfig, authorize, capture, process_payment, refund, void
+from ....streaming import stream_settings
 
 GATEWAY_NAME = "Paypal"
 
@@ -27,9 +29,10 @@ class PaypalGatewayPlugin(BasePlugin):
     PLUGIN_NAME = GATEWAY_NAME
     PLUGIN_ID = "mirumee.payments.paypal"
     DEFAULT_CONFIGURATION = [
-        {"name": "Sandbox mode", "value": True},
-        {"name": "Client ID", "value": ""},
-        {"name": "Secret API key", "value": ""},
+        {"name": "Sandbox mode", "value": stream_settings.PAYPAL_PLUGIN_ACTIVE},
+        {"name": "Client ID", "value": stream_settings.PAYPAL_PUBLIC_KEY},
+        {"name": "Secret API key", "value": stream_settings.PAYPAL_PRIVATE_KEY},
+        {"name": "Supported currencies", "value": ""},
     ]
     CONFIG_STRUCTURE = {
         "Client ID": {
@@ -53,6 +56,12 @@ class PaypalGatewayPlugin(BasePlugin):
             ),
             "label": pgettext_lazy("Plugin label", "Sandbox mode"),
         },
+        "Supported currencies": {
+            "type": ConfigurationTypeField.STRING,
+            "help_text": "Determines currencies supported by gateway."
+            " Please enter currency codes separated by a comma.",
+            "label": "Supported currencies",
+        },
     }
 
     def __init__(self, *args, **kwargs):
@@ -62,6 +71,7 @@ class PaypalGatewayPlugin(BasePlugin):
             gateway_name=GATEWAY_NAME,
             # auto_capture=configuration["Automatic payment capture"],
             auto_capture=False,
+            supported_currencies=configuration["Supported currencies"],
             connection_params={
                 "client_id": configuration["Client ID"],
                 "private_key": configuration["Secret API key"],
@@ -71,6 +81,11 @@ class PaypalGatewayPlugin(BasePlugin):
 
     def _get_gateway_config(self):
         return self.config
+
+    @require_active_plugin
+    def get_supported_currencies(self, previous_value):
+        config = self._get_gateway_config()
+        return get_supported_currencies(config, GATEWAY_NAME)
 
     @require_active_plugin
     def authorize_payment(

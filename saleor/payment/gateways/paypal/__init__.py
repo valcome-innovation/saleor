@@ -1,7 +1,7 @@
 import decimal
 import logging
 
-from paypalcheckoutsdk.orders import OrdersCaptureRequest, OrdersCreateRequest
+from paypalcheckoutsdk.orders import OrdersCaptureRequest, OrdersCreateRequest, OrdersAuthorizeRequest
 from paypalcheckoutsdk.payments import CapturesRefundRequest
 
 from ... import TransactionKind
@@ -25,6 +25,7 @@ def get_client_token(**_):
 
     The client token can be generated in the client.
     """
+    pass
 
 
 def get_paypal_order_id(config: GatewayConfig, amount: float, currency: str) -> str:
@@ -51,19 +52,18 @@ def get_paypal_order_id(config: GatewayConfig, amount: float, currency: str) -> 
 def authorize(
     payment_information: PaymentData, config: GatewayConfig
 ) -> GatewayResponse:
+    # Currently not implemented.
+    return capture(payment_information, config)
 
-    # transaction_kind =\
-    #     TransactionKind.CAPTURE if config.auto_capture else TransactionKind.AUTH
 
+def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
     client = get_paypal_client(**config.connection_params)
     request = OrdersCaptureRequest(payment_information.token)
     try:
         response = client.execute(request)
     except IOError as ioe:
-        # if isinstance(ioe, HttpError):
-        #     # Something went wrong server-side
-        #     print(ioe.status_code)
-        error_message = getattr(ioe, "status_code", repr(ioe))
+        # Limit message length not to incur in db write error
+        error_message = ioe.message[0:255]
         return GatewayResponse(
             is_success=False,
             action_required=False,
@@ -80,20 +80,11 @@ def authorize(
             is_success=True,
             action_required=False,
             kind=TransactionKind.CAPTURE,
-            amount=decimal.Decimal(
-                response.result.purchase_units[0].payments.captures[0].amount.value
-            ),
-            currency=response.result.purchase_units[0]
-            .payments.captures[0]
-            .amount.currency_code,
+            amount=decimal.Decimal(transaction.amount.value),
+            currency=transaction.amount.currency_code,
             transaction_id=transaction.id,
             error=None,
-            # raw_response=response,
         )
-
-
-def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
-    pass
 
 
 def void(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
