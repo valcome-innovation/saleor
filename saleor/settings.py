@@ -11,7 +11,7 @@ import jaeger_client.config
 import pkg_resources
 import sentry_sdk
 import sentry_sdk.utils
-from .streaming import streaming
+from .streaming import stream_settings
 from get_docker_secret import get_docker_secret
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.utils import get_random_secret_key
@@ -29,7 +29,7 @@ def get_list(text):
 
 
 def get_bool_from_env(name, default_value):
-    return streaming.get_bool_from_env(name, default_value)
+    return stream_settings.get_bool_from_env(name, default_value)
 
 
 DEBUG = get_bool_from_env("DEBUG", True)
@@ -62,7 +62,7 @@ ALLOWED_CLIENT_HOSTS = get_list(ALLOWED_CLIENT_HOSTS)
 
 INTERNAL_IPS = get_list(os.environ.get("INTERNAL_IPS", "127.0.0.1"))
 
-streaming.setup_database_url()
+stream_settings.setup_database_url()
 DATABASES = {
     "default": dj_database_url.config(
         default="postgres://saleor:saleor@localhost:5432/saleor", conn_max_age=600
@@ -131,7 +131,7 @@ USE_TZ = True
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 EMAIL_URL = os.environ.get("EMAIL_URL")
-EMAIL_URL = streaming.get_aws_email_url(email_url=EMAIL_URL)
+EMAIL_URL = stream_settings.get_aws_email_url(email_url=EMAIL_URL)
 SENDGRID_USERNAME = os.environ.get("SENDGRID_USERNAME")
 SENDGRID_PASSWORD = os.environ.get("SENDGRID_PASSWORD")
 if not EMAIL_URL and SENDGRID_USERNAME and SENDGRID_PASSWORD:
@@ -222,7 +222,7 @@ MIDDLEWARE = [
     "saleor.core.middleware.plugins",
     "saleor.core.middleware.jwt_refresh_token_middleware",
 ]
-streaming.add_middlewares(MIDDLEWARE)
+stream_settings.add_middlewares(MIDDLEWARE)
 
 INSTALLED_APPS = [
     # External apps that need to go before django's
@@ -269,7 +269,7 @@ INSTALLED_APPS = [
     "django_filters",
     "phonenumber_field",
 ]
-streaming.add_apps(INSTALLED_APPS)
+stream_settings.add_apps(INSTALLED_APPS)
 
 ENABLE_DJANGO_EXTENSIONS = get_bool_from_env("ENABLE_DJANGO_EXTENSIONS", False)
 if ENABLE_DJANGO_EXTENSIONS:
@@ -559,7 +559,7 @@ PLUGINS = [
     "saleor.plugins.admin_email.plugin.AdminEmailPlugin",
     "saleor.plugins.sendgrid.plugin.SendgridEmailPlugin",
 ]
-streaming.add_plugins(PLUGINS)
+stream_settings.add_plugins(PLUGINS)
 
 # Plugin discovery
 installed_plugins = pkg_resources.iter_entry_points("saleor.plugins")
