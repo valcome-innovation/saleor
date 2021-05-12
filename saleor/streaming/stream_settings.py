@@ -43,6 +43,7 @@ def add_middlewares(middlewares):
 def add_apps(installed_apps):
     installed_apps.append("saleor.stripe_webhooks")
     installed_apps.append("social_django")
+    return
 
 
 def add_plugins(plugins):
