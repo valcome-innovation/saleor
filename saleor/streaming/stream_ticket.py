@@ -1,7 +1,6 @@
 from django.core.exceptions import ValidationError
 
 from .models import StreamTicket
-from ..account.models import User
 from ..core.models import ModelWithMetadata
 from ..order.error_codes import OrderErrorCode
 from ..order.models import Order

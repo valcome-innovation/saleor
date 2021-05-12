@@ -43,6 +43,7 @@ def add_middlewares(middlewares):
 def add_apps(installed_apps):
     # TODO: enable stripe webhooks
     # installed_apps.append("saleor.stripe_webhooks")
+    installed_apps.append("saleor.streaming")
     installed_apps.append("social_django")
 
 
@@ -50,6 +51,7 @@ def add_plugins(plugins):
     # TODO: PayPal plugin
     # https://valcome-analytics.atlassian.net/browse/NWS-717?atlOrigin=eyJpIjoiYTQ3MzBmYjdkMmVlNDI1ZGE0MmE1N2Q4Mzc3MTJhZWEiLCJwIjoiaiJ9
     # plugins.append("saleor.payment.gateways.paypal.plugin.PaypalGatewayPlugin")
+    plugins.append("saleor.plugins.streaming.plugin.StreamingPlugin")
     return
 
 

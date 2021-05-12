@@ -22,7 +22,10 @@ class StreamTicket(models.Model):
         (type_name.upper(), type_name) for type_name, _ in TicketType.CHOICES
     ],)
     user = models.ForeignKey(
-        User, related_name="+", null=True, on_delete=models.SET_NULL
+        User,
+        related_name="+",
+        null=True,
+        on_delete=models.SET_NULL
     )
     version = models.IntegerField(default=1)
     game_id = models.CharField(max_length=256, blank=True, null=True)
