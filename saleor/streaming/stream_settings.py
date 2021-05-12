@@ -41,7 +41,8 @@ def add_middlewares(middlewares):
 
 
 def add_apps(installed_apps):
-    installed_apps.append("saleor.stripe_webhooks")
+    # TODO: enable stripe webhooks
+    # installed_apps.append("saleor.stripe_webhooks")
     installed_apps.append("social_django")
 
 
