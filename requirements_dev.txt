@@ -66,6 +66,7 @@ faker==8.1.3; python_version >= "3.6"
 filelock==3.0.12; python_full_version >= "3.6.1"
 flake8==3.9.2; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
 freezegun==0.3.15; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
+get-docker-secret==1.0.1
 gitdb==4.0.7; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version < "3.10" and python_version >= "3.5"
 gitpython==3.1.15; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version < "3.10" and python_version >= "3.5"
 google-api-core==1.26.3; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6"
@@ -121,6 +122,7 @@ packaging==20.9; python_version >= "3.6" and python_full_version < "3.0.0" or py
 pathspec==0.8.1; python_full_version >= "3.6.2"
 petl==1.7.4; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
 phonenumberslite==8.12.22
+paypal-checkout-serversdk==1.0.1
 pillow==8.2.0; python_version >= "3.6"
 pluggy==0.13.1; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6"
 pre-commit==2.12.1; python_full_version >= "3.6.1"
@@ -182,6 +184,7 @@ six==1.16.0; python_full_version >= "3.6.1" and python_version < "3.10" and pyth
 smmap==4.0.0; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version < "3.10" and python_version >= "3.5"
 snowballstemmer==2.1.0; python_version >= "3.6"
 soupsieve==2.2.1; python_version >= "3.6"
+social-auth-app-django==4.0.0
 sqlparse==0.4.1; python_version >= "3.6"
 starkbank-ecdsa==1.1.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
 stripe==2.56.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
