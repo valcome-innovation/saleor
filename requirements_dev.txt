@@ -121,6 +121,7 @@ opentracing==2.4.0
 packaging==20.9; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6"
 pathspec==0.8.1; python_full_version >= "3.6.2"
 petl==1.7.4; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
+paypal-checkout-serversdk==1.0.1
 phonenumberslite==8.12.22
 paypal-checkout-serversdk==1.0.1
 pillow==8.2.0; python_version >= "3.6"
