@@ -32,6 +32,7 @@ def gateway_config():
     return GatewayConfig(
         gateway_name="paypal",
         auto_capture=True,
+        supported_currencies=TRANSACTION_CURRENCY,
         connection_params={
             "client_id": "public",
             "private_key": "secret",
