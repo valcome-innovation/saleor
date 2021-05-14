@@ -10,18 +10,12 @@
             "name": "Tickets",
             "slug": "tickets",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": ""
+                },
+                "type": "paragraph"
+              }]
             },
             "parent": null,
             "background_image": "category-backgrounds/accessories_8AEdvHR.jpg",
@@ -346,23 +340,17 @@
             "description_plaintext": "Single Ticket",
             "seo_title": "",
             "seo_description": "Single Ticket - ASH",
+            "description": {
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
+            },
             "product_type": 7,
             "name": "Single Ticket - ASH",
             "slug": "single-ticket-ash",
-            "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - ASH",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
-            },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
             "charge_taxes": true,
@@ -448,18 +436,12 @@
             "name": "Single Ticket - ECB",
             "slug": "single-ticket-ecb",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - ECB",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -546,18 +528,12 @@
             "name": "Single Ticket - EHC",
             "slug": "single-ticket-ehc",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - EHC",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -644,18 +620,12 @@
             "name": "Single Ticket - FAS",
             "slug": "single-ticket-fas",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - FAS",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -742,18 +712,12 @@
             "name": "Single Ticket - GHE",
             "slug": "single-ticket-ghe",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - GHE",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -840,18 +804,12 @@
             "name": "Single Ticket - JES",
             "slug": "single-ticket-jes",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - JES",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -938,18 +896,12 @@
             "name": "Single Ticket - SWL",
             "slug": "single-ticket-swl",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - SWL",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -1036,18 +988,12 @@
             "name": "Single Ticket - KA2",
             "slug": "single-ticket-ka2",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - KA2",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -1134,18 +1080,12 @@
             "name": "Single Ticket - KEC",
             "slug": "single-ticket-kec",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - KEC",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -1232,18 +1172,12 @@
             "name": "Single Ticket - PUS",
             "slug": "single-ticket-pus",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - PUS",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -1330,18 +1264,12 @@
             "name": "Single Ticket - RBJ",
             "slug": "single-ticket-rbj",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - RBJ",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -1428,18 +1356,12 @@
             "name": "Single Ticket - RIT",
             "slug": "single-ticket-rit",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - RIT",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -1526,18 +1448,12 @@
             "name": "Single Ticket - SGC",
             "slug": "single-ticket-sgc",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - SGC",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -1624,18 +1540,12 @@
             "name": "Single Ticket - VEU",
             "slug": "single-ticket-veu",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - VEU",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -1722,18 +1632,12 @@
             "name": "Single Ticket - WSV",
             "slug": "single-ticket-wsv",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - WSV",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -1820,18 +1724,12 @@
             "name": "Single Ticket - HKO",
             "slug": "single-ticket-hko",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - HKO",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -1918,18 +1816,12 @@
             "name": "Single Ticket - KAC",
             "slug": "single-ticket-kac",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - KAC",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",
@@ -2016,18 +1908,12 @@
             "name": "Single Ticket - HCB",
             "slug": "single-ticket-hcb",
             "description": {
-                "blocks": [
-                    {
-                        "key": "",
-                        "data": {},
-                        "text": "Single Ticket - HCB",
-                        "type": "unstyled",
-                        "depth": 0,
-                        "entityRanges": [],
-                        "inlineStyleRanges": []
-                    }
-                ],
-                "entityMap": {}
+              "blocks": [{
+                "data": {
+                  "text": "Single Ticket"
+                },
+                "type": "paragraph"
+              }]
             },
             "category": 7,
             "updated_at": "2020-04-17T14:22:48.130Z",

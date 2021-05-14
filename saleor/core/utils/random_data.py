@@ -100,6 +100,11 @@ IMAGES_MAPPING = {
     63: ["saleordemoproduct_paints_03.png"],
     64: ["saleordemoproduct_paints_04.png"],
     65: ["saleordemoproduct_paints_05.png"],
+    66: ["saleordemoproduct_paints_05.png"],  # FIXME STREAMSETUP
+    67: ["saleordemoproduct_paints_05.png"],  # FIXME STREAMSETUP
+    68: ["saleordemoproduct_paints_05.png"],  # FIXME STREAMSETUP
+    69: ["saleordemoproduct_paints_05.png"],  # FIXME STREAMSETUP
+    70: ["saleordemoproduct_paints_05.png"],  # FIXME STREAMSETUP
     71: ["saleordemoproduct_fd_juice_06.png"],
     72: ["saleordemoproduct_fd_juice_06.png"],  # FIXME inproper image
     73: ["saleordemoproduct_fd_juice_05.png"],
@@ -194,14 +199,13 @@ def create_categories(categories_data, placeholder_dir):
 
 
 def create_collection_channel_listings(collection_channel_listings_data):
-    channel_USD = Channel.objects.get(currency_code="USD")
-    channel_PLN = Channel.objects.get(currency_code="PLN")
+    channel_EUR = Channel.objects.get(currency_code="EUR")
     for collection_channel_listing in collection_channel_listings_data:
         pk = collection_channel_listing["pk"]
         defaults = collection_channel_listing["fields"]
         defaults["collection_id"] = defaults.pop("collection")
         channel = defaults.pop("channel")
-        defaults["channel_id"] = channel_USD.pk if channel == 1 else channel_PLN.pk
+        defaults["channel_id"] = channel_EUR.pk
         CollectionChannelListing.objects.update_or_create(pk=pk, defaults=defaults)
 
 
