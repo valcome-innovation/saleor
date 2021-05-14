@@ -1,6 +1,10 @@
+from collections import Iterable, Iterator
+
+from astroid import List
 from django.core.exceptions import ValidationError
 
 from .models import StreamTicket
+from ..checkout.models import Checkout, CheckoutLine
 from ..core.models import ModelWithMetadata
 from ..order.error_codes import OrderErrorCode
 from ..order.models import Order
@@ -37,7 +41,7 @@ def determine_ticket_type(game_id, season_id, team_id, expires):
         )
 
 
-def validate_stream_checkout_with_product(checkout, lines):
+def validate_stream_checkout_with_product(checkout: "Checkout", lines: "list"):
     (game_id, season_id, team_id) = get_stream_meta(checkout)
     stream_ticket_type = determine_ticket_type(game_id, season_id, team_id, None)
 

@@ -53,6 +53,7 @@ class AddressQueryset(models.QuerySet):
 
 
 class Address(models.Model):
+    gender = models.CharField(max_length=256, blank=True)
     first_name = models.CharField(max_length=256, blank=True)
     last_name = models.CharField(max_length=256, blank=True)
     company_name = models.CharField(max_length=256, blank=True)
@@ -135,6 +136,7 @@ class UserManager(BaseUserManager):
 
 
 class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
+    gender = models.CharField(max_length=256, blank=True)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=256, blank=True)
     last_name = models.CharField(max_length=256, blank=True)
@@ -152,6 +154,8 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         Address, related_name="+", null=True, blank=True, on_delete=models.SET_NULL
     )
     avatar = VersatileImageField(upload_to="user-avatars", blank=True, null=True)
+    favorite_team = models.CharField(max_length=256, blank=True, null=True)
+
     jwt_token_key = models.CharField(max_length=12, default=get_random_string)
     language_code = models.CharField(
         max_length=35, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE

@@ -56,6 +56,9 @@ from .mutations.staff import (
     UserAvatarDelete,
     UserAvatarUpdate,
 )
+from .mutations.favorite_team import (
+    AccountFavoriteTeamUpdate
+)
 from .resolvers import (
     resolve_address,
     resolve_address_validation_rules,
@@ -206,6 +209,9 @@ class AccountMutations(graphene.ObjectType):
     password_change = PasswordChange.Field()
     request_email_change = RequestEmailChange.Field()
     confirm_email_change = ConfirmEmailChange.Field()
+
+    # Stream stuff
+    account_favorite_team_update = AccountFavoriteTeamUpdate.Field()
 
     # Account mutations
     account_address_create = AccountAddressCreate.Field()

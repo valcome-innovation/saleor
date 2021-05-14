@@ -17,6 +17,7 @@ from ..validators import validate_possible_number
 @pytest.mark.parametrize("country", ["CN", "PL", "US", "IE"])
 def test_address_form_for_country(country):
     data = {
+        "gender": "",
         "first_name": "John",
         "last_name": "Doe",
         "country": country,
@@ -196,6 +197,7 @@ def test_format_address_all_options(address):
 def test_address_as_data(address):
     data = address.as_data()
     assert data == {
+        "gender": "",
         "first_name": "John",
         "last_name": "Doe",
         "company_name": "Mirumee Software",

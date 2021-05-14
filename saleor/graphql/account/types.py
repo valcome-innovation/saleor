@@ -27,6 +27,7 @@ from .utils import can_user_manage_group, get_groups_which_user_can_manage
 
 
 class AddressInput(graphene.InputObjectType):
+    gender = graphene.String(description="Gender of the resident.")
     first_name = graphene.String(description="Given name.")
     last_name = graphene.String(description="Family name.")
     company_name = graphene.String(description="Company or organization.")
@@ -63,6 +64,7 @@ class Address(CountableDjangoObjectType):
             "country",
             "country_area",
             "first_name",
+            "gender",
             "id",
             "last_name",
             "phone",
@@ -241,6 +243,13 @@ class User(CountableDjangoObjectType):
     stored_payment_sources = graphene.List(
         "saleor.graphql.payment.types.PaymentSource",
         description="List of stored payment sources.",
+        channel=graphene.String(
+            description="Slug of a channel for which the data should be returned."
+        ),
+    )
+    favorite_team = graphene.String(
+        description="The favorite Team ID of the customer",
+        required=False
     )
     language_code = graphene.Field(
         LanguageCodeEnum, description="User language code.", required=True
@@ -256,6 +265,7 @@ class User(CountableDjangoObjectType):
             "default_shipping_address",
             "email",
             "first_name",
+            "gender",
             "id",
             "is_active",
             "is_staff",
@@ -356,11 +366,11 @@ class User(CountableDjangoObjectType):
 
     @staticmethod
     @traced_resolver
-    def resolve_stored_payment_sources(root: models.User, info):
+    def resolve_stored_payment_sources(root: models.User, info, channel=None):
         from .resolvers import resolve_payment_sources
 
         if root == info.context.user:
-            return resolve_payment_sources(info, root)
+            return resolve_payment_sources(info, root, channel_slug=channel)
         raise PermissionDenied()
 
     @staticmethod
