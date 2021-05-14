@@ -1,7 +1,5 @@
 import pytest
 
-from saleor.attribute import AttributeType
-from saleor.attribute.models import Attribute, AttributeValue
 from saleor.order.models import Order
 from saleor.streaming.models import StreamTicket
 from saleor.streaming.stream_ticket import create_stream_ticket_from_order

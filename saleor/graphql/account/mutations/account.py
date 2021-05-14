@@ -121,6 +121,7 @@ class AccountRegister(ModelMutation):
 
 
 class AccountInput(graphene.InputObjectType):
+    gender = graphene.String(description="Gender of the resident.")
     first_name = graphene.String(description="Given name.")
     last_name = graphene.String(description="Family name.")
     default_billing_address = AddressInput(
