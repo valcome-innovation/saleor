@@ -31,7 +31,11 @@ class StreamingPlugin(BasePlugin):
                                   lines: Optional[Iterable["CheckoutLineInfo"]],
                                   previous_value: Any):
         checkout_lines = map(lambda line: line.line, lines)
-        validate_stream_checkout_with_product(checkout_info.checkout, checkout_lines)
+        
+        validate_stream_checkout_with_product(
+            checkout_info.checkout,
+            list(checkout_lines)
+        )
 
     def order_created(self, order: "Order", previous_value: Any) -> Any:
         try:
