@@ -1,26 +1,32 @@
-from ...page.models import Page
-from random_data import create_fake_user
+from ...page.models import Page, PageType
+from ..utils import random_data
 
 
 def create_users(how_many=10):
     for dummy in range(how_many):
-        user = create_fake_user()
+        user = random_data.create_fake_user()
         yield "User: %s" % (user.email,)
 
 
-def create_page(title, slug):
-    content = """
-    <h2>E-commerce for the PWA era</h2>
-    <h3>A modular, high performance e-commerce storefront built with GraphQL,
-        Django, and ReactJS.</h3>
-    <p>Saleor is a rapidly-growing open source e-commerce platform that has served
-       high-volume companies from branches like publishing and apparel since 2012.
-       Based on Python and Django, the latest major update introduces a modular
-       front end with a GraphQL API and storefront and dashboard written in React
-       to make Saleor a full-functionality open source e-commerce.</p>
-    <p><a href="https://github.com/mirumee/saleor">Get Saleor today!</a></p>
-    """
-    content_json = {
+def create_page_type(pk, title, slug):
+    data = {
+        "pk": pk,
+        "fields": {
+            "private_metadata": {},
+            "metadata": {},
+            "name": title,
+            "slug": slug,
+        },
+    }
+
+    page_type, _ = PageType.objects.update_or_create(
+        pk=pk, **data["fields"]
+    )
+    yield "Page type %s created" % page_type.slug
+
+
+def create_page(pk, title, slug):
+    content = {
         "blocks": [
             {
                 "key": "",
@@ -93,8 +99,8 @@ def create_page(title, slug):
         },
     }
     page_data = {
+        "page_type_id": pk,
         "content": content,
-        "content_json": content_json,
         "title": title,
         "is_published": True,
     }

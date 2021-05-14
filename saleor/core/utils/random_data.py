@@ -262,14 +262,13 @@ def create_products(products_data, placeholder_dir, create_images):
 
 
 def create_product_channel_listings(product_channel_listings_data):
-    channel_USD = Channel.objects.get(currency_code="USD")
-    channel_PLN = Channel.objects.get(currency_code="PLN")
+    channel_EUR = Channel.objects.get(currency_code="EUR")
     for product_channel_listing in product_channel_listings_data:
         pk = product_channel_listing["pk"]
         defaults = product_channel_listing["fields"]
         defaults["product_id"] = defaults.pop("product")
         channel = defaults.pop("channel")
-        defaults["channel_id"] = channel_USD.pk if channel == 1 else channel_PLN.pk
+        defaults["channel_id"] = channel_EUR.pk
         ProductChannelListing.objects.update_or_create(pk=pk, defaults=defaults)
 
 
@@ -393,9 +392,9 @@ def set_field_as_money(defaults, field):
         defaults[field] = Money(defaults[amount_field], DEFAULT_CURRENCY)
 
 
-def create_products_by_schema(placeholder_dir, create_images):
+def create_products_by_schema(placeholder_dir, create_images, data_json="populatedb_data.json"):
     path = os.path.join(
-        settings.PROJECT_ROOT, "saleor", "static", "populatedb_data.json"
+        settings.PROJECT_ROOT, "saleor", "static", data_json
     )
     with open(path) as f:
         db_items = json.load(f)
