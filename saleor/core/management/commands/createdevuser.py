@@ -44,6 +44,3 @@ class Command(BaseCommand):
 
         msg = create_user({"email": "season@mail.com", "password": "passwerd"})
         self.stdout.write(msg)
-
-
-

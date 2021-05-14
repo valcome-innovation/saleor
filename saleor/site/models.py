@@ -119,3 +119,7 @@ class SiteSettingsTranslation(models.Model):
 
     def __str__(self):
         return self.site_settings.site.name
+
+
+class AuthenticationBackends:
+    pass

@@ -15,13 +15,12 @@
     "url": "https://github.com/mirumee/saleor/issues"
   },
   "homepage": "http://saleor.io/",
-  "dependencies": {},
   "devDependencies": {
     "@release-it/bumper": "^2.0.0",
     "release-it": "^14.5.0"
   },
   "scripts": {
-    "build-schema": "python manage.py get_graphql_schema > saleor/graphql/schema.graphql",
+    "build-schema": "python3 manage.py get_graphql_schema > saleor/graphql/schema.graphql",
     "release": "release-it"
   }
 }
