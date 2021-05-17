@@ -312,15 +312,14 @@ def create_product_variants(variants_data, create_images):
 
 
 def create_product_variant_channel_listings(product_variant_channel_listings_data):
-    channel_USD = Channel.objects.get(currency_code="USD")
-    channel_PLN = Channel.objects.get(currency_code="PLN")
+    channel_EUR = Channel.objects.get(currency_code="EUR")
     for variant_channel_listing in product_variant_channel_listings_data:
         pk = variant_channel_listing["pk"]
         defaults = variant_channel_listing["fields"]
 
         defaults["variant_id"] = defaults.pop("variant")
         channel = defaults.pop("channel")
-        defaults["channel_id"] = channel_USD.pk if channel == 1 else channel_PLN.pk
+        defaults["channel_id"] = channel_EUR.pk
         ProductVariantChannelListing.objects.update_or_create(pk=pk, defaults=defaults)
 
 

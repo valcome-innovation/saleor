@@ -378,13 +378,10 @@
             "metadata": {},
             "sku": "100",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 62,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
-            "weight": "1.0:kg"
+            "weight": "1.0:kg",
+            "default": true
         }
     },
     {
@@ -470,12 +467,9 @@
             "metadata": {},
             "sku": "101",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 63,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -562,12 +556,9 @@
             "metadata": {},
             "sku": "102",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 64,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -654,12 +645,9 @@
             "metadata": {},
             "sku": "103",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 65,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -746,12 +734,9 @@
             "metadata": {},
             "sku": "104",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 66,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -838,12 +823,9 @@
             "metadata": {},
             "sku": "105",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 67,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -930,12 +912,9 @@
             "metadata": {},
             "sku": "106",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 68,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -1022,12 +1001,9 @@
             "metadata": {},
             "sku": "107",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 69,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -1114,12 +1090,9 @@
             "metadata": {},
             "sku": "108",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 70,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -1206,12 +1179,9 @@
             "metadata": {},
             "sku": "109",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 71,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -1298,12 +1268,9 @@
             "metadata": {},
             "sku": "110",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 72,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -1390,12 +1357,8 @@
             "metadata": {},
             "sku": "111",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 73,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
             "weight": "1.0:kg"
         }
     },
@@ -1482,12 +1445,9 @@
             "metadata": {},
             "sku": "112",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 74,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -1574,12 +1534,9 @@
             "metadata": {},
             "sku": "113",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 75,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -1666,12 +1623,9 @@
             "metadata": {},
             "sku": "114",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 76,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -1758,12 +1712,9 @@
             "metadata": {},
             "sku": "115",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 77,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -1850,12 +1801,9 @@
             "metadata": {},
             "sku": "116",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "4.99",
             "product": 78,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "4.99",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
@@ -1942,12 +1890,9 @@
             "metadata": {},
             "sku": "117",
             "name": "Single",
-            "currency": "EUR",
-            "price_override_amount": "6.90",
             "product": 79,
             "track_inventory": false,
-            "quantity": 999999,
-            "cost_price_amount": "6.90",
+            "default": true,
             "weight": "1.0:kg"
         }
     },
