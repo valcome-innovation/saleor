@@ -27,6 +27,7 @@ from . import (
     get_taxed_shipping_price,
     get_taxes_for_country,
 )
+from ...streaming import stream_settings
 
 if TYPE_CHECKING:
     # flake8: noqa
@@ -50,7 +51,7 @@ class VatlayerPlugin(BasePlugin):
     PLUGIN_NAME = "Vatlayer"
     META_CODE_KEY = "vatlayer.code"
     META_DESCRIPTION_KEY = "vatlayer.description"
-
+    DEFAULT_ACTIVE = stream_settings.VATLAYER_PLUGIN_ACTIVE
     DEFAULT_CONFIGURATION = [
         {"name": "Access key", "value": None},
         {"name": "origin_country", "value": None},

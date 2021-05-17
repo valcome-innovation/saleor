@@ -28,11 +28,12 @@ def require_active_plugin(fn):
 class PaypalGatewayPlugin(BasePlugin):
     PLUGIN_NAME = GATEWAY_NAME
     PLUGIN_ID = "mirumee.payments.paypal"
+    DEFAULT_ACTIVE = stream_settings.PAYPAL_PLUGIN_ACTIVE
     DEFAULT_CONFIGURATION = [
         {"name": "Sandbox mode", "value": stream_settings.PAYPAL_PLUGIN_ACTIVE},
         {"name": "Client ID", "value": stream_settings.PAYPAL_PUBLIC_KEY},
         {"name": "Secret API key", "value": stream_settings.PAYPAL_PRIVATE_KEY},
-        {"name": "Supported currencies", "value": ""},
+        {"name": "Supported currencies", "value": stream_settings.DEFAULT_CURRENCY},
     ]
     CONFIG_STRUCTURE = {
         "Client ID": {
