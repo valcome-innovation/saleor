@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, List
 
 from saleor.plugins.base_plugin import BasePlugin, ConfigurationTypeField
+from ....streaming import stream_settings
 
 from ..utils import get_supported_currencies, require_active_plugin
 from . import (
@@ -24,12 +25,13 @@ if TYPE_CHECKING:
 class StripeGatewayPlugin(BasePlugin):
     PLUGIN_NAME = GATEWAY_NAME
     PLUGIN_ID = "mirumee.payments.stripe"
+    DEFAULT_ACTIVE = stream_settings.STRIPE_PLUGIN_ACTIVE
     DEFAULT_CONFIGURATION = [
-        {"name": "Public API key", "value": None},
-        {"name": "Secret API key", "value": None},
+        {"name": "Public API key", "value": stream_settings.STRIPE_PUBLIC_KEY},
+        {"name": "Secret API key", "value": stream_settings.STRIPE_PRIVATE_KEY},
         {"name": "Store customers card", "value": False},
         {"name": "Automatic payment capture", "value": True},
-        {"name": "Supported currencies", "value": ""},
+        {"name": "Supported currencies", "value": stream_settings.DEFAULT_CURRENCY},
     ]
 
     CONFIG_STRUCTURE = {

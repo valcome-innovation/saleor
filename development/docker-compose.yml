@@ -12,6 +12,8 @@ services:
       args:
         STATIC_URL: 'https://valcometv-media.s3.eu-central-1.amazonaws.com/statics/valcometv/'
     restart: unless-stopped
+    volumes:
+      - live-local-media
     networks:
       - live-local-backend
     env_file: local.env
@@ -50,10 +52,17 @@ services:
     container_name: live-worker-local
     command: celery -A saleor --app=saleor.celeryconf:app worker --loglevel=info
     restart: unless-stopped
+    volumes:
+      - live-local-media
     networks:
       - live-local-backend
     env_file: local.env
     user: saleor
+
+
+volumes:
+  live-local-media:
+    driver: local
 
 networks:
   live-local-backend:
