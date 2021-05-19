@@ -5,8 +5,8 @@ import boto3.exceptions
 import logging
 
 from django.core.management.utils import get_random_secret_key
-from django.conf import settings
 from .stream_ticket import from_meta, determine_ticket_type, get_stream_meta
+from ..streaming import stream_settings
 from ..order.models import Order
 
 logger = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ def create_user_watch_log(user_id: str, game_id: str, ticket_type: str):
 
 def put_stream_record(kinesis, user_watch_log):
     kinesis.put_record(
-        StreamName=settings.AWS_KINESIS_STREAM_NAME,
+        StreamName=stream_settings.AWS_KINESIS_STREAM_NAME,
         PartitionKey=get_random_secret_key(),
         Data=encode(user_watch_log)
     )

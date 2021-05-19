@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.utils.functional import SimpleLazyObject
 from django.utils.translation import get_language
 
+from ..streaming import stream_settings
 from ..discount.utils import fetch_discounts
 from ..plugins.manager import get_plugins_manager
 from . import analytics
@@ -111,7 +112,8 @@ def jwt_refresh_token_middleware(get_response):
                 jwt_refresh_token,
                 expires=expires,
                 httponly=True,  # protects token from leaking
-                secure=not settings.DEBUG,
+                secure=True,     # VALCOME
+                samesite="None"  # VALCOME
             )
         return response
 
