@@ -43,27 +43,27 @@ def add_middlewares(middlewares):
 def add_apps(installed_apps):
     # TODO: enable stripe webhooks
     # installed_apps.append("saleor.stripe_webhooks")
-    installed_apps.append("saleor.streaming")
     installed_apps.append("social_django")
-    return
+    installed_apps.append("saleor.streaming")
+
+
+def add_backends(backends):
+    backends.append("social_core.backends.google.GoogleOAuth2")
+    backends.append("social_core.backends.facebook.FacebookOAuth2")
 
 
 def add_plugins(plugins):
     plugins.append("saleor.payment.gateways.paypal.plugin.PaypalGatewayPlugin")
     plugins.append("saleor.plugins.streaming.plugin.StreamingPlugin")
-    return
+    plugins.append("saleor.plugins.social_auth.plugin.SocialAuthPlugin")
 
 
 APP_ID = os.environ.get("APP_ID", None)
 AWS_KINESIS_STREAM_NAME = os.environ.get("AWS_KINESIS_STREAM_NAME", None)
-
-# social auth
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", None)
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", None)
-SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get("SOCIAL_AUTH_FACEBOOK_KEY", None)
-SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get("SOCIAL_AUTH_FACEBOOK_SECRET", None)
-
 DEFAULT_CURRENCY = os.environ.get("DEFAULT_CURRENCY")
+
+# Social Auth
+SOCIAL_PLUGIN_ACTIVE = get_bool_from_env("STRIPE_PLUGIN_ACTIVE", False)
 
 # Stripe
 STRIPE_PLUGIN_ACTIVE = get_bool_from_env("STRIPE_PLUGIN_ACTIVE", False)

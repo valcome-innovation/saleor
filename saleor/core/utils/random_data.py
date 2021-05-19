@@ -199,13 +199,12 @@ def create_categories(categories_data, placeholder_dir):
 
 
 def create_collection_channel_listings(collection_channel_listings_data):
-    channel_EUR = Channel.objects.get(currency_code="EUR")
     for collection_channel_listing in collection_channel_listings_data:
         pk = collection_channel_listing["pk"]
         defaults = collection_channel_listing["fields"]
         defaults["collection_id"] = defaults.pop("collection")
         channel = defaults.pop("channel")
-        defaults["channel_id"] = channel_EUR.pk
+        defaults["channel_id"] = Channel.objects.get(currency_code=channel).id
         CollectionChannelListing.objects.update_or_create(pk=pk, defaults=defaults)
 
 
@@ -266,13 +265,12 @@ def create_products(products_data, placeholder_dir, create_images):
 
 
 def create_product_channel_listings(product_channel_listings_data):
-    channel_EUR = Channel.objects.get(currency_code="EUR")
     for product_channel_listing in product_channel_listings_data:
         pk = product_channel_listing["pk"]
         defaults = product_channel_listing["fields"]
         defaults["product_id"] = defaults.pop("product")
         channel = defaults.pop("channel")
-        defaults["channel_id"] = channel_EUR.pk
+        defaults["channel_id"] = Channel.objects.get(currency_code=channel).id
         ProductChannelListing.objects.update_or_create(pk=pk, defaults=defaults)
 
 
@@ -312,14 +310,13 @@ def create_product_variants(variants_data, create_images):
 
 
 def create_product_variant_channel_listings(product_variant_channel_listings_data):
-    channel_EUR = Channel.objects.get(currency_code="EUR")
     for variant_channel_listing in product_variant_channel_listings_data:
         pk = variant_channel_listing["pk"]
         defaults = variant_channel_listing["fields"]
 
         defaults["variant_id"] = defaults.pop("variant")
         channel = defaults.pop("channel")
-        defaults["channel_id"] = channel_EUR.pk
+        defaults["channel_id"] = Channel.objects.get(currency_code=channel).id
         ProductVariantChannelListing.objects.update_or_create(pk=pk, defaults=defaults)
 
 
