@@ -3,28 +3,28 @@
         "model": "product.category",
         "pk": 7,
         "fields": {
-            "private_metadata": {},
-            "metadata": {},
-            "seo_title": "",
-            "seo_description": "",
-            "name": "Tickets",
-            "slug": "tickets",
-            "description": {
-              "blocks": [{
-                "data": {
-                  "text": ""
-                },
-                "type": "paragraph"
-              }]
-            },
-            "parent": null,
-            "background_image": "category-backgrounds/accessories_8AEdvHR.jpg",
-            "background_image_alt": "",
-            "lft": 1,
-            "rght": 6,
-            "tree_id": 1,
-            "level": 0
-        }
+          "private_metadata": {},
+          "metadata": {},
+          "seo_title": "",
+          "seo_description": "",
+          "name": "Tickets",
+          "slug": "tickets",
+          "description": {
+            "blocks": [{
+              "data": {
+                "text": ""
+              },
+              "type": "paragraph"
+            }]
+          },
+          "parent": null,
+          "background_image": "category-backgrounds/accessories_8AEdvHR.jpg",
+          "background_image_alt": "",
+          "lft": 1,
+          "rght": 8,
+          "tree_id": 1,
+          "level": 0
+      }
     },
     {
         "model": "product.producttype",
@@ -387,6 +387,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -498,6 +499,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -609,6 +611,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -720,6 +723,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -770,7 +774,6 @@
             ]
         }
     },
-
     {
         "model": "attribute.assignedvariantattribute",
         "pk": 9,
@@ -832,6 +835,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -943,6 +947,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1054,6 +1059,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1165,6 +1171,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1276,6 +1283,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1387,6 +1395,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1498,6 +1507,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1609,6 +1619,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1719,6 +1730,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1830,6 +1842,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1941,6 +1954,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -2052,6 +2066,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -2163,6 +2178,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -2274,6 +2290,7 @@
         "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },

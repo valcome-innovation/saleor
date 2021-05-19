@@ -37,7 +37,7 @@ class Command(BaseCommand):
 
         add_address_to_admin(credentials["email"])
 
-        self.create_info_pages()\
+        self.create_info_pages()
 
         channel = create_channel("Streaming Channel", "EUR")
         self.stdout.write(channel)
