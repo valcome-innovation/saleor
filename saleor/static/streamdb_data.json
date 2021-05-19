@@ -3,28 +3,28 @@
         "model": "product.category",
         "pk": 7,
         "fields": {
-            "private_metadata": {},
-            "metadata": {},
-            "seo_title": "",
-            "seo_description": "",
-            "name": "Tickets",
-            "slug": "tickets",
-            "description": {
-              "blocks": [{
-                "data": {
-                  "text": ""
-                },
-                "type": "paragraph"
-              }]
-            },
-            "parent": null,
-            "background_image": "category-backgrounds/accessories_8AEdvHR.jpg",
-            "background_image_alt": "",
-            "lft": 1,
-            "rght": 6,
-            "tree_id": 1,
-            "level": 0
-        }
+          "private_metadata": {},
+          "metadata": {},
+          "seo_title": "",
+          "seo_description": "",
+          "name": "Tickets",
+          "slug": "tickets",
+          "description": {
+            "blocks": [{
+              "data": {
+                "text": ""
+              },
+              "type": "paragraph"
+            }]
+          },
+          "parent": null,
+          "background_image": "category-backgrounds/accessories_8AEdvHR.jpg",
+          "background_image_alt": "",
+          "lft": 1,
+          "rght": 8,
+          "tree_id": 1,
+          "level": 0
+      }
     },
     {
         "model": "product.producttype",
@@ -384,9 +384,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 62,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -409,7 +410,7 @@
       "pk": 1,
       "fields": {
         "variant": 172,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -495,9 +496,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 63,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -520,7 +522,7 @@
       "pk": 2,
       "fields": {
         "variant": 173,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -606,9 +608,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 64,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -631,7 +634,7 @@
       "pk": 3,
       "fields": {
         "variant": 174,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -717,9 +720,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 65,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -742,7 +746,7 @@
       "pk": 4,
       "fields": {
         "variant": 175,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -770,7 +774,6 @@
             ]
         }
     },
-
     {
         "model": "attribute.assignedvariantattribute",
         "pk": 9,
@@ -829,9 +832,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 66,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -854,7 +858,7 @@
       "pk": 5,
       "fields": {
         "variant": 176,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -940,9 +944,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 67,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -965,7 +970,7 @@
       "pk": 6,
       "fields": {
         "variant": 177,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -1051,9 +1056,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 68,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1076,7 +1082,7 @@
       "pk": 7,
       "fields": {
         "variant": 178,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -1162,9 +1168,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 69,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1187,7 +1194,7 @@
       "pk": 8,
       "fields": {
         "variant": 179,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -1273,9 +1280,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 70,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1298,7 +1306,7 @@
       "pk": 9,
       "fields": {
         "variant": 180,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -1384,9 +1392,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 71,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1409,7 +1418,7 @@
       "pk": 10,
       "fields": {
         "variant": 181,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -1495,9 +1504,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 72,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1520,7 +1530,7 @@
       "pk": 11,
       "fields": {
         "variant": 182,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -1606,9 +1616,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 73,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1630,7 +1641,7 @@
       "pk": 12,
       "fields": {
         "variant": 183,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -1716,9 +1727,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 74,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1741,7 +1753,7 @@
       "pk": 13,
       "fields": {
         "variant": 184,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -1827,9 +1839,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 75,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1852,7 +1865,7 @@
       "pk": 14,
       "fields": {
         "variant": 185,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -1938,9 +1951,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 76,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -1963,7 +1977,7 @@
       "pk": 15,
       "fields": {
         "variant": 186,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -2049,9 +2063,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 77,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -2074,7 +2089,7 @@
       "pk": 16,
       "fields": {
         "variant": 187,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -2160,9 +2175,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 78,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -2185,7 +2201,7 @@
       "pk": 17,
       "fields": {
         "variant": 188,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"
@@ -2271,9 +2287,10 @@
         "publication_date": "2020-01-01",
         "is_published": true,
         "product": 79,
-        "channel": 1,
+        "channel": "EUR",
         "visible_in_listings": true,
         "available_for_purchase": "2020-08-31",
+        "discounted_price_amount": "4.900",
         "currency": "EUR"
       }
     },
@@ -2296,7 +2313,7 @@
       "pk": 18,
       "fields": {
         "variant": 189,
-        "channel": 1,
+        "channel": "EUR",
         "currency": "EUR",
         "price_amount": "4.900",
         "cost_price_amount": "4.900"

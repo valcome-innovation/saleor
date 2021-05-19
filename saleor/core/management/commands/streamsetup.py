@@ -38,8 +38,9 @@ class Command(BaseCommand):
         add_address_to_admin(credentials["email"])
 
         self.create_info_pages()
-        self.stdout.write(
-            create_channel("Streaming Channel", "EUR"))
+
+        channel = create_channel("Streaming Channel", "EUR")
+        self.stdout.write(channel)
 
         create_products_by_schema(placeholder_dir=self.placeholders_dir,
                                   create_images=False,

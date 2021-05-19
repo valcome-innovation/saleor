@@ -1598,7 +1598,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 72,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1611,7 +1611,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 74,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1624,7 +1624,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 122,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": false,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1637,7 +1637,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 79,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1650,7 +1650,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 115,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1663,7 +1663,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 116,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1676,7 +1676,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 73,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1689,7 +1689,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 76,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1702,7 +1702,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 89,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1715,7 +1715,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 85,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1728,7 +1728,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 78,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1741,7 +1741,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 65,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2021-08-31",
       "currency": "USD"
@@ -1754,7 +1754,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 123,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": false,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1767,7 +1767,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 120,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1780,7 +1780,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 64,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2021-08-31",
       "currency": "USD"
@@ -1793,7 +1793,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 117,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1806,7 +1806,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 61,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1819,7 +1819,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 121,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": false,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1832,7 +1832,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 71,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1845,7 +1845,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 75,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1858,7 +1858,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 107,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1871,7 +1871,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 108,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1884,7 +1884,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 109,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1897,7 +1897,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 110,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1910,7 +1910,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 77,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1923,7 +1923,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 63,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2021-08-31",
       "currency": "USD"
@@ -1936,7 +1936,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 81,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1949,7 +1949,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 119,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1962,7 +1962,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 84,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1975,7 +1975,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 83,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -1988,7 +1988,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 62,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2021-08-31",
       "currency": "USD"
@@ -2001,7 +2001,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 112,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -2014,7 +2014,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 111,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -2027,7 +2027,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 114,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -2040,7 +2040,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 113,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -2053,7 +2053,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 124,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": false,
       "available_for_purchase": "2021-08-31",
       "currency": "USD"
@@ -2066,7 +2066,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 118,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -2079,7 +2079,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 86,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -2092,7 +2092,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 88,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -2105,7 +2105,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 82,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -2118,7 +2118,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 87,
-      "channel": 1,
+      "channel": "USD",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "USD"
@@ -2131,7 +2131,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 72,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2144,7 +2144,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 74,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2157,7 +2157,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 122,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": false,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2170,7 +2170,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 79,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2183,7 +2183,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 115,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2196,7 +2196,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 116,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2209,7 +2209,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 73,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2222,7 +2222,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 76,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2235,7 +2235,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 89,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2248,7 +2248,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 85,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2261,7 +2261,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 78,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2274,7 +2274,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 65,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2021-08-31",
       "currency": "PLN"
@@ -2287,7 +2287,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 123,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": false,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2300,7 +2300,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 120,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2313,7 +2313,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 64,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2021-08-31",
       "currency": "PLN"
@@ -2326,7 +2326,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 117,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2339,7 +2339,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 61,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2352,7 +2352,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 121,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": false,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2365,7 +2365,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 71,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2378,7 +2378,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 75,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2391,7 +2391,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 107,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2404,7 +2404,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 108,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2417,7 +2417,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 109,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2430,7 +2430,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 110,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2443,7 +2443,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 77,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2456,7 +2456,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 63,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2021-08-31",
       "currency": "PLN"
@@ -2469,7 +2469,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 81,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": false,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2482,7 +2482,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "product": 119,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": false,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2495,7 +2495,7 @@
       "publication_date": "2020-01-01",
       "is_published": false,
       "product": 84,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": true,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -2508,7 +2508,7 @@
       "publication_date": "2020-01-01",
       "is_published": false,
       "product": 83,
-      "channel": 2,
+      "channel": "PLN",
       "visible_in_listings": false,
       "available_for_purchase": "2020-08-31",
       "currency": "PLN"
@@ -4250,7 +4250,7 @@
     "pk": 1,
     "fields": {
       "variant": 314,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4261,7 +4261,7 @@
     "pk": 2,
     "fields": {
       "variant": 278,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4272,7 +4272,7 @@
     "pk": 3,
     "fields": {
       "variant": 253,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4283,7 +4283,7 @@
     "pk": 4,
     "fields": {
       "variant": 193,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": null
@@ -4294,7 +4294,7 @@
     "pk": 5,
     "fields": {
       "variant": 194,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": null
@@ -4305,7 +4305,7 @@
     "pk": 6,
     "fields": {
       "variant": 206,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.500"
@@ -4316,7 +4316,7 @@
     "pk": 7,
     "fields": {
       "variant": 301,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4327,7 +4327,7 @@
     "pk": 8,
     "fields": {
       "variant": 270,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4338,7 +4338,7 @@
     "pk": 9,
     "fields": {
       "variant": 299,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4349,7 +4349,7 @@
     "pk": 10,
     "fields": {
       "variant": 269,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4360,7 +4360,7 @@
     "pk": 11,
     "fields": {
       "variant": 225,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "7.000",
       "cost_price_amount": "2.000"
@@ -4371,7 +4371,7 @@
     "pk": 12,
     "fields": {
       "variant": 285,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4382,7 +4382,7 @@
     "pk": 13,
     "fields": {
       "variant": 302,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4393,7 +4393,7 @@
     "pk": 14,
     "fields": {
       "variant": 298,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4404,7 +4404,7 @@
     "pk": 15,
     "fields": {
       "variant": 266,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4415,7 +4415,7 @@
     "pk": 16,
     "fields": {
       "variant": 209,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.500"
@@ -4426,7 +4426,7 @@
     "pk": 17,
     "fields": {
       "variant": 283,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4437,7 +4437,7 @@
     "pk": 18,
     "fields": {
       "variant": 256,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4448,7 +4448,7 @@
     "pk": 19,
     "fields": {
       "variant": 286,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4459,7 +4459,7 @@
     "pk": 20,
     "fields": {
       "variant": 222,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "7.000",
       "cost_price_amount": "2.000"
@@ -4470,7 +4470,7 @@
     "pk": 21,
     "fields": {
       "variant": 255,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4481,7 +4481,7 @@
     "pk": 22,
     "fields": {
       "variant": 259,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4492,7 +4492,7 @@
     "pk": 23,
     "fields": {
       "variant": 252,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4503,7 +4503,7 @@
     "pk": 24,
     "fields": {
       "variant": 306,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4514,7 +4514,7 @@
     "pk": 25,
     "fields": {
       "variant": 293,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4525,7 +4525,7 @@
     "pk": 26,
     "fields": {
       "variant": 313,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4536,7 +4536,7 @@
     "pk": 27,
     "fields": {
       "variant": 267,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4547,7 +4547,7 @@
     "pk": 28,
     "fields": {
       "variant": 312,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4558,7 +4558,7 @@
     "pk": 29,
     "fields": {
       "variant": 268,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4569,7 +4569,7 @@
     "pk": 30,
     "fields": {
       "variant": 277,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4580,7 +4580,7 @@
     "pk": 31,
     "fields": {
       "variant": 214,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.000"
@@ -4591,7 +4591,7 @@
     "pk": 32,
     "fields": {
       "variant": 242,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "20.000"
@@ -4602,7 +4602,7 @@
     "pk": 33,
     "fields": {
       "variant": 243,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "20.000"
@@ -4613,7 +4613,7 @@
     "pk": 34,
     "fields": {
       "variant": 244,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "20.000"
@@ -4624,7 +4624,7 @@
     "pk": 35,
     "fields": {
       "variant": 245,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "20.000"
@@ -4635,7 +4635,7 @@
     "pk": 36,
     "fields": {
       "variant": 246,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "20.000"
@@ -4646,7 +4646,7 @@
     "pk": 37,
     "fields": {
       "variant": 284,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4657,7 +4657,7 @@
     "pk": 38,
     "fields": {
       "variant": 210,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "7.000",
       "cost_price_amount": "2.000"
@@ -4668,7 +4668,7 @@
     "pk": 39,
     "fields": {
       "variant": 310,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4679,7 +4679,7 @@
     "pk": 40,
     "fields": {
       "variant": 288,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4690,7 +4690,7 @@
     "pk": 41,
     "fields": {
       "variant": 211,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.000"
@@ -4701,7 +4701,7 @@
     "pk": 42,
     "fields": {
       "variant": 203,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.500"
@@ -4712,7 +4712,7 @@
     "pk": 43,
     "fields": {
       "variant": 305,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4723,7 +4723,7 @@
     "pk": 44,
     "fields": {
       "variant": 264,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4734,7 +4734,7 @@
     "pk": 45,
     "fields": {
       "variant": 261,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4745,7 +4745,7 @@
     "pk": 46,
     "fields": {
       "variant": 254,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4756,7 +4756,7 @@
     "pk": 47,
     "fields": {
       "variant": 295,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4767,7 +4767,7 @@
     "pk": 48,
     "fields": {
       "variant": 208,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.000"
@@ -4778,7 +4778,7 @@
     "pk": 49,
     "fields": {
       "variant": 315,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4789,7 +4789,7 @@
     "pk": 50,
     "fields": {
       "variant": 272,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4800,7 +4800,7 @@
     "pk": 51,
     "fields": {
       "variant": 258,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4811,7 +4811,7 @@
     "pk": 52,
     "fields": {
       "variant": 304,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4822,7 +4822,7 @@
     "pk": 53,
     "fields": {
       "variant": 171,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "15.000",
       "cost_price_amount": "5.000"
@@ -4833,7 +4833,7 @@
     "pk": 54,
     "fields": {
       "variant": 172,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "35.000",
       "cost_price_amount": "10.000"
@@ -4844,7 +4844,7 @@
     "pk": 55,
     "fields": {
       "variant": 173,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "49.000",
       "cost_price_amount": "20.000"
@@ -4855,7 +4855,7 @@
     "pk": 56,
     "fields": {
       "variant": 282,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4866,7 +4866,7 @@
     "pk": 57,
     "fields": {
       "variant": 308,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4877,7 +4877,7 @@
     "pk": 58,
     "fields": {
       "variant": 223,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.000"
@@ -4888,7 +4888,7 @@
     "pk": 59,
     "fields": {
       "variant": 224,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.500"
@@ -4899,7 +4899,7 @@
     "pk": 60,
     "fields": {
       "variant": 287,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4910,7 +4910,7 @@
     "pk": 61,
     "fields": {
       "variant": 215,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.500"
@@ -4921,7 +4921,7 @@
     "pk": 62,
     "fields": {
       "variant": 263,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4932,7 +4932,7 @@
     "pk": 63,
     "fields": {
       "variant": 265,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4943,7 +4943,7 @@
     "pk": 64,
     "fields": {
       "variant": 220,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.000"
@@ -4954,7 +4954,7 @@
     "pk": 65,
     "fields": {
       "variant": 300,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4965,7 +4965,7 @@
     "pk": 66,
     "fields": {
       "variant": 207,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "7.000",
       "cost_price_amount": "2.000"
@@ -4976,7 +4976,7 @@
     "pk": 67,
     "fields": {
       "variant": 296,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4987,7 +4987,7 @@
     "pk": 68,
     "fields": {
       "variant": 303,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -4998,7 +4998,7 @@
     "pk": 69,
     "fields": {
       "variant": 257,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5009,7 +5009,7 @@
     "pk": 70,
     "fields": {
       "variant": 307,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5020,7 +5020,7 @@
     "pk": 71,
     "fields": {
       "variant": 205,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.000"
@@ -5031,7 +5031,7 @@
     "pk": 72,
     "fields": {
       "variant": 292,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5042,7 +5042,7 @@
     "pk": 73,
     "fields": {
       "variant": 198,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "12.000"
@@ -5053,7 +5053,7 @@
     "pk": 74,
     "fields": {
       "variant": 197,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "20.000",
       "cost_price_amount": "11.000"
@@ -5064,7 +5064,7 @@
     "pk": 75,
     "fields": {
       "variant": 217,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.000"
@@ -5075,7 +5075,7 @@
     "pk": 76,
     "fields": {
       "variant": 311,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5086,7 +5086,7 @@
     "pk": 77,
     "fields": {
       "variant": 273,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5097,7 +5097,7 @@
     "pk": 78,
     "fields": {
       "variant": 289,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5108,7 +5108,7 @@
     "pk": 79,
     "fields": {
       "variant": 309,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5119,7 +5119,7 @@
     "pk": 80,
     "fields": {
       "variant": 213,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "7.000",
       "cost_price_amount": "2.000"
@@ -5130,7 +5130,7 @@
     "pk": 81,
     "fields": {
       "variant": 281,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5141,7 +5141,7 @@
     "pk": 82,
     "fields": {
       "variant": 291,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5152,7 +5152,7 @@
     "pk": 83,
     "fields": {
       "variant": 212,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.500"
@@ -5163,7 +5163,7 @@
     "pk": 84,
     "fields": {
       "variant": 219,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "7.000",
       "cost_price_amount": "2.000"
@@ -5174,7 +5174,7 @@
     "pk": 85,
     "fields": {
       "variant": 204,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "7.000",
       "cost_price_amount": "2.000"
@@ -5185,7 +5185,7 @@
     "pk": 86,
     "fields": {
       "variant": 276,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5196,7 +5196,7 @@
     "pk": 87,
     "fields": {
       "variant": 221,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.500"
@@ -5207,7 +5207,7 @@
     "pk": 88,
     "fields": {
       "variant": 279,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5218,7 +5218,7 @@
     "pk": 89,
     "fields": {
       "variant": 216,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "7.000",
       "cost_price_amount": "2.000"
@@ -5229,7 +5229,7 @@
     "pk": 90,
     "fields": {
       "variant": 274,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5240,7 +5240,7 @@
     "pk": 91,
     "fields": {
       "variant": 260,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5251,7 +5251,7 @@
     "pk": 92,
     "fields": {
       "variant": 275,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5262,7 +5262,7 @@
     "pk": 93,
     "fields": {
       "variant": 262,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5273,7 +5273,7 @@
     "pk": 94,
     "fields": {
       "variant": 297,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5284,7 +5284,7 @@
     "pk": 95,
     "fields": {
       "variant": 280,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5295,7 +5295,7 @@
     "pk": 96,
     "fields": {
       "variant": 250,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "20.000"
@@ -5306,7 +5306,7 @@
     "pk": 97,
     "fields": {
       "variant": 249,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": null
@@ -5317,7 +5317,7 @@
     "pk": 98,
     "fields": {
       "variant": 191,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.500"
@@ -5328,7 +5328,7 @@
     "pk": 99,
     "fields": {
       "variant": 202,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.000"
@@ -5339,7 +5339,7 @@
     "pk": 100,
     "fields": {
       "variant": 218,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.500"
@@ -5350,7 +5350,7 @@
     "pk": 101,
     "fields": {
       "variant": 248,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "20.000"
@@ -5361,7 +5361,7 @@
     "pk": 102,
     "fields": {
       "variant": 271,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5372,7 +5372,7 @@
     "pk": 103,
     "fields": {
       "variant": 195,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": null
@@ -5383,7 +5383,7 @@
     "pk": 104,
     "fields": {
       "variant": 196,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": null
@@ -5394,7 +5394,7 @@
     "pk": 105,
     "fields": {
       "variant": 290,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5405,7 +5405,7 @@
     "pk": 106,
     "fields": {
       "variant": 199,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "13.000"
@@ -5416,7 +5416,7 @@
     "pk": 107,
     "fields": {
       "variant": 192,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "7.000",
       "cost_price_amount": "2.000"
@@ -5427,7 +5427,7 @@
     "pk": 108,
     "fields": {
       "variant": 190,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "1.000"
@@ -5438,7 +5438,7 @@
     "pk": 109,
     "fields": {
       "variant": 251,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5449,7 +5449,7 @@
     "pk": 110,
     "fields": {
       "variant": 294,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5460,7 +5460,7 @@
     "pk": 111,
     "fields": {
       "variant": 247,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "10.000"
@@ -5471,7 +5471,7 @@
     "pk": 112,
     "fields": {
       "variant": 177,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "15.000",
       "cost_price_amount": "5.000"
@@ -5482,7 +5482,7 @@
     "pk": 113,
     "fields": {
       "variant": 178,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "25.000",
       "cost_price_amount": "10.000"
@@ -5493,7 +5493,7 @@
     "pk": 114,
     "fields": {
       "variant": 179,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "49.000",
       "cost_price_amount": "20.000"
@@ -5504,7 +5504,7 @@
     "pk": 115,
     "fields": {
       "variant": 200,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "5.000",
       "cost_price_amount": "13.000"
@@ -5515,7 +5515,7 @@
     "pk": 116,
     "fields": {
       "variant": 174,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "15.000",
       "cost_price_amount": "5.000"
@@ -5526,7 +5526,7 @@
     "pk": 117,
     "fields": {
       "variant": 176,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "49.000",
       "cost_price_amount": "25.000"
@@ -5537,7 +5537,7 @@
     "pk": 118,
     "fields": {
       "variant": 175,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "25.000",
       "cost_price_amount": "10.000"
@@ -5548,7 +5548,7 @@
     "pk": 119,
     "fields": {
       "variant": 180,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "15.000",
       "cost_price_amount": "5.000"
@@ -5559,7 +5559,7 @@
     "pk": 120,
     "fields": {
       "variant": 181,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "30.000",
       "cost_price_amount": "10.000"
@@ -5570,7 +5570,7 @@
     "pk": 121,
     "fields": {
       "variant": 182,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "49.000",
       "cost_price_amount": "15.000"
@@ -5581,7 +5581,7 @@
     "pk": 122,
     "fields": {
       "variant": 183,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "15.000",
       "cost_price_amount": "5.000"
@@ -5592,7 +5592,7 @@
     "pk": 123,
     "fields": {
       "variant": 184,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "30.000",
       "cost_price_amount": "10.000"
@@ -5603,7 +5603,7 @@
     "pk": 124,
     "fields": {
       "variant": 185,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "49.000",
       "cost_price_amount": "15.000"
@@ -5614,7 +5614,7 @@
     "pk": 125,
     "fields": {
       "variant": 319,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "9.990",
       "cost_price_amount": null
@@ -5625,7 +5625,7 @@
     "pk": 126,
     "fields": {
       "variant": 320,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "9.990",
       "cost_price_amount": null
@@ -5636,7 +5636,7 @@
     "pk": 127,
     "fields": {
       "variant": 317,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "9.990",
       "cost_price_amount": null
@@ -5647,7 +5647,7 @@
     "pk": 128,
     "fields": {
       "variant": 318,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "9.990",
       "cost_price_amount": null
@@ -5658,7 +5658,7 @@
     "pk": 129,
     "fields": {
       "variant": 316,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "9.990",
       "cost_price_amount": null
@@ -5669,7 +5669,7 @@
     "pk": 130,
     "fields": {
       "variant": 321,
-      "channel": 1,
+      "channel": "USD",
       "currency": "USD",
       "price_amount": "9.990",
       "cost_price_amount": null
@@ -5680,7 +5680,7 @@
     "pk": 131,
     "fields": {
       "variant": 203,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "6.000"
@@ -5691,7 +5691,7 @@
     "pk": 132,
     "fields": {
       "variant": 204,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "28.000",
       "cost_price_amount": "8.000"
@@ -5702,7 +5702,7 @@
     "pk": 133,
     "fields": {
       "variant": 202,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "4.000"
@@ -5713,7 +5713,7 @@
     "pk": 134,
     "fields": {
       "variant": 209,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "6.000"
@@ -5724,7 +5724,7 @@
     "pk": 135,
     "fields": {
       "variant": 210,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "28.000",
       "cost_price_amount": "8.000"
@@ -5735,7 +5735,7 @@
     "pk": 136,
     "fields": {
       "variant": 208,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "4.000"
@@ -5746,7 +5746,7 @@
     "pk": 137,
     "fields": {
       "variant": 319,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "39.960",
       "cost_price_amount": null
@@ -5757,7 +5757,7 @@
     "pk": 138,
     "fields": {
       "variant": 225,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "28.000",
       "cost_price_amount": "8.000"
@@ -5768,7 +5768,7 @@
     "pk": 139,
     "fields": {
       "variant": 223,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "4.000"
@@ -5779,7 +5779,7 @@
     "pk": 140,
     "fields": {
       "variant": 224,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "6.000"
@@ -5790,7 +5790,7 @@
     "pk": 141,
     "fields": {
       "variant": 299,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5801,7 +5801,7 @@
     "pk": 142,
     "fields": {
       "variant": 298,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5812,7 +5812,7 @@
     "pk": 143,
     "fields": {
       "variant": 300,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5823,7 +5823,7 @@
     "pk": 144,
     "fields": {
       "variant": 296,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5834,7 +5834,7 @@
     "pk": 145,
     "fields": {
       "variant": 297,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5845,7 +5845,7 @@
     "pk": 146,
     "fields": {
       "variant": 301,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5856,7 +5856,7 @@
     "pk": 147,
     "fields": {
       "variant": 302,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5867,7 +5867,7 @@
     "pk": 148,
     "fields": {
       "variant": 305,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5878,7 +5878,7 @@
     "pk": 149,
     "fields": {
       "variant": 304,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5889,7 +5889,7 @@
     "pk": 150,
     "fields": {
       "variant": 303,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5900,7 +5900,7 @@
     "pk": 151,
     "fields": {
       "variant": 206,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "6.000"
@@ -5911,7 +5911,7 @@
     "pk": 152,
     "fields": {
       "variant": 207,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "28.000",
       "cost_price_amount": "8.000"
@@ -5922,7 +5922,7 @@
     "pk": 153,
     "fields": {
       "variant": 205,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "4.000"
@@ -5933,7 +5933,7 @@
     "pk": 154,
     "fields": {
       "variant": 214,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "4.000"
@@ -5944,7 +5944,7 @@
     "pk": 155,
     "fields": {
       "variant": 215,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "6.000"
@@ -5955,7 +5955,7 @@
     "pk": 156,
     "fields": {
       "variant": 216,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "28.000",
       "cost_price_amount": "8.000"
@@ -5966,7 +5966,7 @@
     "pk": 157,
     "fields": {
       "variant": 253,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5977,7 +5977,7 @@
     "pk": 158,
     "fields": {
       "variant": 255,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5988,7 +5988,7 @@
     "pk": 159,
     "fields": {
       "variant": 252,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -5999,7 +5999,7 @@
     "pk": 160,
     "fields": {
       "variant": 254,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6010,7 +6010,7 @@
     "pk": 161,
     "fields": {
       "variant": 251,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6021,7 +6021,7 @@
     "pk": 162,
     "fields": {
       "variant": 198,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "48.000"
@@ -6032,7 +6032,7 @@
     "pk": 163,
     "fields": {
       "variant": 197,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "80.000",
       "cost_price_amount": "44.000"
@@ -6043,7 +6043,7 @@
     "pk": 164,
     "fields": {
       "variant": 222,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "28.000",
       "cost_price_amount": "8.000"
@@ -6054,7 +6054,7 @@
     "pk": 165,
     "fields": {
       "variant": 220,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "4.000"
@@ -6065,7 +6065,7 @@
     "pk": 166,
     "fields": {
       "variant": 221,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "6.000"
@@ -6076,7 +6076,7 @@
     "pk": 167,
     "fields": {
       "variant": 183,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "60.000",
       "cost_price_amount": "20.000"
@@ -6087,7 +6087,7 @@
     "pk": 168,
     "fields": {
       "variant": 184,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "120.000",
       "cost_price_amount": "40.000"
@@ -6098,7 +6098,7 @@
     "pk": 169,
     "fields": {
       "variant": 185,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "196.000",
       "cost_price_amount": "60.000"
@@ -6109,7 +6109,7 @@
     "pk": 170,
     "fields": {
       "variant": 320,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "39.960",
       "cost_price_amount": null
@@ -6120,7 +6120,7 @@
     "pk": 171,
     "fields": {
       "variant": 317,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "39.960",
       "cost_price_amount": null
@@ -6131,7 +6131,7 @@
     "pk": 172,
     "fields": {
       "variant": 180,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "60.000",
       "cost_price_amount": "20.000"
@@ -6142,7 +6142,7 @@
     "pk": 173,
     "fields": {
       "variant": 181,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "120.000",
       "cost_price_amount": "40.000"
@@ -6153,7 +6153,7 @@
     "pk": 174,
     "fields": {
       "variant": 182,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "196.000",
       "cost_price_amount": "60.000"
@@ -6164,7 +6164,7 @@
     "pk": 175,
     "fields": {
       "variant": 306,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6175,7 +6175,7 @@
     "pk": 176,
     "fields": {
       "variant": 310,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6186,7 +6186,7 @@
     "pk": 177,
     "fields": {
       "variant": 308,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6197,7 +6197,7 @@
     "pk": 178,
     "fields": {
       "variant": 307,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6208,7 +6208,7 @@
     "pk": 179,
     "fields": {
       "variant": 309,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6219,7 +6219,7 @@
     "pk": 180,
     "fields": {
       "variant": 171,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "60.000",
       "cost_price_amount": "20.000"
@@ -6230,7 +6230,7 @@
     "pk": 181,
     "fields": {
       "variant": 172,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "140.000",
       "cost_price_amount": "40.000"
@@ -6241,7 +6241,7 @@
     "pk": 182,
     "fields": {
       "variant": 173,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "196.000",
       "cost_price_amount": "80.000"
@@ -6252,7 +6252,7 @@
     "pk": 183,
     "fields": {
       "variant": 318,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "39.960",
       "cost_price_amount": null
@@ -6263,7 +6263,7 @@
     "pk": 184,
     "fields": {
       "variant": 191,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "6.000"
@@ -6274,7 +6274,7 @@
     "pk": 185,
     "fields": {
       "variant": 192,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "28.000",
       "cost_price_amount": "8.000"
@@ -6285,7 +6285,7 @@
     "pk": 186,
     "fields": {
       "variant": 190,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "4.000"
@@ -6296,7 +6296,7 @@
     "pk": 187,
     "fields": {
       "variant": 211,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "4.000"
@@ -6307,7 +6307,7 @@
     "pk": 188,
     "fields": {
       "variant": 213,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "28.000",
       "cost_price_amount": "8.000"
@@ -6318,7 +6318,7 @@
     "pk": 189,
     "fields": {
       "variant": 212,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "6.000"
@@ -6329,7 +6329,7 @@
     "pk": 190,
     "fields": {
       "variant": 256,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6340,7 +6340,7 @@
     "pk": 191,
     "fields": {
       "variant": 259,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6351,7 +6351,7 @@
     "pk": 192,
     "fields": {
       "variant": 258,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6362,7 +6362,7 @@
     "pk": 193,
     "fields": {
       "variant": 257,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6373,7 +6373,7 @@
     "pk": 194,
     "fields": {
       "variant": 260,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6384,7 +6384,7 @@
     "pk": 195,
     "fields": {
       "variant": 264,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6395,7 +6395,7 @@
     "pk": 196,
     "fields": {
       "variant": 261,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6406,7 +6406,7 @@
     "pk": 197,
     "fields": {
       "variant": 263,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6417,7 +6417,7 @@
     "pk": 198,
     "fields": {
       "variant": 265,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6428,7 +6428,7 @@
     "pk": 199,
     "fields": {
       "variant": 262,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6439,7 +6439,7 @@
     "pk": 200,
     "fields": {
       "variant": 270,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6450,7 +6450,7 @@
     "pk": 201,
     "fields": {
       "variant": 269,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6461,7 +6461,7 @@
     "pk": 202,
     "fields": {
       "variant": 266,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6472,7 +6472,7 @@
     "pk": 203,
     "fields": {
       "variant": 267,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6483,7 +6483,7 @@
     "pk": 204,
     "fields": {
       "variant": 268,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6494,7 +6494,7 @@
     "pk": 205,
     "fields": {
       "variant": 272,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6505,7 +6505,7 @@
     "pk": 206,
     "fields": {
       "variant": 273,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6516,7 +6516,7 @@
     "pk": 207,
     "fields": {
       "variant": 274,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6527,7 +6527,7 @@
     "pk": 208,
     "fields": {
       "variant": 275,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6538,7 +6538,7 @@
     "pk": 209,
     "fields": {
       "variant": 271,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "40.000"
@@ -6549,7 +6549,7 @@
     "pk": 210,
     "fields": {
       "variant": 217,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "4.000"
@@ -6560,7 +6560,7 @@
     "pk": 211,
     "fields": {
       "variant": 219,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "28.000",
       "cost_price_amount": "8.000"
@@ -6571,7 +6571,7 @@
     "pk": 212,
     "fields": {
       "variant": 218,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": "6.000"
@@ -6582,7 +6582,7 @@
     "pk": 213,
     "fields": {
       "variant": 177,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "60.000",
       "cost_price_amount": "20.000"
@@ -6593,7 +6593,7 @@
     "pk": 214,
     "fields": {
       "variant": 178,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "100.000",
       "cost_price_amount": "40.000"
@@ -6604,7 +6604,7 @@
     "pk": 215,
     "fields": {
       "variant": 179,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "196.000",
       "cost_price_amount": "80.000"
@@ -6615,7 +6615,7 @@
     "pk": 216,
     "fields": {
       "variant": 193,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": null
@@ -6626,7 +6626,7 @@
     "pk": 217,
     "fields": {
       "variant": 316,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "39.960",
       "cost_price_amount": null
@@ -6637,7 +6637,7 @@
     "pk": 218,
     "fields": {
       "variant": 196,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": null
@@ -6648,7 +6648,7 @@
     "pk": 219,
     "fields": {
       "variant": 195,
-      "channel": 2,
+      "channel": "PLN",
       "currency": "PLN",
       "price_amount": "20.000",
       "cost_price_amount": null
@@ -10557,7 +10557,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "collection": 1,
-      "channel": 1
+      "channel": "USD"
     }
   },
   {
@@ -10567,7 +10567,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "collection": 2,
-      "channel": 1
+      "channel": "USD"
     }
   },
   {
@@ -10577,7 +10577,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "collection": 1,
-      "channel": 2
+      "channel": "PLN"
     }
   },
   {
@@ -10587,7 +10587,7 @@
       "publication_date": null,
       "is_published": false,
       "collection": 2,
-      "channel": 2
+      "channel": "PLN"
     }
   },
   {
@@ -10597,7 +10597,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "collection": 3,
-      "channel": 1
+      "channel": "USD"
     }
   },
   {
@@ -10607,7 +10607,7 @@
       "publication_date": "2020-01-01",
       "is_published": true,
       "collection": 3,
-      "channel": 2
+      "channel": "PLN"
     }
   }
 ]

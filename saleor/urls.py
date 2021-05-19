@@ -21,6 +21,7 @@ urlpatterns = [
         handle_plugin_webhook,
         name="plugins",
     ),
+    url('', include('social_django.urls', namespace='social'))
 ]
 
 if settings.DEBUG:
