@@ -95,9 +95,11 @@ def process_payment(
     action_required = response is not None and response.action_required
     if response and response.payment_method_info:
         update_payment_method_details(payment, response)
+
+    kind = response.kind if response and response.kind else TransactionKind.CAPTURE
     return get_already_processed_transaction_or_create_new_transaction(
         payment=payment,
-        kind=TransactionKind.CAPTURE,
+        kind=kind,
         action_required=action_required,
         payment_information=payment_data,
         error_msg=error,

@@ -12,7 +12,7 @@ from ....site.models import AuthenticationBackends
 from ...utils.random_data import (
     add_address_to_admin,
     create_products_by_schema,
-    create_channel,
+    create_channel, create_address,
 )
 from ...utils.stream_data import (
     create_page,

@@ -39,6 +39,7 @@ def authorize(
     stripe_amount = get_amount_for_stripe(payment_information.amount, currency)
     future_use = "off_session" if config.store_customer else "on_session"
     customer_id = PaymentData.customer_id if payment_information.reuse_source else None
+    return_url = payment_information.data["returnUrl"] if payment_information.data else None
     shipping = (
         shipping_to_stripe_dict(payment_information.shipping)
         if payment_information.shipping
@@ -54,6 +55,7 @@ def authorize(
             span.set_tag("service.name", "stripe")
             intent = client.PaymentIntent.create(
                 payment_method=payment_information.token,
+                return_url=return_url,
                 amount=stripe_amount,
                 currency=currency,
                 confirmation_method="manual",
@@ -77,11 +79,16 @@ def authorize(
         response = _error_response(kind=kind, exc=exc, payment_info=payment_information)
     else:
         success = intent.status in ("succeeded", "requires_capture", "requires_action")
+        kind = get_transaction_kind(status=intent.status, fallback=kind)
         response = _success_response(
             intent=intent, kind=kind, success=success, customer_id=customer_id
         )
         response = fill_card_details(intent, response)
     return response
+
+
+def get_transaction_kind(status, fallback):
+    return TransactionKind.ACTION_TO_CONFIRM if status == "requires_action" else fallback
 
 
 def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
@@ -137,6 +144,12 @@ def confirm(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
         )
         response = fill_card_details(intent, response)
     return response
+
+
+def is_fully_charged(intent):
+    succeeded = intent.status == "succeeded"
+    paid = intent.amount == intent.amount_received
+    return succeeded and paid
 
 
 def refund(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
@@ -261,6 +274,7 @@ def _success_response(
     return GatewayResponse(
         is_success=success,
         action_required=intent.status == "requires_action",
+        action_required_data=intent.next_action,
         transaction_id=intent.id,
         amount=amount or get_amount_from_stripe(intent.amount, currency),
         currency=currency,

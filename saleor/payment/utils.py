@@ -266,7 +266,7 @@ def gateway_postprocess(transaction, payment):
     if transaction_kind in {
         TransactionKind.CAPTURE,
         TransactionKind.REFUND_REVERSED,
-    }:
+    } or is_stripe_confirmation(transaction_kind, payment.gateway):
         payment.captured_amount += transaction.amount
         payment.is_active = True
         # Set payment charge status to fully charged
@@ -310,6 +310,10 @@ def gateway_postprocess(transaction, payment):
     transaction.save(update_fields=["already_processed"])
     if "captured_amount" in changed_fields and payment.order:
         payment.order.update_total_paid()
+
+
+def is_stripe_confirmation(transaction_kind, gateway):
+    return "stripe" in gateway and transaction_kind == TransactionKind.CONFIRM
 
 
 def fetch_customer_id(user: User, gateway: str):

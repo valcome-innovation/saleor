@@ -5,7 +5,7 @@ from paypalcheckoutsdk.orders import OrdersCaptureRequest, OrdersCreateRequest, 
 from paypalcheckoutsdk.payments import CapturesRefundRequest
 
 from ... import TransactionKind
-from ...interface import GatewayConfig, GatewayResponse, PaymentData
+from ...interface import GatewayConfig, GatewayResponse, PaymentData, PaymentMethodInfo
 from .utils import get_paypal_client
 
 logger = logging.getLogger(__name__)
@@ -84,6 +84,7 @@ def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
             currency=transaction.amount.currency_code,
             transaction_id=transaction.id,
             error=None,
+            payment_method_info=PaymentMethodInfo(type="paypal"),
         )
 
 

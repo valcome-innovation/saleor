@@ -110,7 +110,7 @@ def test_authorize_3d_secure(stripe_payment, sandbox_gateway_config):
     )
     response = authorize(payment_info, sandbox_gateway_config)
     assert not response.error
-    assert response.kind == TransactionKind.CAPTURE
+    assert response.kind == TransactionKind.ACTION_TO_CONFIRM  # VALCOME
     assert isclose(response.amount, TRANSACTION_AMOUNT)
     assert response.currency == TRANSACTION_CURRENCY
     assert response.is_success is True
