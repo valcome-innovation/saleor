@@ -606,7 +606,6 @@ def test_checkout_create_no_channel_shipping_zones(
     new_checkout = Checkout.objects.first()
     assert new_checkout is None
     errors = content["errors"]
-    print(errors)
     assert len(errors) == 1
     assert errors[0]["code"] == CheckoutErrorCode.INSUFFICIENT_STOCK.name
     assert errors[0]["field"] == "quantity"

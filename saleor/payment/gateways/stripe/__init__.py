@@ -146,12 +146,6 @@ def confirm(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
     return response
 
 
-def is_fully_charged(intent):
-    succeeded = intent.status == "succeeded"
-    paid = intent.amount == intent.amount_received
-    return succeeded and paid
-
-
 def refund(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
     client = _get_client(**config.connection_params)
     currency = get_currency_for_stripe(payment_information.currency)
