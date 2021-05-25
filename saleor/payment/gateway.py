@@ -201,9 +201,8 @@ def refund(
     if not payment.can_refund():
         raise PaymentError("This payment cannot be refunded.")
 
-    kind = TransactionKind.EXTERNAL if payment.is_manual() else TransactionKind.CAPTURE
-
-    token = _get_past_transaction_token(payment, kind)
+    # VALCOME: enable refunds for CONFIRM actions
+    token = _get_transaction_token_for_refund(payment)
     payment_data = create_payment_information(
         payment=payment, payment_token=token, amount=amount
     )
@@ -316,6 +315,20 @@ def _fetch_gateway_response(fn, *args, **kwargs):
         error = ERROR_MSG
         response = None
     return response, error
+
+
+ # VALCOME: enable refunds for CONFIRM actions
+def _get_transaction_token_for_refund(
+    payment: Payment
+) -> Optional[str]:
+    if payment.is_manual():
+        return _get_past_transaction_token(payment, TransactionKind.EXTERNAL)
+    else:
+        try:
+            token = _get_past_transaction_token(payment, TransactionKind.CAPTURE)
+        except PaymentError:
+            token = _get_past_transaction_token(payment, TransactionKind.CONFIRM)
+        return token
 
 
 def _get_past_transaction_token(

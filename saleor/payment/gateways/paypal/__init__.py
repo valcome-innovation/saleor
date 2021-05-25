@@ -96,6 +96,12 @@ def void(payment_information: PaymentData, config: GatewayConfig) -> GatewayResp
 def refund(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
     client = get_paypal_client(**config.connection_params)
     request = CapturesRefundRequest(payment_information.token)
+    request.prefer("return=representation")
+    request.request_body(
+        _build_request_body(
+            float(payment_information.amount), payment_information.currency
+        )
+    )
     try:
         response = client.execute(request)
     except IOError as ioe:
@@ -130,3 +136,7 @@ def process_payment(
     payment_information: PaymentData, config: GatewayConfig
 ) -> GatewayResponse:
     return authorize(payment_information, config)
+
+
+def _build_request_body(amount: float, currency: str):
+    return {"amount": {"value": amount, "currency_code": currency}}
