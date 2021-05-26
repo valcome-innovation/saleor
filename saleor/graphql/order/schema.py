@@ -50,7 +50,7 @@ from .resolvers import (
     resolve_order,
     resolve_order_by_token,
     resolve_orders,
-    resolve_orders_total,
+    resolve_orders_total, resolve_order_exists,
 )
 from .sorters import OrderSortingInput
 from .types import Order, OrderEvent
@@ -108,6 +108,11 @@ class OrderQueries(graphene.ObjectType):
         description="Look up an order by token.",
         token=graphene.Argument(UUID, description="The order's token.", required=True),
     )
+    order_exists = graphene.Field(
+        graphene.Boolean,
+        description="Returns true if an order exists for a particular checkout token",
+        checkout_token=graphene.String(description="The checkout token", required=True)
+    ) # VALCOME
 
     @permission_required(OrderPermissions.MANAGE_ORDERS)
     @traced_resolver
@@ -133,6 +138,9 @@ class OrderQueries(graphene.ObjectType):
     @traced_resolver
     def resolve_order_by_token(self, _info, token):
         return resolve_order_by_token(token)
+
+    def resolve_order_exists(self, info, checkout_token):
+        return resolve_order_exists(info, checkout_token)
 
 
 class OrderMutations(graphene.ObjectType):

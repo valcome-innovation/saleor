@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .graphql.api import schema
 from .graphql.views import GraphQLView
+from .payment.gateways.sofort.webhook.views import stripe_webhook
 from .plugins.views import (
     handle_global_plugin_webhook,
     handle_plugin_per_channel_webhook,
@@ -14,6 +15,7 @@ from .plugins.views import (
 from .product.views import digital_product
 
 urlpatterns = [
+    url(r"^webhooks/stripe$", csrf_exempt(stripe_webhook), name="stripe_webhooks"),
     url(r"^graphql/$", csrf_exempt(GraphQLView.as_view(schema=schema)), name="api"),
     url(
         r"^digital-download/(?P<token>[0-9A-Za-z_\-]+)/$",

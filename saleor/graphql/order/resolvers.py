@@ -1,6 +1,7 @@
 import graphene
 
 from ...channel.models import Channel
+from ...core.exceptions import PermissionDenied
 from ...core.tracing import traced_resolver
 from ...order import OrderStatus, models
 from ...order.events import OrderEvents
@@ -64,3 +65,11 @@ def resolve_order_by_token(token):
         .filter(token=token)
         .first()
     )
+
+
+def resolve_order_exists(info, checkout_token):
+    user = info.context.user
+    if user is not None and user.is_authenticated:
+        return models.Order.objects.filter(checkout_token=checkout_token).exists()
+    else:
+        raise PermissionDenied()

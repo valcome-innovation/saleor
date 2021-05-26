@@ -9,7 +9,7 @@ from ....interface import CustomerSource, GatewayConfig, PaymentMethodInfo
 from ....utils import create_payment_information
 from .. import (
     TransactionKind,
-    _get_client,
+    get_client,
     authorize,
     capture,
     confirm,
@@ -347,7 +347,7 @@ def test_list_customer_sources(sandbox_gateway_config):
 
 
 def test_get_client(gateway_config):
-    assert _get_client(**gateway_config.connection_params).api_key == "secret"
+    assert get_client(**gateway_config.connection_params).api_key == "secret"
 
 
 def test_get_client_token():

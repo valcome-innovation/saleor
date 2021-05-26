@@ -33,7 +33,7 @@ def authorize(
     payment_information: PaymentData, config: GatewayConfig
 ) -> GatewayResponse:
     kind = TransactionKind.CAPTURE if config.auto_capture else TransactionKind.AUTH
-    client = _get_client(**config.connection_params)
+    client = get_client(**config.connection_params)
     capture_method = "automatic" if config.auto_capture else "manual"
     currency = get_currency_for_stripe(payment_information.currency)
     stripe_amount = get_amount_for_stripe(payment_information.amount, currency)
@@ -94,7 +94,7 @@ def get_transaction_kind(status, fallback):
 
 
 def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
-    client = _get_client(**config.connection_params)
+    client = get_client(**config.connection_params)
     intent = None
     try:
         with opentracing.global_tracer().start_active_span(
@@ -124,7 +124,7 @@ def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
 
 
 def confirm(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
-    client = _get_client(**config.connection_params)
+    client = get_client(**config.connection_params)
     try:
         intent = client.PaymentIntent(id=payment_information.token)
         with opentracing.global_tracer().start_active_span(
@@ -149,7 +149,7 @@ def confirm(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
 
 
 def refund(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
-    client = _get_client(**config.connection_params)
+    client = get_client(**config.connection_params)
     currency = get_currency_for_stripe(payment_information.currency)
     stripe_amount = get_amount_for_stripe(payment_information.amount, currency)
     try:
@@ -177,7 +177,7 @@ def refund(payment_information: PaymentData, config: GatewayConfig) -> GatewayRe
 
 
 def void(payment_information: PaymentData, config: GatewayConfig) -> GatewayResponse:
-    client = _get_client(**config.connection_params)
+    client = get_client(**config.connection_params)
     try:
         with opentracing.global_tracer().start_active_span(
             "stripe.PaymentIntent.retrieve"
@@ -204,7 +204,7 @@ def void(payment_information: PaymentData, config: GatewayConfig) -> GatewayResp
 def list_client_sources(
     config: GatewayConfig, customer_id: str
 ) -> List[CustomerSource]:
-    client = _get_client(**config.connection_params)
+    client = get_client(**config.connection_params)
     with opentracing.global_tracer().start_active_span(
         "stripe.PaymentMethod.list"
     ) as scope:
@@ -233,7 +233,7 @@ def process_payment(
     return authorize(payment_information, config)
 
 
-def _get_client(**connection_params):
+def get_client(**connection_params):
     stripe.api_key = connection_params.get("private_key")
     return stripe
 

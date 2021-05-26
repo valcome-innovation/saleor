@@ -322,7 +322,8 @@ def gateway_postprocess(transaction, payment):
 
 
 def is_stripe_confirmation(transaction_kind, gateway):
-    return "stripe" in gateway and transaction_kind == TransactionKind.CONFIRM
+    return ("stripe" in gateway or "sofort" in gateway) \
+           and transaction_kind == TransactionKind.CONFIRM
 
 
 def fetch_customer_id(user: User, gateway: str):
