@@ -80,11 +80,6 @@ class SofortGatewayPlugin(BasePlugin):
         return confirm_payment(payment_information, self._get_gateway_config())
 
     @require_active_plugin
-    def create_payment_intent(self, amount, currency, meta, previous_value):
-        config = self._get_gateway_config()
-        return create_sofort_payment_intent(config, amount, currency, meta)
-
-    @require_active_plugin
     def list_payment_sources(
         self, customer_id: str, previous_value
     ) -> List["CustomerSource"]:
