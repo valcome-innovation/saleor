@@ -11,7 +11,7 @@ from . import (
     GatewayResponse,
     PaymentData,
     get_payment_meta,
-    process_payment, confirm_payment
+    process_payment, confirm_payment, refund_payment
 )
 
 GATEWAY_NAME = "SOFORT"
@@ -78,6 +78,12 @@ class SofortGatewayPlugin(BasePlugin):
         self, payment_information: "PaymentData", previous_value
     ) -> "GatewayResponse":
         return confirm_payment(payment_information, self._get_gateway_config())
+
+    @require_active_plugin
+    def refund_payment(
+        self, payment_information: "PaymentData", previous_value
+    ) -> "GatewayResponse":
+        return refund_payment(payment_information, self._get_gateway_config())
 
     @require_active_plugin
     def list_payment_sources(

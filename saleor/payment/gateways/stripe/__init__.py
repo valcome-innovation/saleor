@@ -238,7 +238,7 @@ def get_client(**connection_params):
     return stripe
 
 
-def _error_response(
+def error_response(
     kind: str,  # use TransactionKind class
     exc: stripe.error.StripeError,
     payment_info: PaymentData,
@@ -257,7 +257,7 @@ def _error_response(
     )
 
 
-def _success_response(
+def success_response(
     intent: stripe.PaymentIntent,
     kind: str,  # use TransactionKind class
     success: bool = True,
