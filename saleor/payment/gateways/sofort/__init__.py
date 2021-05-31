@@ -1,7 +1,7 @@
 import stripe
 from stripe.error import StripeError
 
-from ..stripe import get_currency_for_stripe, success_response, get_amount_from_stripe, \
+from ..stripe import get_currency_for_stripe, get_amount_from_stripe, \
     get_currency_from_stripe
 from ... import TransactionKind
 from ....payment.gateways.stripe import get_amount_for_stripe
