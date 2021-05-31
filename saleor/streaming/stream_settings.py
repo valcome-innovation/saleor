@@ -41,8 +41,6 @@ def add_middlewares(middlewares):
 
 
 def add_apps(installed_apps):
-    # TODO: enable stripe webhooks
-    # installed_apps.append("saleor.stripe_webhooks")
     installed_apps.append("social_django")
     installed_apps.append("saleor.streaming")
 
@@ -53,11 +51,14 @@ def add_backends(backends):
 
 
 def add_plugins(plugins):
+    plugins.append("saleor.plugins.user_email.plugin.UserEmailPlugin")
     plugins.append("saleor.payment.gateways.paypal.plugin.PaypalGatewayPlugin")
     plugins.append("saleor.payment.gateways.sofort.plugin.SofortGatewayPlugin")
     plugins.append("saleor.plugins.streaming.plugin.StreamingPlugin")
     plugins.append("saleor.plugins.social_auth.plugin.SocialAuthPlugin")
 
+
+SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", None)
 
 APP_ID = os.environ.get("APP_ID", None)
 AWS_KINESIS_STREAM_NAME = os.environ.get("AWS_KINESIS_STREAM_NAME", None)

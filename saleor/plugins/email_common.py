@@ -17,6 +17,7 @@ from django.core.mail import send_mail
 from django.core.mail.backends.smtp import EmailBackend
 from django_prices.utils.locale import get_locale_data
 
+from .user_email import constants
 from ..product.product_images import get_thumbnail_size
 from .base_plugin import ConfigurationTypeField
 from .error_codes import PluginErrorCode
@@ -205,7 +206,7 @@ def send_email(
         "get_product_image_thumbnail": get_product_image_thumbnail,
         "compare": compare,
     }
-    message = template(context, helpers=helpers)
+    message = template(context, helpers=helpers, partials=get_partials(compiler))
     subject_message = subject_template(context, helpers)
     send_mail(
         subject_message,
@@ -378,3 +379,26 @@ def get_default_email_template(
     with open(default_template_path) as f:
         template_str = f.read()
         return template_str
+
+
+def get_partials(compiler):
+    header_str = get_default_email_template(
+        constants.HEADER_TEMPLATE,
+        constants.DEFAULT_EMAIL_TEMPLATES_PATH)
+    header_partial = compiler.compile(header_str)
+
+    footer_str = get_default_email_template(
+        constants.FOOTER_TEMPLATE,
+        constants.DEFAULT_EMAIL_TEMPLATES_PATH)
+    footer_partial = compiler.compile(footer_str)
+
+    styles_str = get_default_email_template(
+        constants.STYLES_TEMPLATE,
+        constants.DEFAULT_EMAIL_TEMPLATES_PATH)
+    styles_partial = compiler.compile(styles_str)
+
+    return {
+        "header": header_partial,
+        "footer": footer_partial,
+        "styles": styles_partial,
+    }

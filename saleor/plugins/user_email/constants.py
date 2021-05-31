@@ -55,7 +55,9 @@ ORDER_FULFILLMENT_UPDATE_DEFAULT_TEMPLATE = "update_fulfillment.html"
 ORDER_PAYMENT_CONFIRMATION_DEFAULT_TEMPLATE = "confirm_payment.html"
 ORDER_CANCELED_DEFAULT_TEMPLATE = "order_cancel.html"
 ORDER_REFUND_CONFIRMATION_DEFAULT_TEMPLATE = "order_refund.html"
-
+HEADER_TEMPLATE = "header.html"
+FOOTER_TEMPLATE = "footer.html"
+STYLES_TEMPLATE = "styles.html"
 
 ACCOUNT_CONFIRMATION_SUBJECT_FIELD = "account_confirmation_subject"
 ACCOUNT_SET_CUSTOMER_PASSWORD_SUBJECT_FIELD = "account_set_customer_password_subject"

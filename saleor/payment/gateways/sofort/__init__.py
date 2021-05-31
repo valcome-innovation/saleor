@@ -93,12 +93,10 @@ def refund_payment(
     stripe_amount = get_amount_for_stripe(payment_information.amount, currency)
 
     try:
-        print("REFUND")
         refund = client.Refund.create(
             payment_intent=payment_information.token,
             amount=stripe_amount
         )
-        print(refund)
     except StripeError as exc:
         return GatewayResponse(
             is_success=False,
