@@ -13,7 +13,7 @@ import i18naddress
 import pybars
 from babel.numbers import format_currency
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.core.mail.backends.smtp import EmailBackend
 from django_prices.utils.locale import get_locale_data
 
