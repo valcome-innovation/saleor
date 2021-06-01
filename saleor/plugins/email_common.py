@@ -18,10 +18,12 @@ from django.core.mail.backends.smtp import EmailBackend
 from django_prices.utils.locale import get_locale_data
 
 from .user_email import constants
+from .. import settings
 from ..product.product_images import get_thumbnail_size
 from .base_plugin import ConfigurationTypeField
 from .error_codes import PluginErrorCode
 from .models import PluginConfiguration
+from ..streaming import stream_settings
 
 logger = logging.getLogger(__name__)
 
@@ -49,14 +51,14 @@ class EmailConfig:
 
 
 DEFAULT_EMAIL_CONFIGURATION = [
-    {"name": "host", "value": None},
-    {"name": "port", "value": None},
-    {"name": "username", "value": None},
-    {"name": "password", "value": None},
-    {"name": "sender_name", "value": ""},
-    {"name": "sender_address", "value": ""},
-    {"name": "use_tls", "value": False},
-    {"name": "use_ssl", "value": False},
+    {"name": "host", "value": settings.EMAIL_HOST},
+    {"name": "port", "value": settings.EMAIL_PORT},
+    {"name": "username", "value": settings.EMAIL_HOST_USER},
+    {"name": "password", "value": settings.EMAIL_HOST_PASSWORD},
+    {"name": "sender_name", "value": stream_settings.DEFAULT_SENDER_NAME},
+    {"name": "sender_address", "value": settings.EMAIL_HOST_USER},
+    {"name": "use_tls", "value": settings.EMAIL_USE_TLS},
+    {"name": "use_ssl", "value": settings.EMAIL_USE_SSL},
 ]
 
 
@@ -381,6 +383,7 @@ def get_default_email_template(
         return template_str
 
 
+# VALCOME
 def get_partials(compiler):
     header_str = get_default_email_template(
         constants.HEADER_TEMPLATE,

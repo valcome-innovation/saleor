@@ -52,12 +52,14 @@ def add_backends(backends):
 
 def add_plugins(plugins):
     plugins.append("saleor.plugins.user_email.plugin.UserEmailPlugin")
+    plugins.append("saleor.plugins.invoicing.plugin.InvoicingPlugin")
     plugins.append("saleor.payment.gateways.paypal.plugin.PaypalGatewayPlugin")
     plugins.append("saleor.payment.gateways.sofort.plugin.SofortGatewayPlugin")
     plugins.append("saleor.plugins.streaming.plugin.StreamingPlugin")
     plugins.append("saleor.plugins.social_auth.plugin.SocialAuthPlugin")
 
 
+DEFAULT_SENDER_NAME = os.environ.get("DEFAULT_SENDER_NAME", "")
 SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", None)
 
 APP_ID = os.environ.get("APP_ID", None)

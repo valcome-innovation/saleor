@@ -109,6 +109,7 @@ class UserEmailPlugin(BasePlugin):
     PLUGIN_ID = constants.PLUGIN_ID
     PLUGIN_NAME = "User emails"
     CONFIGURATION_PER_CHANNEL = True
+    DEFAULT_ACTIVE = True # VALCOME
 
     DEFAULT_CONFIGURATION = [
         {

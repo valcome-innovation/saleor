@@ -60,7 +60,6 @@ class InvoiceRequest(ModelMutation):
             info, data["order_id"], only_type=Order, field="orderId"
         )
         cls.clean_order(order)
-
         shallow_invoice = models.Invoice.objects.create(
             order=order,
             number=data.get("number"),

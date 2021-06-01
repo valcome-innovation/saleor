@@ -270,7 +270,7 @@ INSTALLED_APPS = [
     "django_filters",
     "phonenumber_field",
 ]
-stream_settings.add_apps(INSTALLED_APPS)
+stream_settings.add_apps(INSTALLED_APPS) # VALCOME
 
 ENABLE_DJANGO_EXTENSIONS = get_bool_from_env("ENABLE_DJANGO_EXTENSIONS", False)
 if ENABLE_DJANGO_EXTENSIONS:
