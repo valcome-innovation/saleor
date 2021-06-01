@@ -91,10 +91,15 @@
             padding-top: 30px;
         }
 
+        .uppercase-text,
         .normal-text {
             font-size: 15px;
             color: #534f6e;
             line-height: 143.52%;
+        }
+
+        .uppercase-text {
+            text-transform: uppercase;
         }
 
         .normal-text-table {
@@ -269,6 +274,7 @@
                 {% trans "SHIPMENT ADDRESS" context "Invoice PDF" %}
             </span>
             <br />
+          {% if order.is_shipping_required %}
             <span class="normal-text">
                 {{ order.shipping_address.first_name }}
                 {{ order.shipping_address.last_name }}
@@ -290,6 +296,9 @@
             <br />
             <span class="normal-text">{{ order.user_email }}</span>
             <br />
+          {% else %}
+            <span class="normal-text">No shipping required.</span>
+          {% endif %}
         </div>
     </div>
     <div class="content-tight-padded">
@@ -300,7 +309,7 @@
             <span class="header-title">{% trans "PAYMENT METHOD" context "Invoice PDF" %}</span>
             <br />
             {% if order.get_last_payment %}
-                <span class="normal-text">{{ order.get_last_payment.gateway }}</span>
+                <span class="uppercase-text">{{ order.get_last_payment.payment_method_type }}</span>
             {% else %}
                 <span class="normal-text">
                     {% trans "Unpaid" context "Invoice PDF: Payment method value" %}
