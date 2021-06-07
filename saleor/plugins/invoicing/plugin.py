@@ -3,10 +3,11 @@ from uuid import uuid4
 
 from django.core.files.base import ContentFile
 
+from .order_confirmed import create_and_send_invoice
 from ...core import JobStatus
 from ...invoice.models import Invoice
 from ...order.models import Order
-from ..base_plugin import BasePlugin
+from ..base_plugin import BasePlugin, ConfigurationTypeField
 from .utils import generate_invoice_number, generate_invoice_pdf
 
 
@@ -16,6 +17,24 @@ class InvoicingPlugin(BasePlugin):
     DEFAULT_ACTIVE = True
     PLUGIN_DESCRIPTION = "Built-in saleor plugin that handles invoice creation."
     CONFIGURATION_PER_CHANNEL = False
+
+    # VALCOME
+    DEFAULT_CONFIGURATION = [
+        {
+            "name": "automatic-invoice-creation",
+            "value": True,
+        }
+    ]
+
+    # VALCOME
+    CONFIG_STRUCTURE = {
+        "automatic-invoice-creation": {
+            "type": ConfigurationTypeField.BOOLEAN,
+            "help_text": "Create invoices automatically whenever an order is confirmed "
+                         "and also send the invoice email to the customer",
+            "label": "Automatic invoice creation",
+        }
+    }
 
     def invoice_request(
         self,
@@ -36,3 +55,9 @@ class InvoicingPlugin(BasePlugin):
             update_fields=["created", "number", "invoice_file", "status", "updated_at"]
         )
         return invoice
+
+    def order_confirmed(self, order: "Order", previous_value: Any):
+        configuration = {item["name"]: item["value"] for item in self.configuration}
+
+        if configuration["automatic-invoice-creation"]:
+            create_and_send_invoice(order)

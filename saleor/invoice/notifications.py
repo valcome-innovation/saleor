@@ -16,11 +16,16 @@ def get_invoice_payload(invoice):
 
 def send_invoice(invoice: "Invoice", staff_user: "User", manager: "PluginsManager"):
     """Send an invoice to user of related order with URL to download it."""
-    payload = {
-        "invoice": get_invoice_payload(invoice),
-        "recipient_email": invoice.order.get_customer_email(),  # type: ignore
-        "requester_user_id": staff_user.id,
-        **get_site_context(),
-    }
+    payload = get_send_invoice_payload(invoice, staff_user)
     manager.notify(NotifyEventType.INVOICE_READY, payload)  # type: ignore
     manager.invoice_sent(invoice, invoice.order.get_customer_email())  # type: ignore
+
+
+# VALCOME
+def get_send_invoice_payload(invoice: "Invoice", user: "User"):
+    return {
+        "invoice": get_invoice_payload(invoice),
+        "recipient_email": invoice.order.get_customer_email(),  # type: ignore
+        "requester_user_id": user.id,
+        **get_site_context(),
+    }
