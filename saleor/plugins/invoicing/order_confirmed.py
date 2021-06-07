@@ -1,10 +1,8 @@
-from typing import Any
 from uuid import uuid4
 
 from django.core.files.base import ContentFile
 
 from ..manager import get_plugins_manager
-from ...account.models import User
 from ...core import JobStatus
 from ...invoice.models import Invoice
 from ...invoice.notifications import send_invoice
@@ -14,11 +12,6 @@ from .utils import generate_invoice_number, generate_invoice_pdf
 
 
 def create_and_send_invoice(order: "Order"):
-    invoice = _create_invoice(order)
-    _send_invoice_to_customer(invoice, order.user)
-
-
-def _create_invoice(order: "Order"):
     number=generate_invoice_number()
     invoice = Invoice.objects.create(
         order=order, number=number,
@@ -41,10 +34,5 @@ def _create_invoice(order: "Order"):
         invoice_number=invoice.number,
     )
 
-    return invoice
-
-
-def _send_invoice_to_customer(invoice: "Invoice", customer: "User"):
     manager = get_plugins_manager()
-    send_invoice(invoice, customer, manager)
-    # TODO
+    send_invoice(invoice, order.user, manager)

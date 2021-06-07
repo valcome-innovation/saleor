@@ -1,5 +1,6 @@
 from typing import Optional
 
+from ..invoicing.utils import get_invoice_attachment
 from ...account import events as account_events
 from ...celeryconf import app
 from ...invoice import events as invoice_events
@@ -216,12 +217,14 @@ def send_invoice_email_task(recipient_email, payload, config):
         constants.INVOICE_READY_DEFAULT_SUBJECT,
     )
 
+    attachment = get_invoice_attachment(payload["invoice"]["id"])
     send_email(
         config=email_config,
         recipient_list=[recipient_email],
         context=payload,
         subject=subject,
         template_str=email_template_str,
+        attachments=[attachment]
     )
     invoice_events.notification_invoice_sent_event(
         user_id=payload["requester_user_id"],
@@ -233,6 +236,13 @@ def send_invoice_email_task(recipient_email, payload, config):
         user_id=payload["requester_user_id"],
         email=payload["recipient_email"],
     )
+
+
+# VALCOME
+def _get_invoice_attachment(payload):
+    if hasattr(payload, "invoice") and hasattr(payload["invoice"], "id"):
+        return get_invoice_attachment(payload["invoice"]["id"])
+    return None
 
 
 @app.task

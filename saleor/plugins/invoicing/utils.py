@@ -1,6 +1,8 @@
 import os
 import re
 from datetime import datetime
+from email import encoders
+from email.mime.base import MIMEBase
 
 import pytz
 from django.conf import settings
@@ -87,3 +89,14 @@ def generate_invoice_pdf(invoice):
         }
     )
     return HTML(string=rendered_template).write_pdf(), creation_date
+
+
+# VALCOME
+def get_invoice_attachment(invoice_id):
+    invoice = Invoice.objects.get(pk=invoice_id)
+    invoice_pdf, date = generate_invoice_pdf(invoice)
+    f = MIMEBase("application", "octate-stream", Name="invoice.pdf")
+    f.set_payload(invoice_pdf)
+    encoders.encode_base64(f)
+    f.add_header('Content-Decomposition', 'attachment', filename="invoice.pdf")
+    return f

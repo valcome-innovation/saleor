@@ -13,10 +13,11 @@ import i18naddress
 import pybars
 from babel.numbers import format_currency
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail
 from django.core.mail.backends.smtp import EmailBackend
 from django_prices.utils.locale import get_locale_data
 
+from .email_custom import send_mail_with_attachments
 from .user_email import constants
 from .. import settings
 from ..product.product_images import get_thumbnail_size
@@ -182,7 +183,7 @@ def price(this, net_amount, gross_amount, currency, display_gross=False):
 
 
 def send_email(
-    config: EmailConfig, recipient_list, context, subject="", template_str=""
+    config: EmailConfig, recipient_list, context, subject="", template_str="", attachments=None
 ):
     sender_name = config.sender_name or ""
     sender_address = config.sender_address
@@ -210,14 +211,25 @@ def send_email(
     }
     message = template(context, helpers=helpers, partials=get_partials(compiler))
     subject_message = subject_template(context, helpers)
-    send_mail(
-        subject_message,
-        html2text.html2text(message),
-        from_email,
-        recipient_list,
-        html_message=message,
-        connection=email_backend,
-    )
+
+    if attachments:
+        send_mail_with_attachments(
+            subject=subject_message,
+            from_email=from_email,
+            recipient_list=recipient_list,
+            html_message=message,
+            connection=email_backend,
+            attachments=attachments
+        )
+    else:
+        send_mail(
+            subject_message,
+            html2text.html2text(message),
+            from_email,
+            recipient_list,
+            html_message=message,
+            connection=email_backend,
+        )
 
 
 def validate_email_config(config: EmailConfig):
