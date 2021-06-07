@@ -104,13 +104,14 @@ class CreateToken(BaseMutation):
     @classmethod
     def perform_mutation(cls, root, info, **data):
         user = cls.get_user(info, data)
+        user.jwt_token_key = get_random_string()  # VALCOME user logout
         access_token = create_access_token(user)
         csrf_token = _get_new_csrf_token()
         refresh_token = create_refresh_token(user, {"csrfToken": csrf_token})
         info.context.refresh_token = refresh_token
         info.context._cached_user = user
         user.last_login = timezone.now()
-        user.save(update_fields=["last_login"])
+        user.save(update_fields=["last_login", "jwt_token_key"]) # VALCOME user logout
         return cls(
             errors=[],
             user=user,
