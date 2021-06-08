@@ -662,14 +662,15 @@ def create_fulfillments(order):
     update_order_status(order)
 
 
-def create_fake_order(discounts, max_order_lines=5):
+def create_fake_order(discounts, max_order_lines=5, customer=None):
     channel = Channel.objects.all().order_by("?").first()
     customers = (
         User.objects.filter(is_superuser=False)
         .exclude(default_billing_address=None)
         .order_by("?")
     )
-    customer = random.choice([None, customers.first()])
+
+    customer = customer or random.choice([None, customers.first()])
 
     # 20% chance to be unconfirmed order.
     will_be_unconfirmed = random.choice([0, 0, 0, 0, 1])

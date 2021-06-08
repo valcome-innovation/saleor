@@ -25,6 +25,11 @@ if [ -v STREAM_SETUP ]; then
   python3 manage.py streamsetup
 fi
 
+if [ -v INTEGRATION_SETUP ]; then
+  echo "Setting up integration data..."
+  python3 manage.py integrationsetup
+fi
+
 if [ -v CREATE_THUMBNAILS ]; then
   echo "Populating database with dummy data..."
   python3 manage.py create_thumbnails

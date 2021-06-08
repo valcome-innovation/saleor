@@ -21,9 +21,10 @@ services:
       - saleor-int-media:/app/media
     env_file: integration.env
     environment:
-      - MIGRATE=true
-      - COLLECT_STATIC=true
-      - POPULATE=true
+      - MIGRATE=True
+      - COLLECT_STATIC=True
+      - POPULATE=True
+      - INTEGRATION_SETUP=True
       - JAEGER_AGENT_HOST=jaeger
       - DASHBOARD_URL=http://localhost:9001/
 
@@ -77,7 +78,7 @@ services:
     container_name: saleor-int-redis
     restart: unless-stopped
     ports:
-      - 6379:6379
+      - 6389:6379
     networks:
       - live-int-backend
     volumes:
