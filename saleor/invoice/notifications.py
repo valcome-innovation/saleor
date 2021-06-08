@@ -1,5 +1,5 @@
 from ..account.models import User
-from ..core.notifications import get_site_context
+from ..core.notifications import get_site_context, get_site_address
 from ..core.notify_events import NotifyEventType
 from ..plugins.manager import PluginsManager
 from .models import Invoice

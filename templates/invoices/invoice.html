@@ -91,6 +91,10 @@
             padding-top: 30px;
         }
 
+        .bold {
+          font-weight: bold;
+        }
+
         .uppercase-text,
         .normal-text {
             font-size: 15px;
@@ -189,23 +193,24 @@
 <body>
     <div class="section-header section-left">
         <div class="content-padded">
-            <span class="normal-text">{{ order.billing_address.company_name }}</span>
+            <span class="normal-text bold">{{ company_address.company_name }}</span>
             <br />
-            <span class="normal-text">{{ order.billing_address.street_address_1 }}</span>
+            <span class="normal-text">{{ company_address.street_address_1 }}</span>
             <br />
-            {% if order.billing_address.street_address_2 %}
-                <span class="normal-text">{{ order.billing_address.street_address_2 }}</span>
+            {% if company_address.street_address_2 %}
+                <span class="normal-text">{{ company_address.street_address_2 }}</span>
                 <br />
             {% endif %}
-            <span class="normal-text">{{ order.billing_address.city }}</span>
+            <span class="normal-text">{{ company_address.city }}, {{ company_address.postal_code }}</span>
             <br />
-            <span class="normal-text">{{ order.billing_address.postal_code }}</span>
+            <span class="normal-text">{{ company_address.country }}</span>
             <br />
-            {% if order.billing_address.phone %}
-                <span class="normal-text">{{ order.billing_address.phone }}</span>
+            {% if company_address.phone %}
+                <span class="normal-text">{{ company_address.phone }}</span>
                 <br />
             {% endif %}
-            <span class="normal-text">{{ order.get_customer_email }}</span>
+            <br />
+            <span class="normal-text">Email: <a href="mailto:{{ support_email }}">{{ support_email }}</a></span>
             <br />
         </div>
     </div>
@@ -256,11 +261,9 @@
                 <span class="normal-text">{{ order.billing_address.street_address_2 }}</span>
                 <br />
             {% endif %}
+            <span class="normal-text">{{ order.billing_address.city }}, {{ order.billing_address.postal_code }}</span>
+            <br />
             <span class="normal-text">{{ order.billing_address.country }}</span>
-            <br />
-            <span class="normal-text">{{ order.billing_address.city }}</span>
-            <br />
-            <span class="normal-text">{{ order.billing_address.postal_code }}</span>
             <br />
             <span class="normal-text">{{ order.billing_address.phone }}</span>
             <br />
@@ -297,7 +300,7 @@
             <span class="normal-text">{{ order.user_email }}</span>
             <br />
           {% else %}
-            <span class="normal-text">No shipping required.</span>
+            <span class="normal-text">No shipment required.</span>
           {% endif %}
         </div>
     </div>

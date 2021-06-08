@@ -9,7 +9,9 @@ from django.conf import settings
 from django.template.loader import get_template
 from weasyprint import HTML
 
+from ...core.notifications import get_site_address
 from ...invoice.models import Invoice
+from ...streaming import stream_settings
 
 MAX_PRODUCTS_WITH_TABLE = 3
 MAX_PRODUCTS_WITHOUT_TABLE = 4
@@ -86,6 +88,8 @@ def generate_invoice_pdf(invoice):
             "font_path": f"file://{font_path}",
             "products_first_page": products_first_page,
             "rest_of_products": rest_of_products,
+            "support_email": stream_settings.SUPPORT_EMAIL,
+            **get_site_address(),
         }
     )
     return HTML(string=rendered_template).write_pdf(), creation_date
