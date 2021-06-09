@@ -10,7 +10,6 @@ services:
       dockerfile: Dockerfile
       args:
         STATIC_URL: 'https://valcometv-media.s3.eu-central-1.amazonaws.com/statics/valcometv/'
-    restart: unless-stopped
     networks:
       - live-int-backend
     depends_on:
@@ -58,7 +57,6 @@ services:
     image: library/postgres:11.1-alpine
     command: postgres
     container_name: saleor-int-db
-    restart: unless-stopped
     user: postgres
     networks:
       - live-int-backend
@@ -76,9 +74,8 @@ services:
   redis:
     image: library/redis:5.0-alpine
     container_name: saleor-int-redis
-    restart: unless-stopped
     ports:
-      - 6389:6379
+      - 6379:6379
     networks:
       - live-int-backend
     volumes:
@@ -97,7 +94,6 @@ services:
         STATIC_URL: 'https://valcometv-media.s3.eu-central-1.amazonaws.com/statics/valcometv/'
     container_name: saleor-int-worker
     command: celery -A saleor --app=saleor.celeryconf:app worker --loglevel=info
-    restart: unless-stopped
     networks:
       - live-int-backend
     env_file: integration.env
