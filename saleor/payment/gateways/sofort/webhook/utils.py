@@ -15,15 +15,12 @@ def handle_sofort(payment_intent, info):
 
 
 def _is_checkout_processing(checkout_token):
-    # checkout = CheckoutModel.objects.only("webhook_processing").get(pk=checkout_token)
-    # return checkout.webhook_processing
-    return False  # TODO
+    checkout = CheckoutModel.objects.only("webhook_processing").get(pk=checkout_token)
+    return checkout.webhook_processing
 
 
 def _update_checkout_webhook_processing(checkout_token, processing):
-    # TODO
-    # CheckoutModel.objects.filter(pk=checkout_token).update(webhook_processing=processing)
-    return
+    CheckoutModel.objects.filter(pk=checkout_token).update(webhook_processing=processing)
 
 
 def _complete_checkout(info, checkout_token, payment_intent):
