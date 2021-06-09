@@ -65,8 +65,8 @@ class Command(BaseCommand):
         stream_ticket = StreamTicket()
         stream_ticket.user = user
         stream_ticket.game_id = "14"
-        stream_ticket.season_id = "3"
-        stream_ticket.team_id = "6"
+        stream_ticket.season_id = None
+        stream_ticket.team_ids = None
         stream_ticket.expires = None
         stream_ticket.type = "single"
         stream_ticket.save()
