@@ -16,7 +16,9 @@ services:
       - live-local-media
     networks:
       - live-local-backend
-    env_file: local.env
+    env_file:
+      - local.env
+      - secret.env
     user: saleor
 
 
@@ -56,7 +58,9 @@ services:
       - live-local-media
     networks:
       - live-local-backend
-    env_file: local.env
+    env_file:
+      - local.env
+      - secret.env
     user: saleor
 
 
