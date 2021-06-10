@@ -18,7 +18,11 @@ class Migration(migrations.Migration):
         migrations.RunSQL("""
             insert into streaming_streamticket (id, game_id, team_id, season_id, user_id, "type", expires, "version")
             select id, game_id, team_id, season_id, user_id, "type", expires, "version" from account_streamticket
-        """
+            """
+        ),
+        migrations.RunSQL("""
+            SELECT setval('streaming_streamticket_id_seq', COALESCE((SELECT MAX(id) + 1 FROM streaming_streamticket), 1), false);
+            """
         ),
         migrations.DeleteModel(
             name='StreamTicket',
