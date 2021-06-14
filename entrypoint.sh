@@ -30,6 +30,11 @@ if [ -v INTEGRATION_SETUP ]; then
   python3 manage.py integrationsetup
 fi
 
+if [ -v SYNC_SEQUENCES ]; then
+  echo "Setting up integration data..."
+  python3 manage.py sync_sequences
+fi
+
 if [ -v CREATE_THUMBNAILS ]; then
   echo "Populating database with dummy data..."
   python3 manage.py create_thumbnails
