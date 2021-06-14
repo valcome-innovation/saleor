@@ -31,7 +31,7 @@ class InvoicingPlugin(BasePlugin):
         "automatic-invoice-creation": {
             "type": ConfigurationTypeField.BOOLEAN,
             "help_text": "Create invoices automatically whenever an order is confirmed "
-                         "and also send the invoice email to the customer",
+                         "and also send the invoice via email to the customer",
             "label": "Automatic invoice creation",
         }
     }

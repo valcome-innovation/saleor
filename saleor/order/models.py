@@ -367,6 +367,10 @@ class Order(ModelWithMetadata):
     def get_total_weight(self, *_args):
         return self.weight
 
+    def get_total_tax_rate(self):
+        total_tax = self.total_gross - self.total_net
+        return round(total_tax / self.total_net * 100)
+
 
 class OrderLineQueryset(models.QuerySet):
     def digital(self):

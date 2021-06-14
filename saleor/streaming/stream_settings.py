@@ -66,6 +66,9 @@ APP_ID = os.environ.get("APP_ID", None)
 AWS_KINESIS_STREAM_NAME = os.environ.get("AWS_KINESIS_STREAM_NAME", None)
 DEFAULT_CURRENCY = os.environ.get("DEFAULT_CURRENCY")
 
+# Invoicing
+UID = os.environ.get("UID", None)
+
 # Social Auth
 SOCIAL_PLUGIN_ACTIVE = get_bool_from_env("STRIPE_PLUGIN_ACTIVE", False)
 
