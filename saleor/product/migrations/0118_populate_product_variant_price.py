@@ -19,7 +19,7 @@ def populate_product_variant_price(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("product", "0117_auto_20200423_0737"),
+        ("product", "0121_delete_attribute_custom"),
     ]
 
     operations = [

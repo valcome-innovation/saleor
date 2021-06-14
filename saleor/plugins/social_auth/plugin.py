@@ -76,13 +76,10 @@ class SocialAuthPlugin(BasePlugin):
     def external_obtain_access_tokens(
         self, data: dict, request: WSGIRequest, previous_value
     ) -> ExternalAccessTokens:
-        if self.active:
-            self.update_social_auth_settings()
-            result = social_auth(data["backend"], data["access_token"], request)
-            token_issued.send(sender=self, request=request, user=result.user)
-            return result
-        else:
-            raise ValidationError(message="The social auth plugin is not configured correctly.")
+        self.update_social_auth_settings()
+        result = social_auth(data["backend"], data["access_token"], request)
+        token_issued.send(sender=self, request=request, user=result.user)
+        return result
 
     def update_social_auth_settings(self):
         if conf.settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY is None or conf.settings.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET is None:

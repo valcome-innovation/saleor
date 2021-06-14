@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("checkout", "0025_auto_20200221_0257"),
+        ("checkout", "0026_checkout_webhook_processing"),
     ]
 
     operations = [
