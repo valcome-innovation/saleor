@@ -54,6 +54,8 @@ def test_send_email_request_change(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -79,6 +81,8 @@ def test_send_email_changed_notification(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -116,6 +120,8 @@ def test_send_password_reset_notification(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     expected_event = (
         NotifyEventType.ACCOUNT_STAFF_RESET_PASSWORD

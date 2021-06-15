@@ -896,6 +896,8 @@ def test_order_confirm(
         "requester_user_id": staff_api_client.user.id,
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     mocked_notify.assert_called_once_with(
         NotifyEventType.ORDER_CONFIRMED,
@@ -3811,6 +3813,8 @@ def test_order_capture(
         },
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
