@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('streaming', '0001_initial'),
+        ('account', '0051_auto_20210609_1402'),
     ]
 
     operations = [
