@@ -1,13 +1,15 @@
-from collections import Iterable, Iterator
-
-from astroid import List
 from django.core.exceptions import ValidationError
 
+from saleor.attribute.models import AssignedProductAttribute
 from .models import StreamTicket
-from ..checkout.models import Checkout, CheckoutLine
+from ..checkout.models import Checkout
 from ..core.models import ModelWithMetadata
 from ..order.error_codes import OrderErrorCode
 from ..order.models import Order
+
+teams_slug = 'teams'
+leagues_slug = 'leagues'
+ticket_type_slug = 'ticket-type'
 
 
 def create_stream_ticket_from_order(order: "Order"):
@@ -47,10 +49,11 @@ def validate_stream_checkout_with_product(checkout: "Checkout", lines: "list"):
 
     if len(lines) == 1 and lines[0].variant.product.attributes.count() >= 1:
         attributes = lines[0].variant.product.attributes.all()
-        attribute = get_stream_type_attribute(attributes)
 
-        if attribute.values.count() == 1 and has_team_attribute(attributes):
-            product_ticket_type = attribute.values.first().slug
+        ticket_type_attribute = get_attribute(attributes, ticket_type_slug)
+
+        if ticket_type_attribute.values.count() == 1:
+            product_ticket_type = ticket_type_attribute.values.first().slug
 
             if product_ticket_type == stream_ticket_type:
                 return True
@@ -74,15 +77,7 @@ def from_meta(key, meta_object: "ModelWithMetadata"):
     return meta_object.get_value_from_metadata(key)
 
 
-def get_stream_type_attribute(attributes):
+def get_attribute(attributes, slug: "str") -> "AssignedProductAttribute":
     for attr in attributes:
-        if attr.values.count() == 1 and attr.attribute.slug == 'stream-type':
+        if attr.values.count() == 1 and attr.attribute.slug == slug:
             return attr
-
-
-def has_team_attribute(attributes):
-    for attr in attributes:
-        if attr.values.count() == 1 and attr.attribute.slug == 'team':
-            return True
-
-    return False
