@@ -1,5 +1,4 @@
 import graphene
-from django.db.models import QuerySet
 
 from ..filters import filter_attributes
 from ....graphql.core.filters import MetadataFilterBase, ListObjectTypeFilter
@@ -38,10 +37,7 @@ class TicketProductFilter(MetadataFilterBase):
         season_filter = self.get_season_filter(teams)
 
         attributes_filter = single_filter | day_filter | month_filter | season_filter
-
-        final_qs = super().qs & attributes_filter
-        print(final_qs.query)
-        return final_qs
+        return super().qs & attributes_filter
 
     def get_single_filter(self, single_teams):
         type_filter = self.get_ticket_type_filter("single")
