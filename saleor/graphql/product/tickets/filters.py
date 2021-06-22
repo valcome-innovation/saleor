@@ -44,7 +44,7 @@ class TicketProductFilter(MetadataFilterBase):
         data = self.data.get(key)
         if not data:
             raise ValidationError('Missing filter attribute: ' + key)
-        return data
+        return [value.lower() for value in data]
 
     def get_single_filter(self, single_teams):
         type_filter = self.get_ticket_type_filter("single")

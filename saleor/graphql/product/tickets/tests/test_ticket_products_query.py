@@ -35,17 +35,17 @@ QUERY_TICKET_PRODUCTS_WITH_FILTERING = """
             "leagues": ["ahl-20-21"],
          }, 4),
         ({
-            "singleTeams": ["swl"],
+            "singleTeams": ["SWL"],
             "teams": ["all-teams"],
             "leagues": ["ahl-20-21"],
          }, 4),
         ({
-            "singleTeams": ["swl"],
+            "singleTeams": ["SwL"],
             "teams": ["swl", "ash", "ka2", "all-teams"],
             "leagues": ["ahl-20-21"],
          }, 10),
         ({
-            "singleTeams": ["swl", "ka2", "ash"],
+            "singleTeams": ["sWl", "ka2", "ash"],
             "teams": ["swl", "ash", "ka2", "all-teams"],
             "leagues": ["ahl-20-21"],
          }, 12),
