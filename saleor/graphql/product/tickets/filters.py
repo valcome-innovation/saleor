@@ -1,4 +1,5 @@
 import graphene
+from django.core.exceptions import ValidationError
 
 from ..filters import filter_attributes
 from ....graphql.core.filters import MetadataFilterBase, ListObjectTypeFilter
@@ -27,9 +28,9 @@ class TicketProductFilter(MetadataFilterBase):
 
     @property
     def qs(self):
-        teams = self.data.get("teams") or []
-        leagues = self.data.get("leagues") or []
-        single_teams = self.data.get("single_teams") or []
+        teams = self.get_from_data("teams")
+        leagues = self.get_from_data("leagues")
+        single_teams = self.get_from_data("single_teams")
 
         single_filter = self.get_single_filter(single_teams)
         day_filter = self.get_day_filter(leagues)
@@ -38,6 +39,12 @@ class TicketProductFilter(MetadataFilterBase):
 
         attributes_filter = single_filter | day_filter | month_filter | season_filter
         return super().qs & attributes_filter
+
+    def get_from_data(self, key):
+        data = self.data.get(key)
+        if not data:
+            raise ValidationError('Missing filter attribute: ' + key)
+        return [value.lower() for value in data]
 
     def get_single_filter(self, single_teams):
         type_filter = self.get_ticket_type_filter("single")
