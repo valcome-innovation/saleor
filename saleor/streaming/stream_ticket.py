@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 
-from saleor.attribute.models import AssignedProductAttribute
+from ..attribute.models import AssignedProductAttribute
 from .models import StreamTicket
 from ..checkout.models import Checkout
 from ..core.models import ModelWithMetadata
@@ -34,7 +34,10 @@ def determine_ticket_type(game_id, season_id, expires):
     elif season_id is not None and expires is None and game_id is None:
         return 'season'
     elif expires is not None and season_id is None and game_id is None:
-        return 'timed'
+        if expires == "m":
+            return 'month'
+        else:
+            return 'day'
     else:
         raise ValidationError(
             "Could not determine TicketType from input parameters",
@@ -49,7 +52,6 @@ def validate_stream_checkout_with_product(checkout: "Checkout", lines: "list"):
 
     if len(lines) == 1 and lines[0].variant.product.attributes.count() >= 1:
         attributes = lines[0].variant.product.attributes.all()
-
         ticket_type_attribute = get_attribute(attributes, ticket_type_slug)
 
         if ticket_type_attribute.values.count() == 1:
@@ -67,7 +69,7 @@ def validate_stream_checkout_with_product(checkout: "Checkout", lines: "list"):
 def get_stream_meta(meta_object: "ModelWithMetadata"):
     return from_meta('GAME_ID', meta_object), \
            from_meta('SEASON_ID', meta_object), \
-           from_meta('EXPIRE', meta_object), \
+           from_meta('EXPIRES', meta_object), \
            from_meta('START_TIME', meta_object), \
            from_meta('TEAM_IDS', meta_object), \
            from_meta('LEAGUE_IDS', meta_object)

@@ -24,13 +24,10 @@ def determine_watch_access_type(ticket_type, team_ids, start_time, expires):
     if team_ids is not None:
         if ticket_type == "season":
             return "season_team"
-        elif ticket_type == "timed":
-            print(start_time)
-            print(expires)
-            if start_time == expires:
-                return "day"
-            else:
-                return "month_team"
+        elif ticket_type == "month":
+            return "month_team"
+        elif ticket_type == "day":
+            return "day"
 
 
 def send_user_watch_log_to_kinesis_stream_silent(user, game_id, ticket_type):
