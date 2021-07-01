@@ -67,8 +67,8 @@ const teamValues = [
 ].map((config) => createAttributeValue(teamsAttribute, config));
 
 const leagueValues = [
-  { name: "AHL 2020/21", slug: "ahl-20-21" },
-  { name: "AHL 2021/22", slug: "ahl-21-22" },
+  { name: "ICE", slug: "ice" },
+  { name: "AHL", slug: "ahl" },
 ].map((config) => createAttributeValue(leaguesAttribute, config));
 
 const singleProducts = teamValues
