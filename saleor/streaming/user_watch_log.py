@@ -5,7 +5,7 @@ import boto3.exceptions
 import logging
 
 from django.core.management.utils import get_random_secret_key
-from .stream_ticket import from_meta, determine_ticket_type, get_stream_meta
+from .stream_ticket import determine_ticket_type, get_stream_meta
 from ..streaming import stream_settings
 from ..order.models import Order
 
@@ -13,10 +13,24 @@ logger = logging.getLogger(__name__)
 
 
 def create_user_watch_log_from_order(order: "Order"):
-    (game_id, season_id, team_id) = get_stream_meta(order)
-    ticket_type = determine_ticket_type(game_id, season_id, team_id, None)
+    (game_id, season_id, expires, start_time, team_ids, league_ids) = get_stream_meta(order)
+    ticket_type = determine_ticket_type(game_id, season_id, expires)
+    access_type = determine_watch_access_type(ticket_type, team_ids, start_time, expires)
+    print(access_type)
+    send_user_watch_log_to_kinesis_stream_silent(order.user, game_id, access_type)
 
-    send_user_watch_log_to_kinesis_stream_silent(order.user, game_id, ticket_type)
+
+def determine_watch_access_type(ticket_type, team_ids, start_time, expires):
+    if team_ids is not None:
+        if ticket_type == "season":
+            return "season_team"
+        elif ticket_type == "timed":
+            print(start_time)
+            print(expires)
+            if start_time == expires:
+                return "day"
+            else:
+                return "month_team"
 
 
 def send_user_watch_log_to_kinesis_stream_silent(user, game_id, ticket_type):

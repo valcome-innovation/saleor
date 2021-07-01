@@ -23,7 +23,7 @@ def create_stream_ticket_from_order(order: "Order"):
     stream_ticket.expires = expires or None
     stream_ticket.league_ids = league_ids or None
     stream_ticket.team_ids = team_ids or None
-    stream_ticket.type = determine_ticket_type(game_id, season_id, team_ids, expires)
+    stream_ticket.type = determine_ticket_type(game_id, season_id, expires)
 
     stream_ticket.save()
 

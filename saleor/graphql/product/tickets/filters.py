@@ -65,8 +65,7 @@ class TicketProductFilter(MetadataFilterBase):
     def get_season_filter(self, teams):
         type_filter = self.get_ticket_type_filter("season")
         teams_filter = self.get_attribute_filter("teams", teams)
-        empty_filter = self.get_attribute_filter("teams", []) # TODO: find solution for empty attributes value
-        return type_filter & (teams_filter | empty_filter)
+        return type_filter & teams_filter
 
     def get_ticket_type_filter(self, ticket_type: "str"):
         attribute = self.get_attribute_data('ticket-type', [ticket_type])
