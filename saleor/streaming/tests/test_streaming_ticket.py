@@ -11,8 +11,8 @@ from ...tests import settings
 
 stream_ticket_test_data = [
     ({'GAME_ID': 1234}, 'single', 'none'),
-    ({'SEASON_ID': 11, 'TEAM_IDS': [22]}, 'season', 'none'),
     ({'SEASON_ID': 11}, 'season', 'none'),
+    ({'SEASON_ID': 11, 'TEAM_IDS': [22]}, 'season', 'none'),
     ({'LEAGUE_IDS': [1], 'EXPIRES': 'm', 'START_TIME': '1625232262'}, 'timed', 'month'),
     ({'LEAGUE_IDS': [1], 'EXPIRES': 'd', 'START_TIME': '1625232262'}, 'timed', 'day'),
 ]

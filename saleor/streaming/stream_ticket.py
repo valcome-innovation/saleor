@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError
 from django.utils.timezone import make_aware
 
+from . import stream_settings
 from ..attribute.models import AssignedProductAttribute
 from .models import StreamTicket
 from ..checkout.models import Checkout
@@ -66,9 +67,9 @@ def determine_timed_type(ticket_type, expire):
 def get_expire_date(start_time, expire_type):
     # TODO fix expire time [NWS-771]
     if expire_type == "m":
-        return start_time + timedelta(days=31)
+        return start_time + timedelta(days=stream_settings.MONTH_TICKET_DURATION_DAYS)
     elif expire_type == "d":
-        return start_time + timedelta(days=1)
+        return start_time + timedelta(days=stream_settings.DAY_TICKET_DURATION_DAYS)
 
 
 def validate_stream_checkout_with_product(checkout: "Checkout", lines: "list"):

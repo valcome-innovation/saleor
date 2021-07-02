@@ -59,6 +59,9 @@ def add_plugins(plugins):
     plugins.append("saleor.plugins.social_auth.plugin.SocialAuthPlugin")
 
 
+MONTH_TICKET_DURATION_DAYS = 31
+DAY_TICKET_DURATION_DAYS = 1
+
 DEFAULT_SENDER_NAME = os.environ.get("DEFAULT_SENDER_NAME", "")
 SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", None)
 
