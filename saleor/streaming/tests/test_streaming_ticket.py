@@ -96,6 +96,10 @@ product_ticket_type_test_data = [
     ("single", "season", "none", False),
     ("single", "timed", "day", False),
     ("single", "timed", "month", False),
+    (None, "timed", "month", False),
+    (None, "timed", "day", False),
+    (None, "single", "none", False),
+    (None, "season", "none", False),
 ]
 
 

@@ -97,10 +97,6 @@ def validate_stream_checkout_with_product(checkout: "Checkout", lines: "list"):
 def product_ticket_type_matches_purchased_ticket(product_ticket_type, ticket_type, timed_type):
     return product_ticket_type is not None and \
         product_ticket_type in [ticket_type, timed_type]
-    # if product_ticket_type in ["day", "month"]:
-    #     return product_ticket_type == timed_type
-    # else:
-    #     return product_ticket_type == ticket_type
 
 
 def get_stream_meta(meta_object: "ModelWithMetadata"):
