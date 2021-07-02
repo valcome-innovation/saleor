@@ -1,4 +1,6 @@
+from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError
+from django.utils.timezone import make_aware
 
 from ..attribute.models import AssignedProductAttribute
 from .models import StreamTicket
@@ -12,32 +14,38 @@ leagues_slug = 'leagues'
 ticket_type_slug = 'ticket-type'
 
 
-def create_stream_ticket_from_order(order: "Order"):
+def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     (game_id, season_id, expires, start_time, team_ids, league_ids) = get_stream_meta(order)
 
     stream_ticket = StreamTicket()
     stream_ticket.user = order.user
     stream_ticket.game_id = game_id or None
     stream_ticket.season_id = season_id or None
-    stream_ticket.start_time = start_time or None
-    stream_ticket.expires = expires or None
     stream_ticket.league_ids = league_ids or None
     stream_ticket.team_ids = team_ids or None
-    stream_ticket.type = determine_ticket_type(game_id, season_id, expires)
-
+    stream_ticket.start_time = get_datetime_from_timestamp_str(start_time)
+    stream_ticket.expires = get_expire_date(stream_ticket.start_time, expires)
+    stream_ticket.type = determine_stream_ticket_type(game_id, season_id, expires)
+    stream_ticket.timed_type = determine_timed_type(stream_ticket.type, expires)
     stream_ticket.save()
+    return stream_ticket
 
 
-def determine_ticket_type(game_id, season_id, expires):
+def get_datetime_from_timestamp_str(timestamp: "str"):
+    if timestamp:
+        dt = datetime.utcfromtimestamp(int(timestamp))
+        return make_aware(dt)
+    else:
+        return None
+
+
+def determine_stream_ticket_type(game_id, season_id, expires):
     if game_id is not None and season_id is None and expires is None:
         return 'single'
     elif season_id is not None and expires is None and game_id is None:
-        return 'season'
+        return "season"
     elif expires is not None and season_id is None and game_id is None:
-        if expires == "m":
-            return 'month'
-        else:
-            return 'day'
+        return "timed"
     else:
         raise ValidationError(
             "Could not determine TicketType from input parameters",
@@ -45,10 +53,29 @@ def determine_ticket_type(game_id, season_id, expires):
         )
 
 
+def determine_timed_type(ticket_type, expire):
+    if ticket_type == "timed":
+        if expire == "m":
+            return "month"
+        else:
+            return "day"
+    else:
+        return "none"
+
+
+def get_expire_date(start_time, expire_type):
+    # TODO fix expire time [NWS-771]
+    if expire_type == "m":
+        return start_time + timedelta(days=31)
+    elif expire_type == "d":
+        return start_time + timedelta(days=1)
+
+
 def validate_stream_checkout_with_product(checkout: "Checkout", lines: "list"):
     (game_id, season_id, expires, start_time, team_ids, league_ids) = get_stream_meta(checkout)
 
-    stream_ticket_type = determine_ticket_type(game_id, season_id, expires)
+    ticket_type = determine_stream_ticket_type(game_id, season_id, expires)
+    timed_type = determine_timed_type(ticket_type, expires)
 
     if len(lines) == 1 and lines[0].variant.product.attributes.count() >= 1:
         attributes = lines[0].variant.product.attributes.all()
@@ -57,13 +84,23 @@ def validate_stream_checkout_with_product(checkout: "Checkout", lines: "list"):
         if ticket_type_attribute.values.count() == 1:
             product_ticket_type = ticket_type_attribute.values.first().slug
 
-            if product_ticket_type == stream_ticket_type:
-                return True
+            return product_ticket_type_matches_purchased_ticket(
+                product_ticket_type, ticket_type, timed_type
+            )
 
     raise ValidationError(
         "Checkout is not a valid StreamTicket purchase",
         code=OrderErrorCode.INVALID.value
     )
+
+
+def product_ticket_type_matches_purchased_ticket(product_ticket_type, ticket_type, timed_type):
+    return product_ticket_type is not None and \
+        product_ticket_type in [ticket_type, timed_type]
+    # if product_ticket_type in ["day", "month"]:
+    #     return product_ticket_type == timed_type
+    # else:
+    #     return product_ticket_type == ticket_type
 
 
 def get_stream_meta(meta_object: "ModelWithMetadata"):

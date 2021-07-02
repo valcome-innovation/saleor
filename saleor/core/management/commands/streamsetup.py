@@ -1,11 +1,12 @@
 import django.conf as conf
 from io import StringIO
 from django.apps import apps
+from django.contrib.sites.models import Site
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.db import connection
 
-from ....account.models import User
+from ....account.models import User, Address
 from ....streaming.models import StreamTicket
 from ....account.utils import create_superuser
 from ....site.models import AuthenticationBackends
@@ -42,6 +43,8 @@ class Command(BaseCommand):
         channel = create_channel("Streaming Channel", "EUR")
         self.stdout.write(channel)
 
+        self.create_company_address()
+
         create_products_by_schema(placeholder_dir=self.placeholders_dir,
                                   create_images=False,
                                   data_json="streamdb_data.json")
@@ -71,3 +74,18 @@ class Command(BaseCommand):
         stream_ticket.type = "single"
         stream_ticket.save()
         return stream_ticket
+
+    def create_company_address(self):
+        company_address = Address(
+            company_name="Valcome Analytics GmbH",
+            street_address_1="Im Backerfeld 12a",
+            city="Linz",
+            postal_code="4020",
+            country="AT",
+            country_area="OOE"
+        )
+        company_address.save()
+
+        site_settings = Site.objects.get_current().settings
+        site_settings.company_address = company_address
+        site_settings.save(update_fields=["company_address"])

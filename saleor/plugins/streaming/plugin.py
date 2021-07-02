@@ -7,7 +7,7 @@ from ...discount import DiscountInfo
 from ...order.models import Order
 from ...streaming.stream_ticket import validate_stream_checkout_with_product, \
     create_stream_ticket_from_order
-from ...streaming.user_watch_log import create_user_watch_log_from_order
+from ...streaming.user_watch_log import create_user_watch_log_from_stream_ticket
 
 logger = logging.getLogger(__name__)
 
@@ -39,8 +39,8 @@ class StreamingPlugin(BasePlugin):
 
     def order_created(self, order: "Order", previous_value: Any) -> Any:
         try:
-            create_stream_ticket_from_order(order)
-            create_user_watch_log_from_order(order)
+            stream_ticket = create_stream_ticket_from_order(order)
+            create_user_watch_log_from_stream_ticket(stream_ticket)
         except Exception as exc:
             logger.exception(
                 f"[stream checkout] FATAL error after creating order with id {order.pk}",
