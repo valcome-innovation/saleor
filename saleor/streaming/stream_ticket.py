@@ -28,6 +28,8 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     stream_ticket.expires = get_expire_date(stream_ticket.start_time, expires)
     stream_ticket.type = determine_stream_ticket_type(game_id, season_id, expires)
     stream_ticket.timed_type = determine_timed_type(stream_ticket.type, expires)
+
+    validate_stream_ticket_creation(stream_ticket)
     stream_ticket.save()
     return stream_ticket
 
@@ -40,9 +42,26 @@ def get_datetime_from_timestamp_str(timestamp: "str"):
         return None
 
 
+def validate_stream_ticket_creation(stream_ticket: "StreamTicket"):
+    validate_start_time(stream_ticket.start_time)
+
+
+def validate_start_time(start_time: "datetime"):
+    if start_time:
+        start_date = start_time.date()
+        utc_now_date = datetime.utcnow().date()
+        day_difference = (start_date - utc_now_date).days
+
+        if day_difference < 0:
+            raise ValidationError(
+                "Start-Time cannot be in the past for newly purchased tickets."
+            )
+    return True
+
+
 def determine_stream_ticket_type(game_id, season_id, expires):
     if game_id is not None and season_id is None and expires is None:
-        return 'single'
+        return "single"
     elif season_id is not None and expires is None and game_id is None:
         return "season"
     elif expires is not None and season_id is None and game_id is None:

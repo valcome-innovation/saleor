@@ -1,11 +1,15 @@
 import pytest
+from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError
 
 from ...order.models import Order
 from ...streaming.stream_ticket import (
     create_stream_ticket_from_order,
-    get_datetime_from_timestamp_str, determine_stream_ticket_type, determine_timed_type,
+    get_datetime_from_timestamp_str,
+    determine_stream_ticket_type,
+    determine_timed_type,
     product_ticket_type_matches_purchased_ticket,
+    validate_start_time,
 )
 from ...tests import settings
 
@@ -13,8 +17,8 @@ stream_ticket_test_data = [
     ({'GAME_ID': 1234}, 'single', 'none'),
     ({'SEASON_ID': 11}, 'season', 'none'),
     ({'SEASON_ID': 11, 'TEAM_IDS': [22]}, 'season', 'none'),
-    ({'LEAGUE_IDS': [1], 'EXPIRES': 'm', 'START_TIME': '1625232262'}, 'timed', 'month'),
-    ({'LEAGUE_IDS': [1], 'EXPIRES': 'd', 'START_TIME': '1625232262'}, 'timed', 'day'),
+    ({'LEAGUE_IDS': [1], 'EXPIRES': 'm', 'START_TIME': '%d' % datetime.utcnow().timestamp()}, 'timed', 'month'),
+    ({'LEAGUE_IDS': [1], 'EXPIRES': 'd', 'START_TIME': '%d' % datetime.utcnow().timestamp()}, 'timed', 'day'),
 ]
 
 
@@ -107,6 +111,40 @@ product_ticket_type_test_data = [
 def test_product_ticket_type_matches_purchased_ticket(product_ticket_type, ticket_type, timed_type, expected):
     result = product_ticket_type_matches_purchased_ticket(product_ticket_type, ticket_type, timed_type)
     assert result == expected
+
+
+test_start_times_valid = [
+    (datetime.utcnow()),
+    (datetime.utcnow() + timedelta(days=0)),
+    (datetime.utcnow() + timedelta(days=1)),
+    (datetime.utcnow() + timedelta(days=36)),
+    (datetime.utcnow() - timedelta(hours=datetime.utcnow().hour) + timedelta(hours=1)),
+    (datetime.utcnow() - timedelta(hours=datetime.utcnow().hour) + timedelta(hours=12)),
+    (datetime.utcnow() - timedelta(hours=datetime.utcnow().hour) + timedelta(hours=23, minutes=59)),
+    (datetime.utcnow() - timedelta(hours=datetime.utcnow().hour) + timedelta(hours=24)),
+]
+
+
+@pytest.mark.parametrize('start_time', test_start_times_valid)
+def test_is_valid_start_time(start_time):
+    assert validate_start_time(start_time)
+
+
+test_start_times_invalid = [
+    (datetime.utcnow() - timedelta(days=1)),
+    (datetime.utcnow() - timedelta(days=36)),
+    (datetime.utcnow() - timedelta(hours=datetime.utcnow().hour + 1)),
+    (datetime.utcnow() - timedelta(hours=datetime.utcnow().hour + 12)),
+    (datetime.utcnow() - timedelta(hours=datetime.utcnow().hour + 23)),
+    (datetime.utcnow() - timedelta(hours=datetime.utcnow().hour + 24)),
+    (datetime.utcnow() - timedelta(hours=datetime.utcnow().hour + 25)),
+]
+
+
+@pytest.mark.parametrize('start_time', test_start_times_invalid)
+def test_is_valid_start_time_errors(start_time):
+    with pytest.raises(ValidationError):
+        validate_start_time(start_time)
 
 
 def test_get_datetime_from_timestamp_str():
