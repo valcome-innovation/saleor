@@ -21,22 +21,6 @@ def create_user_watch_log_from_stream_ticket(stream_ticket: "StreamTicket"):
         )
 
 
-def determine_watch_access_type(ticket_type, timed_type, team_ids):
-    access_type = ticket_type
-
-    if timed_type != "none":
-        access_type = timed_type
-
-    return determine_teamed_watch_type(access_type, team_ids)
-
-
-def determine_teamed_watch_type(access_type, team_ids):
-    if team_ids and access_type in ["season", "month"]:
-        return access_type + "_team"
-    else:
-        return access_type
-
-
 def send_user_watch_log_to_kinesis_stream_silent(user, game_id, access_type):
     try:
         send_user_watch_log_to_kinesis_stream(user, game_id, access_type)
