@@ -1010,6 +1010,8 @@ def test_customer_register(mocked_notify, mocked_generator, api_client, channel_
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     assert new_user.metadata == {"meta": "data"}
     assert new_user.language_code == "pl"
@@ -1164,6 +1166,8 @@ def test_customer_create(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     mocked_notify.assert_called_once_with(
         NotifyEventType.ACCOUNT_SET_CUSTOMER_PASSWORD,
@@ -1214,6 +1218,8 @@ def test_customer_create_send_password_with_url(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     mocked_notify.assert_called_once_with(
         NotifyEventType.ACCOUNT_SET_CUSTOMER_PASSWORD,
@@ -1638,6 +1644,8 @@ def test_account_request_deletion(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -1672,6 +1680,8 @@ def test_account_request_deletion_token_validation(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -1735,6 +1745,8 @@ def test_account_request_deletion_all_storefront_hosts_allowed(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -1770,6 +1782,8 @@ def test_account_request_deletion_subdomain(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -2012,6 +2026,8 @@ def test_staff_create(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": None,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -2141,6 +2157,8 @@ def test_staff_create_out_of_scope_group(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": None,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -2183,6 +2201,8 @@ def test_staff_create_send_password_with_url(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": None,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -3512,6 +3532,8 @@ def test_account_reset_password(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -3604,6 +3626,8 @@ def test_request_password_reset_email_for_staff(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": None,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -3696,6 +3720,8 @@ def test_account_reset_password_all_storefront_hosts_allowed(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -3729,6 +3755,8 @@ def test_account_reset_password_subdomain(
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "channel_slug": channel_PLN.slug,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(

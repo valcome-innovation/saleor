@@ -212,6 +212,8 @@ def test_get_default_fulfillment_payload(
         "recipient_email": order.get_customer_email(),
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
 
@@ -232,6 +234,8 @@ def test_send_email_payment_confirmation(mocked_notify, site_settings, payment_d
         },
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     notifications.send_payment_confirmation(order, manager)
     mocked_notify.assert_called_once_with(
@@ -253,6 +257,8 @@ def test_send_email_order_confirmation(mocked_notify, order, site_settings):
         "recipient_email": order.get_customer_email(),
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     mocked_notify.assert_called_once_with(
         NotifyEventType.ORDER_CONFIRMATION,
@@ -300,6 +306,8 @@ def test_send_confirmation_emails_without_addresses_for_payment(
         },
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     mocked_notify.assert_called_once_with(
         NotifyEventType.ORDER_PAYMENT_CONFIRMATION,
@@ -338,6 +346,8 @@ def test_send_confirmation_emails_without_addresses_for_order(
         "recipient_email": order.get_customer_email(),
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(
@@ -407,6 +417,8 @@ def test_send_email_order_canceled(mocked_notify, order, site_settings, staff_us
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
         "requester_user_id": staff_user.id,
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     mocked_notify.assert_called_once_with(
         NotifyEventType.ORDER_CANCELED,
@@ -435,6 +447,8 @@ def test_send_email_order_refunded(mocked_notify, order, site_settings, staff_us
         "recipient_email": order.get_customer_email(),
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mocked_notify.assert_called_once_with(

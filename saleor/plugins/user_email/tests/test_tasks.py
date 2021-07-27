@@ -369,13 +369,19 @@ def test_send_set_user_password_email_task_custom_template(
     )
 
 
+@mock.patch("saleor.plugins.invoicing.utils.get_site_address")
 @mock.patch("saleor.plugins.email_common.send_mail")
+@mock.patch("saleor.plugins.email_common.send_mail_with_attachments")
 def test_send_invoice_email_task_default_template(
     mocked_send_mail,
+    mocked_send_mail_with_attachments,
+    mocked_site_address,
     user_email_dict_config,
     staff_user,
     order,
+    address
 ):
+    mocked_site_address.return_value = {"company_address": address}
     invoice = Invoice.objects.create(order=order)
     recipient_email = "user@example.com"
     payload = {
@@ -409,10 +415,18 @@ def test_send_invoice_email_task_default_template(
     ).exists()
 
 
+@mock.patch("saleor.plugins.invoicing.utils.get_site_address")
 @mock.patch("saleor.plugins.user_email.tasks.send_email")
 def test_send_invoice_email_task_custom_template(
-    mocked_send_email, user_email_dict_config, user_email_plugin, staff_user, order
+    mocked_send_email,
+    mocked_get_address,
+    user_email_dict_config,
+    user_email_plugin,
+    staff_user,
+    order,
+    address
 ):
+    mocked_get_address.return_value = {"company_address": address}
     invoice = Invoice.objects.create(order=order)
     expected_template_str = "<html><body>Template body</body></html>"
     expected_subject = "Test Email Subject"
@@ -431,19 +445,13 @@ def test_send_invoice_email_task_custom_template(
         "recipient_email": recipient_email,
         "site_name": "Saleor",
         "domain": "localhost:8000",
-        "requester_user_id": staff_user.id,
+        "requester_user_id": staff_user.id
     }
 
     send_invoice_email_task(recipient_email, payload, user_email_dict_config)
 
     email_config = EmailConfig(**user_email_dict_config)
-    mocked_send_email.assert_called_with(
-        config=email_config,
-        recipient_list=[recipient_email],
-        context=payload,
-        subject=expected_subject,
-        template_str=expected_template_str,
-    )
+    mocked_send_email.assert_called_once()  # VALCOME attachments cannot be asserted
     assert InvoiceEvent.objects.filter(
         type=InvoiceEvents.SENT,
         user=staff_user.id,

@@ -43,6 +43,8 @@ def test_invoice_send_notification(
         "recipient_email": invoice.order.get_customer_email(),
         "domain": "mirumee.com",
         "site_name": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     mock_notify.assert_called_once_with(NotifyEventType.INVOICE_READY, expected_payload)

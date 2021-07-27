@@ -65,7 +65,7 @@ INTERNAL_IPS = get_list(os.environ.get("INTERNAL_IPS", "127.0.0.1"))
 stream_settings.setup_database_url()
 DATABASES = {
     "default": dj_database_url.config(
-        default="postgres://saleor:saleor@localhost:5432/saleor", conn_max_age=600
+        default="postgres://saleor:saleor@localhost:5442/saleor", conn_max_age=600
     )
 }
 
@@ -410,7 +410,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Amazon S3 configuration
 # See https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_ACCESS_KEY_ID = get_docker_secret("aws_access_key_id", secrets_dir="/run/secrets")
 AWS_LOCATION = os.environ.get("AWS_LOCATION", "")
 AWS_MEDIA_BUCKET_NAME = os.environ.get("AWS_MEDIA_BUCKET_NAME")
 AWS_MEDIA_CUSTOM_DOMAIN = os.environ.get("AWS_MEDIA_CUSTOM_DOMAIN")
@@ -419,7 +419,7 @@ AWS_QUERYSTRING_EXPIRE = get_bool_from_env("AWS_QUERYSTRING_EXPIRE", 3600)
 AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_STATIC_CUSTOM_DOMAIN")
 AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None)
 AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", None)
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = get_docker_secret("aws_secret_key", default=os.environ.get("AWS_SECRET_ACCESS_KEY", ""), secrets_dir="/run/secrets")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 AWS_DEFAULT_ACL = os.environ.get("AWS_DEFAULT_ACL", None)
 

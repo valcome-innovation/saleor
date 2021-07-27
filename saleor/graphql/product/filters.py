@@ -225,7 +225,7 @@ def filter_products_by_stock_availability(qs, stock_availability, channel_slug):
     return qs
 
 
-def _filter_attributes(qs, _, value):
+def filter_attributes(qs, _, value):
     if value:
         value_list = []
         value_range_list = []
@@ -437,7 +437,7 @@ class ProductFilter(MetadataFilterBase):
         ]
 
     def filter_attributes(self, queryset, name, value):
-        return _filter_attributes(queryset, name, value)
+        return filter_attributes(queryset, name, value)
 
     def filter_variant_price(self, queryset, name, value):
         channel_slug = get_channel_slug_from_filter_data(self.data)
