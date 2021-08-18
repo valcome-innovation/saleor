@@ -24,3 +24,10 @@ def channel_PLN(db):
     return Channel.objects.create(
         name="Channel PLN", slug="c-pln", currency_code="PLN", is_active=True
     )
+
+
+@pytest.fixture
+def channel_EUR(db):
+    return Channel.objects.create(
+        name="Channel EUR", slug="c-eur", currency_code="EUR", is_active=True
+    )

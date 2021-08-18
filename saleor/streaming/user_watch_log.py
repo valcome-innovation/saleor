@@ -5,35 +5,37 @@ import boto3.exceptions
 import logging
 
 from django.core.management.utils import get_random_secret_key
-from .stream_ticket import from_meta, determine_ticket_type, get_stream_meta
+
+from .models import StreamTicket
 from ..streaming import stream_settings
-from ..order.models import Order
 
 logger = logging.getLogger(__name__)
 
 
-def create_user_watch_log_from_order(order: "Order"):
-    (game_id, season_id, team_id) = get_stream_meta(order)
-    ticket_type = determine_ticket_type(game_id, season_id, team_id, None)
+def create_user_watch_log_from_stream_ticket(stream_ticket: "StreamTicket"):
+    if stream_ticket.game_id is not None:
+        send_user_watch_log_to_kinesis_stream_silent(
+            user=stream_ticket.user,
+            game_id=stream_ticket.game_id,
+            access_type=stream_ticket.type
+        )
 
-    send_user_watch_log_to_kinesis_stream_silent(order.user, game_id, ticket_type)
 
-
-def send_user_watch_log_to_kinesis_stream_silent(user, game_id, ticket_type):
+def send_user_watch_log_to_kinesis_stream_silent(user, game_id, access_type):
     try:
-        send_user_watch_log_to_kinesis_stream(user, game_id, ticket_type)
+        send_user_watch_log_to_kinesis_stream(user, game_id, access_type)
     except Exception as exc:
         logger.exception(
             f"[AWS Kinesis] Couldn't create user watch log user_id={user.id}, "
-            f"game_id={game_id}, type={ticket_type}",
+            f"game_id={game_id}, type={access_type}",
             exc_info=exc
         )
 
 
-def send_user_watch_log_to_kinesis_stream(user, game_id, ticket_type):
+def send_user_watch_log_to_kinesis_stream(user, game_id, access_type):
     credentials = retrieve_cognito_credentials()
     kinesis = create_kinesis_client(credentials)
-    user_watch_log = create_user_watch_log(user.id, game_id, ticket_type)
+    user_watch_log = create_user_watch_log(user.id, game_id, access_type)
     put_stream_record(kinesis, user_watch_log)
 
 
@@ -59,13 +61,17 @@ def create_kinesis_client(credentials):
         aws_session_token=credentials["SessionToken"])
 
 
-def create_user_watch_log(user_id: str, game_id: str, ticket_type: str):
+def create_user_watch_log(user_id: str, game_id: str, access_type: str):
     global_user_id = graphene.Node.to_global_id("User", user_id)
     return {
         'id': f'{game_id}_{global_user_id}',
         'gameId': f'{game_id}',
         'userId': f'{global_user_id}',
-        'type': f'{ticket_type}',
+        'access': {
+            'type': f'{access_type}',
+            'withCode': False,
+            'isFree': False,
+        },
         'watchDuration': 0
     }
 

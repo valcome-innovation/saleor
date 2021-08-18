@@ -31,7 +31,7 @@
         <tr class="summary-row">
             <td class="cell-summary">
                 <span class="normal-text-table">
-                    {% trans "Tax" context "Invoice PDF summary" %}
+                    {% trans "Tax" context "Invoice PDF summary" %} ({{ order.get_total_tax_rate }}%)
                 </span>
             </td>
             <td class="cell-quantity"></td>

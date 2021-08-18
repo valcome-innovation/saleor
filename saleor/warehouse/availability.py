@@ -70,13 +70,7 @@ def check_stock_quantity_bulk(
 
         # VALCOME: fix insufficient stock bug at checkout create
         if variant.track_inventory:
-            if not stocks:
-                insufficient_stocks.append(
-                    InsufficientStockData(
-                        variant=variant, available_quantity=available_quantity
-                    )
-                )
-            if quantity > available_quantity:
+            if not stocks or quantity > available_quantity:
                 insufficient_stocks.append(
                     InsufficientStockData(
                         variant=variant, available_quantity=available_quantity

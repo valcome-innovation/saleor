@@ -28,6 +28,7 @@ def get_site_address():
             "city": address.city,
             "postal_code": address.postal_code,
             "phone": address.phone,
+            "uid": stream_settings.UID
         }
     }
     return site_address

@@ -57,7 +57,7 @@ DEFAULT_EMAIL_CONFIGURATION = [
     {"name": "username", "value": settings.EMAIL_HOST_USER},
     {"name": "password", "value": settings.EMAIL_HOST_PASSWORD},
     {"name": "sender_name", "value": stream_settings.DEFAULT_SENDER_NAME},
-    {"name": "sender_address", "value": settings.EMAIL_HOST_USER},
+    {"name": "sender_address", "value": settings.DEFAULT_FROM_EMAIL}, # VALCOME
     {"name": "use_tls", "value": settings.EMAIL_USE_TLS},
     {"name": "use_ssl", "value": settings.EMAIL_USE_SSL},
 ]

@@ -114,6 +114,8 @@ def test_create_order_captured_payment_creates_expected_events(
         "recipient_email": order.get_customer_email(),
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     expected_payment_payload = {
@@ -129,6 +131,8 @@ def test_create_order_captured_payment_creates_expected_events(
         },
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     # Ensure the correct order confirmed event was created
     # should be order confirmed event
@@ -261,6 +265,8 @@ def test_create_order_captured_payment_creates_expected_events_anonymous_user(
         "recipient_email": order.get_customer_email(),
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     expected_payment_payload = {
@@ -276,6 +282,8 @@ def test_create_order_captured_payment_creates_expected_events_anonymous_user(
         },
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     # Ensure the correct order confirmed event was created
@@ -390,6 +398,8 @@ def test_create_order_preauth_payment_creates_expected_events(
         "recipient_email": order.get_customer_email(),
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
 
     # Ensure the correct order confirmed event was created
@@ -500,6 +510,8 @@ def test_create_order_preauth_payment_creates_expected_events_anonymous_user(
         "recipient_email": order.get_customer_email(),
         "site_name": "mirumee.com",
         "domain": "mirumee.com",
+        "static_url": "/static/",  # VALCOME
+        "support_email": None  # VALCOME
     }
     # Ensure the correct order confirmed event was created
     # should be order confirmed event

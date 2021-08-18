@@ -28,14 +28,16 @@ def test_get_product_limit_first_page(product):
     assert get_product_limit_first_page([product] * 16) == 4
 
 
+@patch("saleor.plugins.invoicing.utils.get_site_address")
 @patch("saleor.plugins.invoicing.utils.HTML")
 @patch("saleor.plugins.invoicing.utils.get_template")
 @patch("saleor.plugins.invoicing.utils.os")
 def test_generate_invoice_pdf_for_order(
-    os_mock, get_template_mock, HTML_mock, fulfilled_order
+    os_mock, get_template_mock, HTML_mock, site_address_mock, fulfilled_order, address
 ):
     get_template_mock.return_value.render = Mock(return_value="<html></html>")
     os_mock.path.join.return_value = "test"
+    site_address_mock.return_value = {"company_address": address}
 
     content, creation = generate_invoice_pdf(fulfilled_order.invoices.first())
 
@@ -47,6 +49,8 @@ def test_generate_invoice_pdf_for_order(
             "font_path": "file://test",
             "products_first_page": list(fulfilled_order.lines.all()),
             "rest_of_products": [],
+            "support_email": None,
+            "company_address": address
         }
     )
     HTML_mock.assert_called_once_with(

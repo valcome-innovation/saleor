@@ -13,6 +13,8 @@ from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.models import Site
 from django.core.files import File
+from django.core.management.color import no_style
+from django.db import connection
 from django.db.models import F, Q
 from django.urls import reverse
 from django.utils import timezone
@@ -100,17 +102,17 @@ IMAGES_MAPPING = {
     63: ["saleordemoproduct_paints_03.png"],
     64: ["saleordemoproduct_paints_04.png"],
     65: ["saleordemoproduct_paints_05.png"],
-    66: ["saleordemoproduct_paints_05.png"],  # FIXME STREAMSETUP
-    67: ["saleordemoproduct_paints_05.png"],  # FIXME STREAMSETUP
-    68: ["saleordemoproduct_paints_05.png"],  # FIXME STREAMSETUP
-    69: ["saleordemoproduct_paints_05.png"],  # FIXME STREAMSETUP
-    70: ["saleordemoproduct_paints_05.png"],  # FIXME STREAMSETUP
+    66: ["saleordemoproduct_paints_05.png"],
+    67: ["saleordemoproduct_paints_05.png"],
+    68: ["saleordemoproduct_paints_05.png"],
+    69: ["saleordemoproduct_paints_05.png"],
+    70: ["saleordemoproduct_paints_05.png"],
     71: ["saleordemoproduct_fd_juice_06.png"],
-    72: ["saleordemoproduct_fd_juice_06.png"],  # FIXME inproper image
+    72: ["saleordemoproduct_fd_juice_06.png"],
     73: ["saleordemoproduct_fd_juice_05.png"],
     74: ["saleordemoproduct_fd_juice_01.png"],
-    75: ["saleordemoproduct_fd_juice_03.png"],  # FIXME inproper image
-    76: ["saleordemoproduct_fd_juice_02.png"],  # FIXME inproper image
+    75: ["saleordemoproduct_fd_juice_03.png"],
+    76: ["saleordemoproduct_fd_juice_02.png"],
     77: ["saleordemoproduct_fd_juice_03.png"],
     78: ["saleordemoproduct_fd_juice_04.png"],
     79: ["saleordemoproduct_fd_juice_02.png"],
@@ -147,7 +149,7 @@ IMAGES_MAPPING = {
     114: [
         "saleordemoproduct_cl_boot06_1.png",
         "saleordemoproduct_cl_boot06_2.png",
-    ],  # FIXME incorrect image
+    ],
     115: ["saleordemoproduct_cl_bogo01_1.png"],
     116: ["saleordemoproduct_cl_bogo02_1.png"],
     117: ["saleordemoproduct_cl_bogo03_1.png"],
@@ -247,9 +249,9 @@ def create_attributes_values(values_data):
 def create_products(products_data, placeholder_dir, create_images):
     for product in products_data:
         pk = product["pk"]
-        # We are skipping products without images
-        if pk not in IMAGES_MAPPING:
-            continue
+        # VALCOME commented out
+        # if pk not in IMAGES_MAPPING:
+        #     continue
 
         defaults = product["fields"]
         defaults["weight"] = get_weight(defaults["weight"])
@@ -259,7 +261,7 @@ def create_products(products_data, placeholder_dir, create_images):
         product, _ = Product.objects.update_or_create(pk=pk, defaults=defaults)
 
         if create_images:
-            images = IMAGES_MAPPING.get(pk, [])
+            images = IMAGES_MAPPING.get(pk, ["saleor-digital-03_1.png"])
             for image_name in images:
                 create_product_image(product, placeholder_dir, image_name)
 
@@ -290,9 +292,9 @@ def create_product_variants(variants_data, create_images):
         defaults = variant["fields"]
         defaults["weight"] = get_weight(defaults["weight"])
         product_id = defaults.pop("product")
-        # We have not created products without images
-        if product_id not in IMAGES_MAPPING:
-            continue
+        # VALCOME commented out
+        # if product_id not in IMAGES_MAPPING:
+        #     continue
         defaults["product_id"] = product_id
         set_field_as_money(defaults, "price_override")
         set_field_as_money(defaults, "cost_price")

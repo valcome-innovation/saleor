@@ -18,6 +18,7 @@ from .page.schema import PageMutations, PageQueries
 from .payment.schema import PaymentMutations, PaymentQueries
 from .plugins.schema import PluginsMutations, PluginsQueries
 from .product.schema import ProductMutations, ProductQueries
+from .product.tickets.schema import TicketProductQueries
 from .shipping.schema import ShippingMutations, ShippingQueries
 from .shop.schema import ShopMutations, ShopQueries
 from .translations.schema import TranslationQueries
@@ -42,6 +43,7 @@ class Query(
     PageQueries,
     PaymentQueries,
     ProductQueries,
+    TicketProductQueries,
     ShippingQueries,
     ShopQueries,
     SofortQueries,
