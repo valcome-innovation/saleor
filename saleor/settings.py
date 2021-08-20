@@ -484,6 +484,7 @@ AUTHENTICATION_BACKENDS = [
     "saleor.core.auth_backend.PluginBackend",
 ]
 stream_settings.add_backends(AUTHENTICATION_BACKENDS)
+PASSWORD_RESET_TIMEOUT = 518400
 
 SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
