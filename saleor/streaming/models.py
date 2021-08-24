@@ -31,8 +31,8 @@ class StreamTicket(models.Model):
     season_id = models.CharField(max_length=256, blank=True, null=True)
     start_time = models.DateTimeField(default=None, editable=True, blank=True, null=True)
     expires = models.DateTimeField(default=None, editable=True, blank=True, null=True)
-    league_ids = models.CharField(max_length=256, blank=True, null=True)
-    team_ids = models.CharField(max_length=256, blank=True, null=True)
+    league_ids = models.CharField(max_length=2048, blank=True, null=True)
+    team_ids = models.CharField(max_length=2048, blank=True, null=True)
     is_free = models.BooleanField(default=False, null=False)
     timed_type = models.CharField(max_length=256, default="none", null=False)
 
