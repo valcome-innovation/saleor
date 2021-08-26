@@ -35,6 +35,7 @@ class StreamTicket(models.Model):
     team_ids = models.CharField(max_length=2048, blank=True, null=True)
     is_free = models.BooleanField(default=False, null=False)
     timed_type = models.CharField(max_length=256, default="none", null=False)
+    for_guests = models.BooleanField(default=False, null=False)
 
     class Meta:
         ordering = ("expires",)
