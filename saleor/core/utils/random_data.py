@@ -485,7 +485,7 @@ def create_product_image(product, placeholder_dir, image_name):
 
 
 def create_address(save=True):
-    address = Address(
+    address = Address.objects.create(
         first_name=fake.first_name(),
         last_name=fake.last_name(),
         street_address_1=fake.street_address(),
@@ -515,8 +515,7 @@ def create_fake_user(save=True):
     except User.DoesNotExist:
         pass
 
-    user = User(
-        id=fake.numerify(),
+    user = User.objects.create_user(
         first_name=address.first_name,
         last_name=address.last_name,
         email=email,
