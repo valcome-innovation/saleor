@@ -141,22 +141,6 @@ def resolve_product_variants(
     return ChannelQsContext(qs=qs, channel_slug=channel_slug)
 
 
-# def resolve_report_product_sales(period, channel_slug) -> ChannelQsContext:
-#     qs = models.ProductVariant.objects.all()
-#
-#     # exclude draft and canceled orders
-#     exclude_status = [OrderStatus.DRAFT, OrderStatus.CANCELED]
-#     qs = qs.exclude(order_lines__order__status__in=exclude_status)
-#
-#     # filter by period
-#     qs = filter_by_period(qs, period, "order_lines__order__created")
-#
-#     qs = qs.annotate(quantity_ordered=Sum("order_lines__quantity"))
-#     qs = qs.filter(
-#         quantity_ordered__isnull=False, order_lines__order__channel__slug=channel_slug
-#     )
-#     qs = qs.order_by("-quantity_ordered")
-#     return ChannelQsContext(qs=qs, channel_slug=channel_slug)
 def resolve_report_product_sales(period, channel_slug) -> ChannelQsContext:
     qs = models.ProductVariant.objects.all()
 

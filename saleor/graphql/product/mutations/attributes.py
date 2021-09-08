@@ -7,6 +7,7 @@ from django.db.models import Q
 
 from ....attribute import AttributeType
 from ....attribute import models as attribute_models
+from ....core.caching import invalidate_cache, CachePrefix
 from ....core.permissions import ProductPermissions, ProductTypePermissions
 from ....core.tracing import traced_atomic_transaction
 from ....product import models
@@ -180,6 +181,7 @@ class ProductAttributeAssign(BaseMutation):
 
     @classmethod
     @traced_atomic_transaction()
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, _root, info, **data):
         product_type_id: str = data["product_type_id"]
         operations: List[ProductAttributeAssignInput] = data["operations"]
@@ -244,6 +246,7 @@ class ProductAttributeUnassign(BaseMutation):
         getattr(product_type, field).remove(*pks)
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, _root, info, **data):
         product_type_id: str = data["product_type_id"]
         attribute_ids: List[str] = data["attribute_ids"]

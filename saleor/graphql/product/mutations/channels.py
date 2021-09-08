@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 
 from ....checkout.models import CheckoutLine
+from ....core.caching import CachePrefix, invalidate_cache
 from ....core.permissions import ProductPermissions
 from ....core.tracing import traced_atomic_transaction
 from ....product.error_codes import CollectionErrorCode, ProductErrorCode
@@ -269,6 +270,7 @@ class ProductChannelListingUpdate(BaseChannelListingMutation):
         info.context.plugins.product_updated(product)
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, _root, info, id, input):
         qs = ProductModel.objects.prefetched_for_webhook()
         product = cls.get_node_or_error(info, id, only_type=Product, field="id", qs=qs)
@@ -433,6 +435,7 @@ class ProductVariantChannelListingUpdate(BaseMutation):
         )
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, _root, info, id, input):
         qs = ProductVariantModel.objects.prefetched_for_webhook()
         variant: "ProductVariantModel" = cls.get_node_or_error(  # type: ignore

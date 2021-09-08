@@ -1,5 +1,32 @@
+from ...account.models import User
+from faker import Factory
+from django.utils import timezone
+
+from .random_data import create_address
 from ...page.models import Page, PageType
 from ..utils import random_data
+
+fake = Factory.create()
+
+
+def create_test_user(how_many=100):
+    for dummy in range(how_many):
+        address = create_address()
+
+        user = User.objects.create_user(
+            first_name=address.first_name,
+            last_name=address.last_name,
+            email="gatling%d@valcome.tv" % dummy,
+            password="password",
+            default_billing_address=address,
+            default_shipping_address=address,
+            is_active=True,
+            note=fake.paragraph(),
+            date_joined=fake.date_time(tzinfo=timezone.get_current_timezone()),
+        )
+        user.save()
+        user.addresses.add(address)
+        yield "User: %s" % (user.email,)
 
 
 def create_users(how_many=10):

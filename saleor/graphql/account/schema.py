@@ -1,5 +1,6 @@
 import graphene
 
+from ...core.caching import cached_resolver, CachePrefix
 from ...core.permissions import AccountPermissions
 from ..core.fields import FilterInputConnectionField
 from ..core.types import FilterInputObjectType
@@ -147,6 +148,7 @@ class AccountQueries(graphene.ObjectType):
         description="Look up a user by ID or email address.",
     )
 
+    @cached_resolver(CachePrefix.ADDRESS)
     def resolve_address_validation_rules(
         self, info, country_code, country_area=None, city=None, city_area=None
     ):
