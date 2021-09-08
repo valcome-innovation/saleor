@@ -64,6 +64,17 @@ const teamValues = [
   { name: "VEU", slug: "veu" },
   { name: "WSV", slug: "wsv" },
   { name: "HKO", slug: "hko" },
+  { name: "HCB", slug: "hcb" },
+  { name: "VSV", slug: "vsv" },
+  { name: "BWI", slug: "bwi" },
+  { name: "HCI", slug: "hci" },
+  { name: "G99", slug: "g99" },
+  { name: "VIC", slug: "vic" },
+  { name: "RBS", slug: "rbs" },
+  { name: "KAC", slug: "kac" },
+  { name: "DEC", slug: "dec" },
+  { name: "AVS", slug: "avs" },
+  { name: "BRC", slug: "brc" }
 ].map((config) => createAttributeValue(teamsAttribute, config));
 
 const leagueValues = [
