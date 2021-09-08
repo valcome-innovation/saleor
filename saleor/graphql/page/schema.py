@@ -26,6 +26,7 @@ from .resolvers import (
 )
 from .sorters import PageSortingInput, PageTypeSortingInput
 from .types import Page, PageType
+from ...core.caching import cached_resolver, CachePrefix
 
 
 class PageQueries(graphene.ObjectType):
@@ -55,9 +56,11 @@ class PageQueries(graphene.ObjectType):
         description="List of the page types.",
     )
 
+    @cached_resolver(CachePrefix.PAGE)
     def resolve_page(self, info, id=None, slug=None):
         return resolve_page(info, id, slug)
 
+    @cached_resolver(CachePrefix.PAGE)
     def resolve_pages(self, info, **kwargs):
         return resolve_pages(info, **kwargs)
 

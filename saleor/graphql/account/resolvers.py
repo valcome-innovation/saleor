@@ -5,6 +5,7 @@ from django.contrib.auth import models as auth_models
 from i18naddress import get_validation_rules
 
 from ...account import models
+from ...core.caching import cached_resolver
 from ...core.exceptions import PermissionDenied
 from ...core.permissions import AccountPermissions
 from ...core.tracing import traced_resolver

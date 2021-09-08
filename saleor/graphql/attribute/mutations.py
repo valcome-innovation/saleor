@@ -7,6 +7,7 @@ from django.utils.text import slugify
 from ...attribute import ATTRIBUTE_PROPERTIES_CONFIGURATION, AttributeInputType
 from ...attribute import models as models
 from ...attribute.error_codes import AttributeErrorCode
+from ...core.caching import CachePrefix, invalidate_cache
 from ...core.exceptions import PermissionDenied
 from ...core.permissions import (
     PageTypePermissions,
@@ -500,6 +501,7 @@ class AttributeUpdate(AttributeMixin, ModelMutation):
             attribute_value.delete()
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT)
     def perform_mutation(cls, _root, info, id, input):
         instance = cls.get_node_or_error(info, id, only_type=Attribute)
 
@@ -531,6 +533,11 @@ class AttributeDelete(ModelDeleteMutation):
         permissions = (ProductTypePermissions.MANAGE_PRODUCT_TYPES_AND_ATTRIBUTES,)
         error_type_class = AttributeError
         error_type_field = "attribute_errors"
+
+    @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT)
+    def perform_mutation(cls, _root, info, **data):
+        super().perform_mutation(_root, info, **data)
 
 
 def validate_value_is_unique(attribute: models.Attribute, value: models.AttributeValue):
@@ -622,6 +629,7 @@ class AttributeValueUpdate(ModelMutation):
         super().clean_instance(info, instance)
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT)
     def success_response(cls, instance):
         response = super().success_response(instance)
         response.attribute = instance.attribute

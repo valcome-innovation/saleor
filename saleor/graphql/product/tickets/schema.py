@@ -5,6 +5,7 @@ from .resolvers import resolve_ticket_products
 from ..sorters import ProductOrder
 from ..types import Product
 from ...core.fields import ChannelContextFilterConnectionField
+from ....core.caching import cached_resolver, CachePrefix
 
 
 class TicketProductQueries(graphene.ObjectType):
@@ -18,5 +19,6 @@ class TicketProductQueries(graphene.ObjectType):
         description="List of the shop's products.",
     )
 
+    @cached_resolver(CachePrefix.PRODUCT)
     def resolve_ticket_products(self, info, channel=None, **kwargs):
         return resolve_ticket_products(info, info.context.user, channel_slug=channel, **kwargs)

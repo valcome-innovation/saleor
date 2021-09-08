@@ -18,7 +18,8 @@ from ...utils.random_data import (
 from ...utils.stream_data import (
     create_page,
     create_page_type,
-    create_users
+    create_users,
+    create_test_user,
 )
 
 
@@ -31,6 +32,10 @@ class Command(BaseCommand):
         create_superuser(credentials)
 
         for msg in create_users(20):
+            self.stdout.write(msg)
+
+        self.stdout.write("Creating test user:")
+        for msg in create_test_user(100):
             self.stdout.write(msg)
 
         user = User.objects.filter(email="dev@valcome.tv").first()
