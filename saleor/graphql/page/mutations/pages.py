@@ -108,6 +108,7 @@ class PageCreate(ModelMutation):
             AttributeAssignmentMixin.save(instance, attributes)
 
     @classmethod
+    @invalidate_cache(CachePrefix.PAGE_PATTERN)
     def save(cls, info, instance, cleaned_input):
         super().save(info, instance, cleaned_input)
         info.context.plugins.page_created(instance)
