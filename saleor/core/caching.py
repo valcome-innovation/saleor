@@ -35,7 +35,7 @@ def invalidate_cache(pattern: "str"):
         def wrapper(*args, **kwargs):
             if is_redis_cache():
                 nr_deleted = cache.delete_pattern(pattern)
-                logger.debug(f"Deleted {nr_deleted} cache entries")
+                # logger.debug(f"Deleted {nr_deleted} cache entries")
             return func(*args, **kwargs)
         return wrapper
     return decorator
@@ -64,10 +64,10 @@ def cached_resolver(prefix: "str", with_user: "bool" = False):
             cached_value = cache.get(key)
 
             if cached_value:
-                logger.debug(f"Using cache: {key}")
+                # logger.debug(f"Using cache: {key}")
                 return cached_value
             else:
-                logger.debug(f"Key: {key}")
+                # logger.debug(f"Key: {key}")
                 value = func(*args, **kwargs)
                 cache.set(key, value)
                 return value
