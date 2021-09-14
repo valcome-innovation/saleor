@@ -113,7 +113,7 @@ def jwt_refresh_token_middleware(get_response):
                 expires=expires,
                 httponly=True,  # protects token from leaking
                 secure=True,     # VALCOME
-                samesite="Lax"  # VALCOME
+                samesite="None"  # VALCOME
             )
         return response
 
