@@ -9,6 +9,12 @@ import {
 } from "./factories";
 import { ticketProductType, ticketsCategory } from "./static-objects";
 
+const mediaAttribute = createAttribute({
+  name: "Media",
+  slug: "media",
+  input_type: "dropdown",
+  isRequired: true,
+});
 const ticketTypeAttribute = createAttribute({
   name: "Ticket Type",
   slug: "ticket-type",
@@ -28,7 +34,7 @@ const teamsAttribute = createAttribute({
   isRequired: false,
 });
 
-const attributeLinks = [ticketTypeAttribute, leaguesAttribute, teamsAttribute]
+const attributeLinks = [mediaAttribute, ticketTypeAttribute, leaguesAttribute, teamsAttribute]
   .map((attribute) => createAttributeProductLinks(attribute))
   .flat();
 
@@ -39,8 +45,13 @@ const ticketTypeValues = [
   { name: "Day", slug: "day" },
 ].map((config) => createAttributeValue(ticketTypeAttribute, config));
 
-const [singleAttribute, seasonAttribute, monthAttribute, dayAttribute] =
-  ticketTypeValues;
+const [singleAttribute, seasonAttribute, monthAttribute, dayAttribute] = ticketTypeValues;
+
+const mediaValues = [
+  { name: "Game", slug: "game" },
+  { name: "Video", slug: "video" },
+].map((config) => createAttributeValue(mediaAttribute, config));
+const [mediaValueGame, mediaValueVideo] = mediaValues;
 
 const allTeamValue = createAttributeValue(teamsAttribute, {
   name: "All Teams",
@@ -81,6 +92,7 @@ const singleProducts = teamValues
       attributes: [
         { attribute: ticketTypeAttribute, values: [singleAttribute] },
         { attribute: teamsAttribute, values: [team] },
+        { attribute: mediaAttribute, values: [mediaValueGame] },
       ],
     })
   )
@@ -96,6 +108,7 @@ const seasonProducts = teamValues
       attributes: [
         { attribute: ticketTypeAttribute, values: [seasonAttribute] },
         { attribute: teamsAttribute, values: [team] },
+        { attribute: mediaAttribute, values: [mediaValueGame] },
       ],
     })
   )
@@ -110,6 +123,7 @@ seasonProducts.push(
     attributes: [
       { attribute: ticketTypeAttribute, values: [seasonAttribute] },
       { attribute: teamsAttribute, values: [allTeamValue] },
+      { attribute: mediaAttribute, values: [mediaValueGame] },
     ],
   })
 );
@@ -124,6 +138,7 @@ const dayProducts = leagueValues
       attributes: [
         { attribute: ticketTypeAttribute, values: [dayAttribute] },
         { attribute: leaguesAttribute, values: [league] },
+        { attribute: mediaAttribute, values: [mediaValueGame] },
       ],
     })
   )
@@ -141,6 +156,7 @@ const monthProducts = leagueValues
           { attribute: ticketTypeAttribute, values: [monthAttribute] },
           { attribute: leaguesAttribute, values: [league] },
           { attribute: teamsAttribute, values: [team] },
+          { attribute: mediaAttribute, values: [mediaValueGame] },
         ],
       })
     );
@@ -155,6 +171,7 @@ const monthProducts = leagueValues
           { attribute: ticketTypeAttribute, values: [monthAttribute] },
           { attribute: leaguesAttribute, values: [league] },
           { attribute: teamsAttribute, values: [allTeamValue] },
+          { attribute: mediaAttribute, values: [mediaValueGame] },
         ],
       })
     );
@@ -168,10 +185,12 @@ const result = [
   ticketsCategory,
   ticketProductType,
   ticketTypeAttribute,
+  mediaAttribute,
   leaguesAttribute,
   teamsAttribute,
   allTeamValue,
   ...attributeLinks,
+  ...mediaValues,
   ...ticketTypeValues,
   ...teamValues,
   ...leagueValues,
