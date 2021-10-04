@@ -16,17 +16,28 @@ ticket_type_slug = 'ticket-type'
 
 
 def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
-    (game_id, season_id, expires, start_time, team_ids, league_ids) = get_stream_meta(order)
+    (
+        stream_type,
+        game_id,
+        video_id,
+        season_id,
+        expires,
+        start_time,
+        team_ids,
+        league_ids
+    ) = get_stream_meta(order)
 
     stream_ticket = StreamTicket()
     stream_ticket.user = order.user
+    stream_ticket.stream_type = stream_type
     stream_ticket.game_id = game_id or None
+    stream_ticket.video_id = video_id or None
     stream_ticket.season_id = season_id or None
     stream_ticket.league_ids = league_ids or None
     stream_ticket.team_ids = team_ids or None
     stream_ticket.start_time = get_datetime_from_timestamp_str(start_time)
     stream_ticket.expires = get_expire_date(stream_ticket.start_time, expires)
-    stream_ticket.type = determine_stream_ticket_type(game_id, season_id, expires)
+    stream_ticket.type = determine_stream_ticket_type(game_id, video_id, season_id, expires)
     stream_ticket.timed_type = determine_timed_type(stream_ticket.type, expires)
 
     validate_stream_ticket_creation(stream_ticket)
@@ -59,12 +70,12 @@ def validate_start_time(start_time: "datetime"):
     return True
 
 
-def determine_stream_ticket_type(game_id, season_id, expires):
-    if game_id is not None and season_id is None and expires is None:
+def determine_stream_ticket_type(game_id, video_id, season_id, expires):
+    if (game_id is not None or video_id is not None) and season_id is None and expires is None:
         return "single"
-    elif season_id is not None and expires is None and game_id is None:
+    elif season_id is not None and expires is None and game_id is None and video_id is None:
         return "season"
-    elif expires is not None and season_id is None and game_id is None:
+    elif expires is not None and season_id is None and game_id is None and video_id is None:
         return "timed"
     else:
         raise ValidationError(
@@ -92,7 +103,7 @@ def get_expire_date(start_time, expire_type):
 
 
 def validate_stream_checkout_with_product(checkout: "Checkout", lines: "list"):
-    (game_id, season_id, expires, start_time, team_ids, league_ids) = get_stream_meta(checkout)
+    (stream_type, game_id, video_id, season_id, expires, start_time, team_ids, league_ids) = get_stream_meta(checkout)
 
     ticket_type = determine_stream_ticket_type(game_id, season_id, expires)
     timed_type = determine_timed_type(ticket_type, expires)
@@ -120,7 +131,9 @@ def product_ticket_type_matches_purchased_ticket(product_ticket_type, ticket_typ
 
 
 def get_stream_meta(meta_object: "ModelWithMetadata"):
-    return from_meta('GAME_ID', meta_object), \
+    return from_meta('STREAM_TYPE', meta_object), \
+           from_meta('GAME_ID', meta_object), \
+           from_meta('VIDEO_ID', meta_object), \
            from_meta('SEASON_ID', meta_object), \
            from_meta('EXPIRES', meta_object), \
            from_meta('START_TIME', meta_object), \

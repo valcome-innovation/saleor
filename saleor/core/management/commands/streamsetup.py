@@ -72,6 +72,7 @@ class Command(BaseCommand):
     def create_stream_ticket(self, user):
         stream_ticket = StreamTicket()
         stream_ticket.user = user
+        stream_ticket.stream_type = 'Game'
         stream_ticket.game_id = "14"
         stream_ticket.season_id = None
         stream_ticket.team_ids = None
