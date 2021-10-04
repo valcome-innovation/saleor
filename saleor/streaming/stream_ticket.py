@@ -105,7 +105,7 @@ def get_expire_date(start_time, expire_type):
 def validate_stream_checkout_with_product(checkout: "Checkout", lines: "list"):
     (stream_type, game_id, video_id, season_id, expires, start_time, team_ids, league_ids) = get_stream_meta(checkout)
 
-    ticket_type = determine_stream_ticket_type(game_id, season_id, expires)
+    ticket_type = determine_stream_ticket_type(game_id, video_id, season_id, expires)
     timed_type = determine_timed_type(ticket_type, expires)
 
     if len(lines) == 1 and lines[0].variant.product.attributes.count() >= 1:
