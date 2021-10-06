@@ -29,12 +29,12 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
 
     stream_ticket = StreamTicket()
     stream_ticket.user = order.user
-    stream_ticket.stream_type = stream_type
     stream_ticket.game_id = game_id or None
     stream_ticket.video_id = video_id or None
     stream_ticket.season_id = season_id or None
     stream_ticket.league_ids = league_ids or None
     stream_ticket.team_ids = team_ids or None
+    stream_ticket.stream_type = get_stream_type_from_order(stream_type)
     stream_ticket.start_time = get_datetime_from_timestamp_str(start_time)
     stream_ticket.expires = get_expire_date(stream_ticket.start_time, expires)
     stream_ticket.type = determine_stream_ticket_type(game_id, video_id, season_id, expires)
@@ -43,6 +43,15 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     validate_stream_ticket_creation(stream_ticket)
     stream_ticket.save()
     return stream_ticket
+
+
+def get_stream_type_from_order(order_stream_type: "str"):
+    if order_stream_type == 'g':
+        return 'Game'
+    elif order_stream_type == 'v':
+        return 'Video'
+    else:
+        raise ValueError('Cannot determine stream type from order.')
 
 
 def get_datetime_from_timestamp_str(timestamp: "str"):
