@@ -8,12 +8,15 @@ from ....product.models import Product
 
 
 class TicketProductFilter(MetadataFilterBase):
+    stream_type = ListObjectTypeFilter(
+        input_class=graphene.String, method="pass_through",
+    )
     teams = ListObjectTypeFilter(
         input_class=graphene.String, method="pass_through",
     )
     leagues = ListObjectTypeFilter(
         input_class=graphene.String, method="pass_through",
-     )
+    )
     single_teams = ListObjectTypeFilter(
         input_class=graphene.String, method="pass_through",
     )
@@ -21,6 +24,7 @@ class TicketProductFilter(MetadataFilterBase):
     class Meta:
         model = Product
         fields = [
+            "stream_type",
             "teams",
             "leagues",
             "single_teams",
@@ -47,25 +51,33 @@ class TicketProductFilter(MetadataFilterBase):
         return [value.lower() for value in data]
 
     def get_single_filter(self, single_teams):
+        stream_type_filter = self.get_stream_type_filter()
         type_filter = self.get_ticket_type_filter("single")
         attribute_filter = self.get_attribute_filter("teams", single_teams)
-        return type_filter & attribute_filter
+        return type_filter & stream_type_filter & attribute_filter
 
     def get_day_filter(self, leagues):
+        stream_type_filter = self.get_stream_type_filter()
         type_filter = self.get_ticket_type_filter("day")
         attribute_filter = self.get_attribute_filter("leagues", leagues)
-        return type_filter & attribute_filter
+        return type_filter & stream_type_filter & attribute_filter
 
     def get_month_filter(self, teams, leagues):
+        stream_type_filter = self.get_stream_type_filter()
         type_filter = self.get_ticket_type_filter("month")
         teams_filter = self.get_attribute_filter("teams", teams)
         leagues_filter = self.get_attribute_filter("leagues", leagues)
-        return type_filter & teams_filter & leagues_filter
+        return type_filter & stream_type_filter & teams_filter & leagues_filter
 
     def get_season_filter(self, teams):
+        stream_type_filter = self.get_stream_type_filter()
         type_filter = self.get_ticket_type_filter("season")
         teams_filter = self.get_attribute_filter("teams", teams)
-        return type_filter & teams_filter
+        return type_filter & stream_type_filter & teams_filter
+
+    def get_stream_type_filter(self):
+        stream_type = self.get_from_data("stream_type")
+        return self.get_attribute_filter("stream-type", stream_type)
 
     def get_ticket_type_filter(self, ticket_type: "str"):
         attribute = self.get_attribute_data('ticket-type', [ticket_type])

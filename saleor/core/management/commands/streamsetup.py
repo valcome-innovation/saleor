@@ -18,7 +18,8 @@ from ...utils.random_data import (
 from ...utils.stream_data import (
     create_page,
     create_page_type,
-    create_users
+    create_users,
+    create_test_user,
 )
 
 
@@ -31,6 +32,10 @@ class Command(BaseCommand):
         create_superuser(credentials)
 
         for msg in create_users(20):
+            self.stdout.write(msg)
+
+        self.stdout.write("Creating test user:")
+        for msg in create_test_user(100):
             self.stdout.write(msg)
 
         user = User.objects.filter(email="dev@valcome.tv").first()
@@ -67,6 +72,7 @@ class Command(BaseCommand):
     def create_stream_ticket(self, user):
         stream_ticket = StreamTicket()
         stream_ticket.user = user
+        stream_ticket.stream_type = 'Game'
         stream_ticket.game_id = "14"
         stream_ticket.season_id = None
         stream_ticket.team_ids = None

@@ -3,9 +3,11 @@ from datetime import date
 from typing import TYPE_CHECKING, Dict, List
 
 import graphene
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 
 from ....attribute import AttributeType
+from ....core.caching import invalidate_cache, CachePrefix
 from ....core.permissions import PagePermissions, PageTypePermissions
 from ....core.tracing import traced_atomic_transaction
 from ....page import models
@@ -106,6 +108,7 @@ class PageCreate(ModelMutation):
             AttributeAssignmentMixin.save(instance, attributes)
 
     @classmethod
+    @invalidate_cache(CachePrefix.PAGE_PATTERN)
     def save(cls, info, instance, cleaned_input):
         super().save(info, instance, cleaned_input)
         info.context.plugins.page_created(instance)
@@ -126,6 +129,7 @@ class PageUpdate(PageCreate):
         error_type_field = "page_errors"
 
     @classmethod
+    @invalidate_cache(CachePrefix.PAGE_PATTERN)
     def save(cls, info, instance, cleaned_input):
         super(PageCreate, cls).save(info, instance, cleaned_input)
         info.context.plugins.page_updated(instance)
@@ -143,6 +147,7 @@ class PageDelete(ModelDeleteMutation):
         error_type_field = "page_errors"
 
     @classmethod
+    @invalidate_cache(CachePrefix.PAGE_PATTERN)
     def perform_mutation(cls, _root, info, **data):
         page = cls.get_instance(info, **data)
         response = super().perform_mutation(_root, info, **data)

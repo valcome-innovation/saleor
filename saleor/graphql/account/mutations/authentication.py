@@ -111,7 +111,10 @@ class CreateToken(BaseMutation):
         info.context.refresh_token = refresh_token
         info.context._cached_user = user
         user.last_login = timezone.now()
-        user.save(update_fields=["last_login", "jwt_token_key"]) # VALCOME user logout
+        models.User.objects.filter(email=user.email).update(
+            last_login=user.last_login,
+            jwt_token_key=user.jwt_token_key
+        )
         return cls(
             errors=[],
             user=user,

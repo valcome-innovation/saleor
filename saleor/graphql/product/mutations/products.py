@@ -9,6 +9,7 @@ from django.utils.text import slugify
 
 from ....attribute import AttributeInputType, AttributeType
 from ....attribute import models as attribute_models
+from ....core.caching import CachePrefix, invalidate_cache
 from ....core.exceptions import PermissionDenied
 from ....core.permissions import ProductPermissions, ProductTypePermissions
 from ....core.tracing import traced_atomic_transaction
@@ -115,6 +116,7 @@ class CategoryCreate(ModelMutation):
         return cleaned_input
 
     @classmethod
+    @invalidate_cache(CachePrefix.CATEGORY_PATTERN)
     def perform_mutation(cls, root, info, **data):
         parent_id = data.pop("parent_id", None)
         data["input"]["parent_id"] = parent_id
@@ -141,6 +143,11 @@ class CategoryUpdate(CategoryCreate):
         error_type_class = ProductError
         error_type_field = "product_errors"
 
+    @classmethod
+    @invalidate_cache(CachePrefix.CATEGORY_PATTERN)
+    def perform_mutation(cls, root, info, **data):
+        return super().perform_mutation(root, info, **data)
+
 
 class CategoryDelete(ModelDeleteMutation):
     class Arguments:
@@ -154,6 +161,7 @@ class CategoryDelete(ModelDeleteMutation):
         error_type_field = "product_errors"
 
     @classmethod
+    @invalidate_cache(CachePrefix.CATEGORY_PATTERN)
     def perform_mutation(cls, _root, info, **data):
         if not cls.check_permissions(info.context):
             raise PermissionDenied()
@@ -642,6 +650,7 @@ class ProductCreate(ModelMutation):
         info.context.plugins.product_created(instance)
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, _root, info, **data):
         response = super().perform_mutation(_root, info, **data)
         product = getattr(response, cls._meta.return_field_name)
@@ -671,6 +680,7 @@ class ProductUpdate(ProductCreate):
 
     @classmethod
     @traced_atomic_transaction()
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def save(cls, info, instance, cleaned_input):
         instance.save()
         attributes = cleaned_input.get("attributes")
@@ -699,6 +709,7 @@ class ProductDelete(ModelDeleteMutation):
         return super().success_response(instance)
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, _root, info, **data):
         node_id = data.get("id")
 
@@ -898,6 +909,7 @@ class ProductVariantCreate(ModelMutation):
 
     @classmethod
     @traced_atomic_transaction()
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def save(cls, info, instance, cleaned_input):
         new_variant = instance.pk is None
         instance.save()
@@ -1007,6 +1019,7 @@ class ProductVariantDelete(ModelDeleteMutation):
 
     @classmethod
     @traced_atomic_transaction()
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, _root, info, **data):
         node_id = data.get("id")
         instance = cls.get_node_or_error(info, node_id, only_type=ProductVariant)
@@ -1414,6 +1427,7 @@ class ProductVariantSetDefault(BaseMutation):
         error_type_field = "product_errors"
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, _root, info, product_id, variant_id):
         qs = models.Product.objects.prefetched_for_webhook()
         product = cls.get_node_or_error(

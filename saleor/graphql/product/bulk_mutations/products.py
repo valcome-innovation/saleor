@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from graphene.types import InputObjectType
 
+from ....core.caching import invalidate_cache, CachePrefix
 from ....core.permissions import ProductPermissions, ProductTypePermissions
 from ....core.tracing import traced_atomic_transaction
 from ....order import OrderStatus
@@ -56,6 +57,7 @@ class CategoryBulkDelete(ModelBulkDeleteMutation):
         error_type_field = "product_errors"
 
     @classmethod
+    @invalidate_cache(CachePrefix.CATEGORY_PATTERN)
     def bulk_action(cls, info, queryset):
         delete_categories(queryset.values_list("pk", flat=True), info.context.plugins)
 
@@ -101,6 +103,7 @@ class ProductBulkDelete(ModelBulkDeleteMutation):
 
     @classmethod
     @traced_atomic_transaction()
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, _root, info, ids, **data):
         _, pks = resolve_global_ids_to_primary_keys(ids, Product)
         product_to_variant = list(
@@ -338,6 +341,7 @@ class ProductVariantBulkCreate(BaseMutation):
             error_dict[key].extend(value)
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def save(cls, info, instance, cleaned_input):
         instance.save()
 
@@ -511,6 +515,7 @@ class ProductVariantBulkDelete(ModelBulkDeleteMutation):
 
     @classmethod
     @traced_atomic_transaction()
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, _root, info, ids, **data):
         _, pks = resolve_global_ids_to_primary_keys(ids, ProductVariant)
         # get draft order lines for variants
@@ -582,6 +587,7 @@ class ProductVariantStocksCreate(BaseMutation):
         error_type_field = "bulk_stock_errors"
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, root, info, **data):
         errors = defaultdict(list)
         stocks = data["stocks"]
@@ -648,6 +654,7 @@ class ProductVariantStocksUpdate(ProductVariantStocksCreate):
         error_type_field = "bulk_stock_errors"
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, root, info, **data):
         errors = defaultdict(list)
         stocks = data["stocks"]
@@ -701,6 +708,7 @@ class ProductVariantStocksDelete(BaseMutation):
         error_type_field = "stock_errors"
 
     @classmethod
+    @invalidate_cache(CachePrefix.PRODUCT_PATTERN)
     def perform_mutation(cls, root, info, **data):
         variant = cls.get_node_or_error(
             info, data["variant_id"], only_type=ProductVariant
