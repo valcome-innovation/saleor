@@ -82,10 +82,10 @@ const leagueValues = [
   { name: "AHL", slug: "ahl" },
 ].map((config) => createAttributeValue(leaguesAttribute, config));
 
-const singleProducts = teamValues
+const singleGameProducts = teamValues
   .map((team) =>
     createProduct({
-      name: "Single",
+      name: "Single-Game",
       postfix: `- ${team.fields.name}`,
       postfixSlug: `-${team.fields.slug}`,
       price: "4.900",
@@ -93,6 +93,22 @@ const singleProducts = teamValues
         { attribute: ticketTypeAttribute, values: [singleAttribute] },
         { attribute: teamsAttribute, values: [team] },
         { attribute: streamTypeAttribute, values: [streamTypeGame] },
+      ],
+    })
+  )
+  .flat();
+
+const singleVideoProducts = teamValues
+  .map((team) =>
+    createProduct({
+      name: "Single-Video",
+      postfix: `- ${team.fields.name}`,
+      postfixSlug: `-${team.fields.slug}`,
+      price: "2.900",
+      attributes: [
+        { attribute: ticketTypeAttribute, values: [singleAttribute] },
+        { attribute: teamsAttribute, values: [team] },
+        { attribute: streamTypeAttribute, values: [streamTypeVideo] },
       ],
     })
   )
@@ -194,7 +210,8 @@ const result = [
   ...ticketTypeValues,
   ...teamValues,
   ...leagueValues,
-  ...singleProducts,
+  ...singleGameProducts,
+  ...singleVideoProducts,
   ...seasonProducts,
   ...dayProducts,
   ...monthProducts,
