@@ -1,3 +1,4 @@
+import uuid
 from decimal import Decimal
 from unittest.mock import Mock, patch
 
@@ -18,6 +19,7 @@ from ..utils import (
     create_payment_information,
     create_transaction,
     is_currency_supported,
+    update_payment,
     validate_gateway_response,
 )
 
@@ -28,7 +30,12 @@ EXAMPLE_ERROR = "Example dummy error"
 @pytest.fixture
 def payment_method_details():
     return PaymentMethodInfo(
-        last_4="1234", exp_year=2020, exp_month=8, brand="visa", name="Joe Doe"
+        last_4="1234",
+        exp_year=2020,
+        exp_month=8,
+        brand="visa",
+        name="Joe Doe",
+        type="test",
     )
 
 
@@ -47,6 +54,7 @@ def gateway_response(settings, payment_method_details):
             "transaction-id": "transaction-token",
         },
         payment_method_info=payment_method_details,
+        psp_reference="test_reference",
     )
 
 
@@ -196,6 +204,49 @@ def test_create_payment_information_for_checkout_payment(address, checkout_with_
     assert billing.street_address_1 == address.street_address_1
     assert billing.city == address.city
     assert shipping == billing
+
+
+def test_create_payment_information_for_checkout_token(payment_dummy, checkout):
+    payment_dummy.order = None
+    payment_dummy.checkout = checkout
+    payment_dummy.save(update_fields=["order", "checkout"])
+
+    payment_info = create_payment_information(payment_dummy)
+    assert payment_info.checkout_token == str(checkout.token)
+
+
+def test_create_payment_information_for_checkout_token_from_order(payment_dummy, order):
+    token = str(uuid.uuid4())
+    order.checkout_token = token
+    order.save(update_fields=["checkout_token"])
+    payment_dummy.order = order
+    payment_dummy.checkout = None
+    payment_dummy.save(update_fields=["order", "checkout"])
+
+    payment_info = create_payment_information(payment_dummy)
+    assert payment_info.checkout_token == order.checkout_token == token
+
+
+def test_create_payment_information_for_empty_payment(payment_dummy):
+    payment_dummy.order = None
+    payment_dummy.checkout = None
+    payment_dummy.save(update_fields=["order", "checkout"])
+
+    payment_info = create_payment_information(payment_dummy)
+    assert payment_info.checkout_token == ""
+    assert payment_info.checkout_metadata is None
+
+
+def test_create_payment_information_for_checkout_metadata(payment_dummy, checkout):
+    metadata = {"test_key": "test_val"}
+    checkout.metadata = metadata
+    checkout.save(update_fields=["metadata"])
+    payment_dummy.order = None
+    payment_dummy.checkout = checkout
+    payment_dummy.save(update_fields=["order", "checkout"])
+
+    payment_info = create_payment_information(payment_dummy)
+    assert payment_info.checkout_metadata == metadata
 
 
 def test_create_payment_information_for_draft_order(draft_order):
@@ -529,3 +580,17 @@ def test_is_currency_supported(
 
     # then
     assert response == exp_response
+
+
+def test_update_payment(gateway_response, payment_txn_captured):
+    payment = payment_txn_captured
+
+    update_payment(payment_txn_captured, gateway_response)
+
+    payment.refresh_from_db()
+    assert payment.psp_reference == gateway_response.psp_reference
+    assert payment.cc_brand == gateway_response.payment_method_info.brand
+    assert payment.cc_last_digits == gateway_response.payment_method_info.last_4
+    assert payment.cc_exp_year == gateway_response.payment_method_info.exp_year
+    assert payment.cc_exp_month == gateway_response.payment_method_info.exp_month
+    assert payment.payment_method_type == gateway_response.payment_method_info.type

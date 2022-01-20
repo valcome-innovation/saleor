@@ -1,3 +1,5 @@
+import datetime
+import os
 import re
 import uuid
 from collections import defaultdict
@@ -12,6 +14,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.test import override_settings
+from django.utils import timezone
 from freezegun import freeze_time
 
 from ....account import events as account_events
@@ -22,6 +25,7 @@ from ....checkout import AddressType
 from ....core.jwt import create_token
 from ....core.notify_events import NotifyEventType
 from ....core.permissions import AccountPermissions, OrderPermissions
+from ....core.tokens import account_delete_token_generator
 from ....core.utils.url import prepare_url
 from ....order import OrderStatus
 from ....order.models import FulfillmentStatus, Order
@@ -31,6 +35,7 @@ from ...tests.utils import (
     assert_graphql_error_with_message,
     assert_no_permission,
     get_graphql_content,
+    get_graphql_content_from_response,
     get_multipart_request_body,
 )
 from ..mutations.base import INVALID_TOKEN
@@ -241,7 +246,10 @@ def test_query_customer_user(
 
 
 def test_query_customer_user_with_orders(
-    staff_api_client, customer_user, order_list, permission_manage_users
+    staff_api_client,
+    customer_user,
+    order_list,
+    permission_manage_users,
 ):
     # given
     query = FULL_USER_QUERY
@@ -610,6 +618,47 @@ def test_user_query_permission_manage_staff_get_staff(
     assert staff_user.email == data["email"]
 
 
+@pytest.mark.parametrize("id", ["'", "abc"])
+def test_user_query_invalid_id(
+    id, staff_api_client, customer_user, permission_manage_users
+):
+    variables = {"id": id}
+    response = staff_api_client.post_graphql(
+        USER_QUERY, variables, permissions=[permission_manage_users]
+    )
+
+    content = get_graphql_content_from_response(response)
+    assert len(content["errors"]) == 1
+    assert content["errors"][0]["message"] == f"Couldn't resolve id: {id}."
+    assert content["data"]["user"] is None
+
+
+def test_user_query_object_with_given_id_does_not_exist(
+    staff_api_client, permission_manage_users
+):
+    id = graphene.Node.to_global_id("User", -1)
+    variables = {"id": id}
+    response = staff_api_client.post_graphql(
+        USER_QUERY, variables, permissions=[permission_manage_users]
+    )
+
+    content = get_graphql_content(response)
+    assert content["data"]["user"] is None
+
+
+def test_user_query_object_with_invalid_object_type(
+    staff_api_client, customer_user, permission_manage_users
+):
+    id = graphene.Node.to_global_id("Order", customer_user.pk)
+    variables = {"id": id}
+    response = staff_api_client.post_graphql(
+        USER_QUERY, variables, permissions=[permission_manage_users]
+    )
+
+    content = get_graphql_content(response)
+    assert content["data"]["user"] is None
+
+
 def test_query_customers(staff_api_client, user_api_client, permission_manage_users):
     query = """
     query Users {
@@ -707,6 +756,10 @@ ME_QUERY = """
             checkout {
                 token
             }
+            userPermissions {
+                code
+                name
+            }
         }
     }
 """
@@ -717,6 +770,20 @@ def test_me_query(user_api_client):
     content = get_graphql_content(response)
     data = content["data"]["me"]
     assert data["email"] == user_api_client.user.email
+
+
+def test_me_user_permissions_query(
+    user_api_client, permission_manage_users, permission_group_manage_users
+):
+    user = user_api_client.user
+    user.user_permissions.add(permission_manage_users)
+    user.groups.add(permission_group_manage_users)
+    response = user_api_client.post_graphql(ME_QUERY)
+    content = get_graphql_content(response)
+    user_permissions = content["data"]["me"]["userPermissions"]
+
+    assert len(user_permissions) == 1
+    assert user_permissions[0]["code"] == permission_manage_users.codename.upper()
 
 
 def test_me_query_anonymous_client(api_client):
@@ -1062,7 +1129,7 @@ def test_customer_register_no_redirect_url(mocked_notify, api_client):
 
 CUSTOMER_CREATE_MUTATION = """
     mutation CreateCustomer(
-        $email: String, $firstName: String, $lastName: String,
+        $email: String, $firstName: String, $lastName: String, $channel: String
         $note: String, $billing: AddressInput, $shipping: AddressInput,
         $redirect_url: String, $languageCode: LanguageCodeEnum) {
         customerCreate(input: {
@@ -1073,7 +1140,8 @@ CUSTOMER_CREATE_MUTATION = """
             defaultShippingAddress: $shipping,
             defaultBillingAddress: $billing,
             redirectUrl: $redirect_url,
-            languageCode: $languageCode
+            languageCode: $languageCode,
+            channel: $channel,
         }) {
             errors {
                 field
@@ -1376,10 +1444,7 @@ def test_customer_update(
     assert name_changed_event.parameters == {"message": customer.get_full_name()}
 
 
-def test_customer_update_generates_event_when_changing_email(
-    staff_api_client, staff_user, customer_user, address, permission_manage_users
-):
-    query = """
+UPDATE_CUSTOMER_EMAIL_MUTATION = """
     mutation UpdateCustomer(
             $id: ID!, $firstName: String, $lastName: String, $email: String) {
         customerUpdate(id: $id, input: {
@@ -1393,7 +1458,13 @@ def test_customer_update_generates_event_when_changing_email(
             }
         }
     }
-    """
+"""
+
+
+def test_customer_update_generates_event_when_changing_email(
+    staff_api_client, staff_user, customer_user, address, permission_manage_users
+):
+    query = UPDATE_CUSTOMER_EMAIL_MUTATION
 
     user_id = graphene.Node.to_global_id("User", customer_user.id)
     address_data = convert_dict_keys_to_camel_case(address.as_data())
@@ -1421,21 +1492,7 @@ def test_customer_update_generates_event_when_changing_email(
 def test_customer_update_without_any_changes_generates_no_event(
     staff_api_client, customer_user, address, permission_manage_users
 ):
-    query = """
-    mutation UpdateCustomer(
-            $id: ID!, $firstName: String, $lastName: String, $email: String) {
-        customerUpdate(id: $id, input: {
-            firstName: $firstName,
-            lastName: $lastName,
-            email: $email
-        }) {
-            errors {
-                field
-                message
-            }
-        }
-    }
-    """
+    query = UPDATE_CUSTOMER_EMAIL_MUTATION
 
     user_id = graphene.Node.to_global_id("User", customer_user.id)
     address_data = convert_dict_keys_to_camel_case(address.as_data())
@@ -1455,6 +1512,32 @@ def test_customer_update_without_any_changes_generates_no_event(
 
     # No event should have been generated
     assert not account_events.CustomerEvent.objects.exists()
+
+
+def test_customer_update_generates_event_when_changing_email_by_app(
+    app_api_client, staff_user, customer_user, address, permission_manage_users
+):
+    query = UPDATE_CUSTOMER_EMAIL_MUTATION
+
+    user_id = graphene.Node.to_global_id("User", customer_user.id)
+    address_data = convert_dict_keys_to_camel_case(address.as_data())
+
+    new_street_address = "Updated street address"
+    address_data["streetAddress1"] = new_street_address
+
+    variables = {
+        "id": user_id,
+        "firstName": customer_user.first_name,
+        "lastName": customer_user.last_name,
+        "email": "mirumee@example.com",
+    }
+    app_api_client.post_graphql(query, variables, permissions=[permission_manage_users])
+
+    # The email was changed, an event should have been triggered
+    email_changed_event = account_events.CustomerEvent.objects.get()
+    assert email_changed_event.type == account_events.CustomerEvents.EMAIL_ASSIGNED
+    assert email_changed_event.user is None
+    assert email_changed_event.parameters == {"message": "mirumee@example.com"}
 
 
 ACCOUNT_UPDATE_QUERY = """
@@ -1608,18 +1691,15 @@ ACCOUNT_REQUEST_DELETION_MUTATION = """
         accountRequestDeletion(redirectUrl: $redirectUrl, channel: $channel) {
             errors {
                 field
-                message
-            }
-            errors {
                 code
-                field
+                message
             }
         }
     }
 """
 
 
-@patch("saleor.account.notifications.default_token_generator.make_token")
+@patch("saleor.account.notifications.account_delete_token_generator.make_token")
 @patch("saleor.plugins.manager.PluginsManager.notify")
 def test_account_request_deletion(
     mocked_notify, mocked_token, user_api_client, channel_PLN
@@ -1661,7 +1741,7 @@ def test_account_request_deletion_token_validation(
     mocked_notify, user_api_client, channel_PLN
 ):
     user = user_api_client.user
-    token = default_token_generator.make_token(user)
+    token = account_delete_token_generator.make_token(user)
     redirect_url = "https://www.example.com"
     variables = {"redirectUrl": redirect_url, "channel": channel_PLN.slug}
     response = user_api_client.post_graphql(
@@ -1724,7 +1804,10 @@ def test_account_request_deletion_all_storefront_hosts_allowed(
     mocked_notify, user_api_client, settings, channel_PLN
 ):
     user = user_api_client.user
-    token = default_token_generator.make_token(user)
+    user.last_login = timezone.now()
+    user.save(update_fields=["last_login"])
+
+    token = account_delete_token_generator.make_token(user)
     settings.ALLOWED_CLIENT_HOSTS = ["*"]
     redirect_url = "https://www.test.com"
     variables = {"redirectUrl": redirect_url, "channel": channel_PLN.slug}
@@ -1762,7 +1845,7 @@ def test_account_request_deletion_subdomain(
     mocked_notify, user_api_client, settings, channel_PLN
 ):
     user = user_api_client.user
-    token = default_token_generator.make_token(user)
+    token = account_delete_token_generator.make_token(user)
     settings.ALLOWED_CLIENT_HOSTS = [".example.com"]
     redirect_url = "https://sub.example.com"
     variables = {"redirectUrl": redirect_url, "channel": channel_PLN.slug}
@@ -1808,7 +1891,43 @@ ACCOUNT_DELETE_MUTATION = """
 @freeze_time("2018-05-31 12:00:01")
 def test_account_delete(user_api_client):
     user = user_api_client.user
-    token = default_token_generator.make_token(user)
+    user.last_login = timezone.now()
+    user.save(update_fields=["last_login"])
+    token = account_delete_token_generator.make_token(user)
+    variables = {"token": token}
+
+    response = user_api_client.post_graphql(ACCOUNT_DELETE_MUTATION, variables)
+    content = get_graphql_content(response)
+    data = content["data"]["accountDelete"]
+    assert not data["errors"]
+    assert not User.objects.filter(pk=user.id).exists()
+
+
+@freeze_time("2018-05-31 12:00:01")
+def test_account_delete_user_never_log_in(user_api_client):
+    user = user_api_client.user
+    token = account_delete_token_generator.make_token(user)
+    variables = {"token": token}
+
+    response = user_api_client.post_graphql(ACCOUNT_DELETE_MUTATION, variables)
+    content = get_graphql_content(response)
+    data = content["data"]["accountDelete"]
+    assert not data["errors"]
+    assert not User.objects.filter(pk=user.id).exists()
+
+
+@freeze_time("2018-05-31 12:00:01")
+def test_account_delete_log_out_after_deletion_request(user_api_client):
+    user = user_api_client.user
+    user.last_login = timezone.now()
+    user.save(update_fields=["last_login"])
+
+    token = account_delete_token_generator.make_token(user)
+
+    # simulate re-login
+    user.last_login = timezone.now() + datetime.timedelta(hours=1)
+    user.save(update_fields=["last_login"])
+
     variables = {"token": token}
 
     response = user_api_client.post_graphql(ACCOUNT_DELETE_MUTATION, variables)
@@ -1853,7 +1972,7 @@ def test_account_delete_staff_user(staff_api_client):
 def test_account_delete_other_customer_token(user_api_client):
     user = user_api_client.user
     other_user = User.objects.create(email="temp@example.com")
-    token = default_token_generator.make_token(other_user)
+    token = account_delete_token_generator.make_token(other_user)
     variables = {"token": token}
 
     response = user_api_client.post_graphql(ACCOUNT_DELETE_MUTATION, variables)
@@ -1881,9 +2000,7 @@ CUSTOMER_DELETE_MUTATION = """
 
 
 @patch("saleor.account.signals.delete_versatile_image")
-@patch(
-    "saleor.graphql.account.utils.account_events.staff_user_deleted_a_customer_event"
-)
+@patch("saleor.graphql.account.utils.account_events.customer_deleted_event")
 def test_customer_delete(
     mocked_deletion_event,
     delete_versatile_image_mock,
@@ -1913,8 +2030,46 @@ def test_customer_delete(
     # Ensure the customer was properly deleted
     # and any related event was properly triggered
     mocked_deletion_event.assert_called_once_with(
-        staff_user=staff_user, deleted_count=1
+        staff_user=staff_user, app=None, deleted_count=1
     )
+    delete_versatile_image_mock.assert_called_once_with(customer_user.avatar)
+
+
+@patch("saleor.account.signals.delete_versatile_image")
+@patch("saleor.graphql.account.utils.account_events.customer_deleted_event")
+def test_customer_delete_by_app(
+    mocked_deletion_event,
+    delete_versatile_image_mock,
+    app_api_client,
+    app,
+    customer_user,
+    image,
+    permission_manage_users,
+    media_root,
+):
+    """Ensure deleting a customer actually deletes the customer and creates proper
+    related events"""
+
+    query = CUSTOMER_DELETE_MUTATION
+    customer_id = graphene.Node.to_global_id("User", customer_user.pk)
+    customer_user.avatar = image
+    customer_user.save(update_fields=["avatar"])
+    variables = {"id": customer_id}
+    response = app_api_client.post_graphql(
+        query, variables, permissions=[permission_manage_users]
+    )
+    content = get_graphql_content(response)
+    data = content["data"]["customerDelete"]
+    assert data["errors"] == []
+    assert data["user"]["id"] == customer_id
+
+    # Ensure the customer was properly deleted
+    # and any related event was properly triggered
+    assert mocked_deletion_event.call_count == 1
+    args, kwargs = mocked_deletion_event.call_args
+    assert kwargs["deleted_count"] == 1
+    assert kwargs["staff_user"].is_anonymous
+    assert kwargs["app"] == app
     delete_versatile_image_mock.assert_called_once_with(customer_user.avatar)
 
 
@@ -3216,6 +3371,20 @@ def test_customer_update_own_address(
     assert address_obj.city == address_data["city"].upper()
 
 
+def test_update_address_as_anonymous_user(
+    api_client, customer_user, graphql_address_data
+):
+    query = ACCOUNT_ADDRESS_UPDATE_MUTATION
+    address_obj = customer_user.addresses.first()
+
+    variables = {
+        "addressId": graphene.Node.to_global_id("Address", address_obj.id),
+        "address": graphql_address_data,
+    }
+    response = api_client.post_graphql(query, variables)
+    assert_no_permission(response)
+
+
 def test_customer_update_own_address_not_updated_when_validation_fails(
     user_api_client, customer_user, graphql_address_data
 ):
@@ -3275,6 +3444,23 @@ def test_address_delete_mutation(
     address_obj = customer_user.addresses.first()
     variables = {"id": graphene.Node.to_global_id("Address", address_obj.id)}
     response = staff_api_client.post_graphql(
+        query, variables, permissions=[permission_manage_users]
+    )
+    content = get_graphql_content(response)
+    data = content["data"]["addressDelete"]
+    assert data["address"]["city"] == address_obj.city
+    assert data["user"]["id"] == graphene.Node.to_global_id("User", customer_user.pk)
+    with pytest.raises(address_obj._meta.model.DoesNotExist):
+        address_obj.refresh_from_db()
+
+
+def test_address_delete_mutation_as_app(
+    app_api_client, customer_user, permission_manage_users
+):
+    query = ADDRESS_DELETE_MUTATION
+    address_obj = customer_user.addresses.first()
+    variables = {"id": graphene.Node.to_global_id("Address", address_obj.id)}
+    response = app_api_client.post_graphql(
         query, variables, permissions=[permission_manage_users]
     )
     content = get_graphql_content(response)
@@ -3379,8 +3565,7 @@ def test_set_default_address(
     assert data["user"]["defaultShippingAddress"]["id"] == address_id
 
 
-def test_address_validation_rules(user_api_client):
-    query = """
+GET_ADDRESS_VALIDATION_RULES_QUERY = """
     query getValidator(
         $country_code: CountryCode!, $country_area: String, $city_area: String) {
         addressValidationRules(
@@ -3391,33 +3576,9 @@ def test_address_validation_rules(user_api_client):
             countryName
             addressFormat
             addressLatinFormat
-            postalCodeMatchers
-        }
-    }
-    """
-    variables = {"country_code": "PL", "country_area": None, "city_area": None}
-    response = user_api_client.post_graphql(query, variables)
-    content = get_graphql_content(response)
-    data = content["data"]["addressValidationRules"]
-    assert data["countryCode"] == "PL"
-    assert data["countryName"] == "POLAND"
-    assert data["addressFormat"] is not None
-    assert data["addressLatinFormat"] is not None
-    matcher = data["postalCodeMatchers"][0]
-    matcher = re.compile(matcher)
-    assert matcher.match("00-123")
-
-
-def test_address_validation_rules_with_country_area(user_api_client):
-    query = """
-    query getValidator(
-        $country_code: CountryCode!, $country_area: String, $city_area: String) {
-        addressValidationRules(
-                countryCode: $country_code,
-                countryArea: $country_area,
-                cityArea: $city_area) {
-            countryCode
-            countryName
+            allowedFields
+            requiredFields
+            upperFields
             countryAreaType
             countryAreaChoices {
                 verbose
@@ -3433,9 +3594,49 @@ def test_address_validation_rules_with_country_area(user_api_client):
                 raw
                 verbose
             }
+            postalCodeType
+            postalCodeMatchers
+            postalCodeExamples
+            postalCodePrefix
         }
     }
-    """
+"""
+
+
+def test_address_validation_rules(user_api_client):
+    query = GET_ADDRESS_VALIDATION_RULES_QUERY
+    variables = {"country_code": "PL", "country_area": None, "city_area": None}
+    response = user_api_client.post_graphql(query, variables)
+    content = get_graphql_content(response)
+    data = content["data"]["addressValidationRules"]
+    assert data["countryCode"] == "PL"
+    assert data["countryName"] == "POLAND"
+    assert data["addressFormat"] is not None
+    assert data["addressLatinFormat"] is not None
+    assert data["cityType"] == "city"
+    assert data["cityAreaType"] == "suburb"
+    matcher = data["postalCodeMatchers"][0]
+    matcher = re.compile(matcher)
+    assert matcher.match("00-123")
+    assert not data["cityAreaChoices"]
+    assert not data["cityChoices"]
+    assert not data["countryAreaChoices"]
+    assert data["postalCodeExamples"]
+    assert data["postalCodeType"] == "postal"
+    assert set(data["allowedFields"]) == {
+        "companyName",
+        "city",
+        "postalCode",
+        "streetAddress1",
+        "name",
+        "streetAddress2",
+    }
+    assert set(data["requiredFields"]) == {"postalCode", "streetAddress1", "city"}
+    assert set(data["upperFields"]) == {"city"}
+
+
+def test_address_validation_rules_with_country_area(user_api_client):
+    query = GET_ADDRESS_VALIDATION_RULES_QUERY
     variables = {
         "country_code": "CN",
         "country_area": "Fujian Sheng",
@@ -3450,8 +3651,29 @@ def test_address_validation_rules_with_country_area(user_api_client):
     assert data["countryAreaChoices"]
     assert data["cityType"] == "city"
     assert data["cityChoices"]
-    assert data["cityAreaType"] == "city"
+    assert data["cityAreaType"] == "district"
     assert not data["cityAreaChoices"]
+    assert data["cityChoices"]
+    assert data["countryAreaChoices"]
+    assert data["postalCodeExamples"]
+    assert data["postalCodeType"] == "postal"
+    assert set(data["allowedFields"]) == {
+        "city",
+        "postalCode",
+        "streetAddress1",
+        "name",
+        "streetAddress2",
+        "countryArea",
+        "companyName",
+        "cityArea",
+    }
+    assert set(data["requiredFields"]) == {
+        "postalCode",
+        "streetAddress1",
+        "city",
+        "countryArea",
+    }
+    assert set(data["upperFields"]) == {"countryArea"}
 
 
 def test_address_validation_rules_fields_in_camel_case(user_api_client):
@@ -3738,7 +3960,11 @@ def test_account_reset_password_subdomain(
 ):
     settings.ALLOWED_CLIENT_HOSTS = [".example.com"]
     redirect_url = "https://sub.example.com"
-    variables = {"email": customer_user.email, "redirectUrl": redirect_url}
+    variables = {
+        "email": customer_user.email,
+        "redirectUrl": redirect_url,
+        "channel": channel_PLN.slug,
+    }
     response = user_api_client.post_graphql(REQUEST_PASSWORD_RESET_MUTATION, variables)
     content = get_graphql_content(response)
     data = content["data"]["requestPasswordReset"]
@@ -4027,6 +4253,11 @@ def test_user_avatar_update_mutation(monkeypatch, staff_api_client, media_root):
     assert data["user"]["avatar"]["url"].startswith(
         "http://testserver/media/user-avatars/avatar"
     )
+    img_name, format = os.path.splitext(image_file._name)
+    file_name = user.avatar.name
+    assert file_name != image_file._name
+    assert file_name.startswith(f"user-avatars/{img_name}")
+    assert file_name.endswith(format)
 
     # The image creation should have triggered a warm-up
     mock_create_thumbnails.assert_called_once_with(user_id=user.pk)
@@ -4192,6 +4423,76 @@ def test_query_customers_with_filter_placed_orders_(
     assert len(users) == count
 
 
+def test_query_customers_with_filter_metadata(
+    query_customer_with_filter,
+    staff_api_client,
+    permission_manage_users,
+    customer_user,
+    channel_USD,
+):
+    second_customer = User.objects.create(email="second_example@example.com")
+    second_customer.store_value_in_metadata({"metakey": "metavalue"})
+    second_customer.save()
+
+    variables = {"filter": {"metadata": [{"key": "metakey", "value": "metavalue"}]}}
+    response = staff_api_client.post_graphql(
+        query_customer_with_filter, variables, permissions=[permission_manage_users]
+    )
+    content = get_graphql_content(response)
+    users = content["data"]["customers"]["edges"]
+    assert len(users) == 1
+    user = users[0]
+    _, user_id = graphene.Node.from_global_id(user["node"]["id"])
+    assert second_customer.id == int(user_id)
+
+
+def test_query_customers_search_without_duplications(
+    query_customer_with_filter,
+    staff_api_client,
+    permission_manage_users,
+    permission_manage_orders,
+):
+    customer = User.objects.create(email="david@example.com")
+    customer.addresses.create(first_name="David")
+    customer.addresses.create(first_name="David")
+
+    variables = {"filter": {"search": "David"}}
+    response = staff_api_client.post_graphql(
+        query_customer_with_filter, variables, permissions=[permission_manage_users]
+    )
+    content = get_graphql_content(response)
+    users = content["data"]["customers"]["edges"]
+    assert len(users) == 1
+
+    response = staff_api_client.post_graphql(
+        query_customer_with_filter,
+        variables,
+        permissions=[permission_manage_orders],
+        check_no_permissions=False,
+    )
+    content = get_graphql_content(response)
+    users = content["data"]["customers"]["edges"]
+    assert len(users) == 1
+
+
+def test_query_customers_with_permission_manage_orders(
+    query_customer_with_filter,
+    customer_user,
+    staff_api_client,
+    permission_manage_orders,
+):
+    variables = {"filter": {}}
+
+    response = staff_api_client.post_graphql(
+        query_customer_with_filter,
+        variables,
+        permissions=[permission_manage_orders],
+    )
+    content = get_graphql_content(response)
+    users = content["data"]["customers"]["totalCount"]
+    assert users == 1
+
+
 QUERY_CUSTOMERS_WITH_SORT = """
     query ($sort_by: UserSortingInput!) {
         customers(first:5, sortBy: $sort_by) {
@@ -4262,16 +4563,14 @@ def test_query_customers_with_sort(
 @pytest.mark.parametrize(
     "customer_filter, count",
     [
-        ({"search": "example.com"}, 2),
+        ({"search": "mirumee.com"}, 2),
         ({"search": "Alice"}, 1),
         ({"search": "Kowalski"}, 1),
-        ({"search": "John"}, 1),  # default_shipping_address__first_name
-        ({"search": "Doe"}, 1),  # default_shipping_address__last_name
-        ({"search": "wroc"}, 1),  # default_shipping_address__city
-        ({"search": "pl"}, 2),  # default_shipping_address__country, email
+        ({"search": "John"}, 1),  # first_name
+        ({"search": "Doe"}, 1),  # last_name
+        ({"search": "wroc"}, 1),  # city
+        ({"search": "pl"}, 1),  # country
         ({"search": "+48713988102"}, 1),
-        ({"search": "7139881"}, 1),
-        ({"search": "+48713"}, 1),
     ],
 )
 def test_query_customer_members_with_filter_search(
@@ -4283,22 +4582,21 @@ def test_query_customer_members_with_filter_search(
     address,
     staff_user,
 ):
-
-    User.objects.bulk_create(
+    users = User.objects.bulk_create(
         [
             User(
-                email="second@example.com",
+                email="second@mirumee.com",
                 first_name="Alice",
                 last_name="Kowalski",
                 is_active=False,
             ),
             User(
-                email="third@example.com",
+                email="third@mirumee.com",
                 is_active=True,
-                default_shipping_address=address,
             ),
         ]
     )
+    users[1].addresses.set([address])
 
     variables = {"filter": customer_filter}
     response = staff_api_client.post_graphql(
@@ -4364,13 +4662,13 @@ def test_query_staff_members_app_no_permission(
 @pytest.mark.parametrize(
     "staff_member_filter, count",
     [
-        ({"search": "example.com"}, 3),
+        ({"search": "mirumee.com"}, 2),
         ({"search": "Alice"}, 1),
         ({"search": "Kowalski"}, 1),
-        ({"search": "John"}, 1),  # default_shipping_address__first_name
-        ({"search": "Doe"}, 1),  # default_shipping_address__last_name
-        ({"search": "wroc"}, 1),  # default_shipping_address__city
-        ({"search": "pl"}, 3),  # default_shipping_address__country, email
+        ({"search": "John"}, 1),  # first_name
+        ({"search": "Doe"}, 1),  # last_name
+        ({"search": "irv"}, 1),  # city
+        ({"search": "us"}, 1),  # country
     ],
 )
 def test_query_staff_members_with_filter_search(
@@ -4379,26 +4677,25 @@ def test_query_staff_members_with_filter_search(
     query_staff_users_with_filter,
     staff_api_client,
     permission_manage_staff,
-    address,
+    address_usa,
     staff_user,
 ):
-    User.objects.bulk_create(
+    users = User.objects.bulk_create(
         [
             User(
-                email="second@example.com",
+                email="second@mirumee.com",
                 first_name="Alice",
                 last_name="Kowalski",
                 is_staff=True,
                 is_active=False,
             ),
             User(
-                email="third@example.com",
+                email="third@mirumee.com",
                 is_staff=True,
                 is_active=True,
-                default_shipping_address=address,
             ),
             User(
-                email="customer@example.com",
+                email="customer@mirumee.com",
                 first_name="Alice",
                 last_name="Kowalski",
                 is_staff=False,
@@ -4406,6 +4703,7 @@ def test_query_staff_members_with_filter_search(
             ),
         ]
     )
+    users[1].addresses.set([address_usa])
 
     variables = {"filter": staff_member_filter}
     response = staff_api_client.post_graphql(
@@ -4649,6 +4947,29 @@ def test_address_query_as_anonymous_user(api_client, address_other_country):
     assert_no_permission(response)
 
 
+def test_address_query_invalid_id(
+    staff_api_client,
+    address_other_country,
+):
+    id = "..afs"
+    variables = {"id": id}
+    response = staff_api_client.post_graphql(ADDRESS_QUERY, variables)
+    content = get_graphql_content_from_response(response)
+    assert len(content["errors"]) == 1
+    assert content["errors"][0]["message"] == f"Couldn't resolve id: {id}."
+    assert content["data"]["address"] is None
+
+
+def test_address_query_with_invalid_object_type(
+    staff_api_client,
+    address_other_country,
+):
+    variables = {"id": graphene.Node.to_global_id("Order", address_other_country.pk)}
+    response = staff_api_client.post_graphql(ADDRESS_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["address"] is None
+
+
 REQUEST_EMAIL_CHANGE_QUERY = """
 mutation requestEmailChange(
     $password: String!, $new_email: String!, $redirect_url: String!, $channel:String
@@ -4745,8 +5066,8 @@ def test_request_email_change_with_invalid_password(user_api_client, customer_us
 
 
 EMAIL_UPDATE_QUERY = """
-mutation emailUpdate($token: String!) {
-    confirmEmailChange(token: $token){
+mutation emailUpdate($token: String!, $channel: String) {
+    confirmEmailChange(token: $token, channel: $channel){
         user {
             email
         }
@@ -4769,7 +5090,7 @@ def test_email_update(user_api_client, customer_user, channel_PLN):
     }
 
     token = create_token(payload, timedelta(hours=1))
-    variables = {"token": token}
+    variables = {"token": token, "channel": channel_PLN.slug}
 
     response = user_api_client.post_graphql(EMAIL_UPDATE_QUERY, variables)
     content = get_graphql_content(response)
@@ -4797,3 +5118,520 @@ def test_email_update_to_existing_email(user_api_client, customer_user, staff_us
             "field": "newEmail",
         }
     ]
+
+
+USER_FEDERATION_QUERY = """
+  query GetUserInFederation($representations: [_Any]) {
+    _entities(representations: $representations) {
+      __typename
+      ... on User {
+        id
+        email
+      }
+    }
+  }
+"""
+
+
+def test_staff_query_user_by_id_for_federation(
+    staff_api_client, customer_user, permission_manage_users
+):
+    customer_user_id = graphene.Node.to_global_id("User", customer_user.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "User",
+                "id": customer_user_id,
+            },
+        ],
+    }
+
+    response = staff_api_client.post_graphql(
+        USER_FEDERATION_QUERY,
+        variables,
+        permissions=[permission_manage_users],
+        check_no_permissions=False,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [
+        {
+            "__typename": "User",
+            "id": customer_user_id,
+            "email": customer_user.email,
+        }
+    ]
+
+
+def test_staff_query_user_by_email_for_federation(
+    staff_api_client, customer_user, permission_manage_users
+):
+    customer_user_id = graphene.Node.to_global_id("User", customer_user.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "User",
+                "email": customer_user.email,
+            },
+        ],
+    }
+
+    response = staff_api_client.post_graphql(
+        USER_FEDERATION_QUERY,
+        variables,
+        permissions=[permission_manage_users],
+        check_no_permissions=False,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [
+        {
+            "__typename": "User",
+            "id": customer_user_id,
+            "email": customer_user.email,
+        }
+    ]
+
+
+def test_staff_query_user_by_id_without_permission_for_federation(
+    staff_api_client, customer_user
+):
+    customer_user_id = graphene.Node.to_global_id("User", customer_user.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "User",
+                "id": customer_user_id,
+            },
+        ],
+    }
+
+    response = staff_api_client.post_graphql(USER_FEDERATION_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_staff_query_user_by_email_without_permission_for_federation(
+    staff_api_client, customer_user
+):
+    variables = {
+        "representations": [
+            {
+                "__typename": "User",
+                "email": customer_user.email,
+            },
+        ],
+    }
+
+    response = staff_api_client.post_graphql(USER_FEDERATION_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_customer_query_self_by_id_for_federation(user_api_client, customer_user):
+    customer_user_id = graphene.Node.to_global_id("User", customer_user.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "User",
+                "id": customer_user_id,
+            },
+        ],
+    }
+
+    response = user_api_client.post_graphql(
+        USER_FEDERATION_QUERY,
+        variables,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [
+        {
+            "__typename": "User",
+            "id": customer_user_id,
+            "email": customer_user.email,
+        }
+    ]
+
+
+def test_customer_query_self_by_email_for_federation(user_api_client, customer_user):
+    customer_user_id = graphene.Node.to_global_id("User", customer_user.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "User",
+                "email": customer_user.email,
+            },
+        ],
+    }
+
+    response = user_api_client.post_graphql(
+        USER_FEDERATION_QUERY,
+        variables,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [
+        {
+            "__typename": "User",
+            "id": customer_user_id,
+            "email": customer_user.email,
+        }
+    ]
+
+
+def test_customer_query_user_by_id_for_federation(
+    user_api_client, customer_user, staff_user
+):
+    staff_user_id = graphene.Node.to_global_id("User", staff_user.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "User",
+                "id": staff_user_id,
+            },
+        ],
+    }
+
+    response = user_api_client.post_graphql(
+        USER_FEDERATION_QUERY,
+        variables,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_customer_query_user_by_email_for_federation(
+    user_api_client, customer_user, staff_user
+):
+    variables = {
+        "representations": [
+            {
+                "__typename": "User",
+                "email": staff_user.email,
+            },
+        ],
+    }
+
+    response = user_api_client.post_graphql(
+        USER_FEDERATION_QUERY,
+        variables,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_unauthenticated_query_user_by_id_for_federation(api_client, customer_user):
+    customer_user_id = graphene.Node.to_global_id("User", customer_user.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "User",
+                "id": customer_user_id,
+            },
+        ],
+    }
+
+    response = api_client.post_graphql(
+        USER_FEDERATION_QUERY,
+        variables,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_unauthenticated_query_user_by_email_for_federation(api_client, customer_user):
+    variables = {
+        "representations": [
+            {
+                "__typename": "User",
+                "email": customer_user.email,
+            },
+        ],
+    }
+
+    response = api_client.post_graphql(
+        USER_FEDERATION_QUERY,
+        variables,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+ADDRESS_FEDERATION_QUERY = """
+  query GetUserInFederation($representations: [_Any]) {
+    _entities(representations: $representations) {
+      __typename
+      ... on Address {
+        id
+        city
+      }
+    }
+  }
+"""
+
+
+def test_customer_query_address_federation(user_api_client, customer_user, address):
+    customer_user.addresses.add(address)
+
+    address_id = graphene.Node.to_global_id("Address", address.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Address",
+                "id": address_id,
+            },
+        ],
+    }
+
+    response = user_api_client.post_graphql(ADDRESS_FEDERATION_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [
+        {
+            "__typename": "Address",
+            "id": address_id,
+            "city": address.city,
+        }
+    ]
+
+
+def test_customer_query_other_user_address_federation(
+    user_api_client, staff_user, customer_user, address
+):
+    staff_user.addresses.add(address)
+
+    address_id = graphene.Node.to_global_id("Address", address.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Address",
+                "id": address_id,
+            },
+        ],
+    }
+
+    response = user_api_client.post_graphql(ADDRESS_FEDERATION_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_staff_query_other_user_address_federation(
+    staff_api_client, customer_user, address
+):
+    customer_user.addresses.add(address)
+
+    address_id = graphene.Node.to_global_id("Address", address.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Address",
+                "id": address_id,
+            },
+        ],
+    }
+
+    response = staff_api_client.post_graphql(ADDRESS_FEDERATION_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_staff_query_other_user_address_with_permission_federation(
+    staff_api_client, customer_user, address, permission_manage_users
+):
+    customer_user.addresses.add(address)
+
+    address_id = graphene.Node.to_global_id("Address", address.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Address",
+                "id": address_id,
+            },
+        ],
+    }
+
+    response = staff_api_client.post_graphql(
+        ADDRESS_FEDERATION_QUERY,
+        variables,
+        permissions=[permission_manage_users],
+        check_no_permissions=False,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_app_query_address_federation(app_api_client, address, permission_manage_users):
+    address_id = graphene.Node.to_global_id("Address", address.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Address",
+                "id": address_id,
+            },
+        ],
+    }
+
+    response = app_api_client.post_graphql(
+        ADDRESS_FEDERATION_QUERY,
+        variables,
+        permissions=[permission_manage_users],
+        check_no_permissions=False,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [
+        {
+            "__typename": "Address",
+            "id": address_id,
+            "city": address.city,
+        }
+    ]
+
+
+def test_app_no_permission_query_address_federation(app_api_client, address):
+    address_id = graphene.Node.to_global_id("Address", address.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Address",
+                "id": address_id,
+            },
+        ],
+    }
+
+    response = app_api_client.post_graphql(ADDRESS_FEDERATION_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_unauthenticated_query_address_federation(api_client, address):
+    address_id = graphene.Node.to_global_id("Address", address.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Address",
+                "id": address_id,
+            },
+        ],
+    }
+
+    response = api_client.post_graphql(ADDRESS_FEDERATION_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+GROUP_FEDERATION_QUERY = """
+  query GetGroupInFederation($representations: [_Any]) {
+    _entities(representations: $representations) {
+      __typename
+      ... on Group {
+        id
+        name
+      }
+    }
+  }
+"""
+
+
+def test_staff_query_group_federation(staff_api_client, permission_manage_staff):
+    group = Group.objects.create(name="empty group")
+    group_id = graphene.Node.to_global_id("Group", group.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Group",
+                "id": group_id,
+            },
+        ],
+    }
+
+    response = staff_api_client.post_graphql(
+        GROUP_FEDERATION_QUERY,
+        variables,
+        permissions=[permission_manage_staff],
+        check_no_permissions=False,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [
+        {
+            "__typename": "Group",
+            "id": group_id,
+            "name": group.name,
+        }
+    ]
+
+
+def test_app_query_group_federation(app_api_client, permission_manage_staff):
+    group = Group.objects.create(name="empty group")
+    group_id = graphene.Node.to_global_id("Group", group.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Group",
+                "id": group_id,
+            },
+        ],
+    }
+
+    response = app_api_client.post_graphql(
+        GROUP_FEDERATION_QUERY,
+        variables,
+        permissions=[permission_manage_staff],
+        check_no_permissions=False,
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [
+        {
+            "__typename": "Group",
+            "id": group_id,
+            "name": group.name,
+        }
+    ]
+
+
+def test_app_no_permission_query_group_federation(app_api_client):
+    group = Group.objects.create(name="empty group")
+    group_id = graphene.Node.to_global_id("Group", group.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Group",
+                "id": group_id,
+            },
+        ],
+    }
+
+    response = app_api_client.post_graphql(GROUP_FEDERATION_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_client_query_group_federation(user_api_client):
+    group = Group.objects.create(name="empty group")
+
+    group_id = graphene.Node.to_global_id("Group", group.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Group",
+                "id": group_id,
+            },
+        ],
+    }
+
+    response = user_api_client.post_graphql(GROUP_FEDERATION_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]
+
+
+def test_unauthenticated_query_group_federation(api_client):
+    group = Group.objects.create(name="empty group")
+
+    group_id = graphene.Node.to_global_id("Group", group.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "Group",
+                "id": group_id,
+            },
+        ],
+    }
+
+    response = api_client.post_graphql(GROUP_FEDERATION_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [None]

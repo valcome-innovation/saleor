@@ -51,9 +51,9 @@ def aggregate_plugins_configuration(
     return global_plugins, plugins_per_channel
 
 
-def resolve_plugin(plugin_id, manager):
+def resolve_plugin(id, manager):
     global_plugins, plugins_per_channel = aggregate_plugins_configuration(manager)
-    plugin: BasePlugin = manager.get_plugin(plugin_id)
+    plugin: BasePlugin = manager.get_plugin(id)
     if not plugin:
         return None
 
@@ -81,7 +81,7 @@ def resolve_plugins(manager, sort_by=None, **kwargs):
             description=plugin.PLUGIN_DESCRIPTION,
             name=plugin.PLUGIN_NAME,
         )
-        for plugin_id, plugin in global_plugins.items()
+        for _, plugin in global_plugins.items()
     ]
 
     plugins.extend(

@@ -33,37 +33,44 @@ QUERY_TICKET_PRODUCTS_WITH_FILTERING = """
             "singleTeams": ["swl"],
             "teams": ["swl"],
             "leagues": ["ahl-20-21"],
+            "streamType": "Game"
          }, 4),
         ({
             "singleTeams": ["SWL"],
             "teams": ["all-teams"],
             "leagues": ["ahl-20-21"],
+            "streamType": "Game"
          }, 4),
         ({
             "singleTeams": ["SwL"],
             "teams": ["swl", "ash", "ka2", "all-teams"],
             "leagues": ["ahl-20-21"],
+            "streamType": "Game"
          }, 10),
         ({
             "singleTeams": ["sWl", "ka2", "ash"],
             "teams": ["swl", "ash", "ka2", "all-teams"],
             "leagues": ["ahl-20-21"],
+            "streamType": "Game"
          }, 12),
         ({
             "singleTeams": ["swl", "ka2", "ash"],
             "teams": ["swl", "ash", "ka2"],
             "leagues": ["ahl-20-21"],
+            "streamType": "Game"
          }, 10),
         ({
             "singleTeams": ["swl"],
             "teams": ["all-teams"],
             "leagues": ["ahl-20-21"],
-        }, 4),
+            "streamType": "Game"
+         }, 4),
         ({
             "singleTeams": ["swl", "ash", "rbs", "any"],
             "teams": ["ash", "all-teams"],
             "leagues": ["ahl-20-21"],
-        }, 7),
+            "streamType": "Game"
+         }, 7),
     ],
 )
 def test_ticket_product_query_with_filters(
@@ -94,15 +101,18 @@ def test_ticket_product_query_with_filters(
         ({
              "teams": ["swl"],
              "leagues": ["ahl-20-21"],
-        }, "single_teams"),
+             "streamType": "Game"
+         }, "single_teams"),
         ({
             "singleTeams": ["swl"],
             "leagues": ["ahl-20-21"],
-        }, "teams"),
+            "streamType": "Game"
+         }, "teams"),
         ({
             "singleTeams": ["swl"],
             "teams": ["swl"],
-        }, "leagues")
+            "streamType": "Game"
+         }, "leagues")
     ],
 )
 def test_ticket_product_query_with_invalid_filters(

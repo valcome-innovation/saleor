@@ -1,6 +1,10 @@
 import graphene
 
-from ...tests.utils import assert_no_permission, get_graphql_content
+from ...tests.utils import (
+    assert_no_permission,
+    get_graphql_content,
+    get_graphql_content_from_response,
+)
 
 PAGE_TYPE_QUERY = """
     query PageType($id: ID!, $filters: AttributeFilterInput) {
@@ -115,6 +119,23 @@ def test_page_type_query_by_app_no_perm(
     assert_no_permission(response)
 
 
+def test_staff_query_page_type_by_invalid_id(staff_api_client, page_type):
+    id = "bh/"
+    variables = {"id": id}
+    response = staff_api_client.post_graphql(PAGE_TYPE_QUERY, variables)
+    content = get_graphql_content_from_response(response)
+    assert len(content["errors"]) == 1
+    assert content["errors"][0]["message"] == f"Couldn't resolve id: {id}."
+    assert content["data"]["pageType"] is None
+
+
+def test_staff_query_page_type_with_invalid_object_type(staff_api_client, page_type):
+    variables = {"id": graphene.Node.to_global_id("Order", page_type.pk)}
+    response = staff_api_client.post_graphql(PAGE_TYPE_QUERY, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["pageType"] is None
+
+
 def test_page_type_query_filter_unassigned_attributes(
     staff_api_client,
     page_type,
@@ -178,3 +199,36 @@ def test_page_type_query_no_pages(
     available_attributes = page_type_data["availableAttributes"]["edges"]
     assert len(available_attributes) == 1
     assert available_attributes[0]["node"]["slug"] == author_page_attribute.slug
+
+
+def test_query_page_types_for_federation(api_client, page_type):
+    page_type_id = graphene.Node.to_global_id("PageType", page_type.pk)
+    variables = {
+        "representations": [
+            {
+                "__typename": "PageType",
+                "id": page_type_id,
+            },
+        ],
+    }
+    query = """
+      query GetPageTypeInFederation($representations: [_Any]) {
+        _entities(representations: $representations) {
+          __typename
+          ... on PageType {
+            id
+            name
+          }
+        }
+      }
+    """
+
+    response = api_client.post_graphql(query, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["_entities"] == [
+        {
+            "__typename": "PageType",
+            "id": page_type_id,
+            "name": page_type.name,
+        }
+    ]

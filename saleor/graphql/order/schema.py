@@ -1,11 +1,11 @@
 import graphene
 
 from ...core.permissions import OrderPermissions
-from ...core.tracing import traced_resolver
 from ..core.enums import ReportingPeriod
 from ..core.fields import FilterInputConnectionField, PrefetchingConnectionField
 from ..core.scalars import UUID
 from ..core.types import FilterInputObjectType, TaxedMoney
+from ..core.utils import from_global_id_or_error
 from ..decorators import permission_required
 from .bulk_mutations.draft_orders import DraftOrderBulkDelete, DraftOrderLinesBulkDelete
 from .bulk_mutations.orders import OrderBulkCancel
@@ -115,13 +115,13 @@ class OrderQueries(graphene.ObjectType):
     ) # VALCOME
 
     @permission_required(OrderPermissions.MANAGE_ORDERS)
-    @traced_resolver
     def resolve_homepage_events(self, *_args, **_kwargs):
         return resolve_homepage_events()
 
     @permission_required(OrderPermissions.MANAGE_ORDERS)
     def resolve_order(self, info, **data):
-        return resolve_order(info, data.get("id"))
+        _, id = from_global_id_or_error(data.get("id"), Order)
+        return resolve_order(id)
 
     @permission_required(OrderPermissions.MANAGE_ORDERS)
     def resolve_orders(self, info, channel=None, **_kwargs):
@@ -135,7 +135,6 @@ class OrderQueries(graphene.ObjectType):
     def resolve_orders_total(self, info, period, channel=None, **_kwargs):
         return resolve_orders_total(info, period, channel)
 
-    @traced_resolver
     def resolve_order_by_token(self, _info, token):
         return resolve_order_by_token(token)
 

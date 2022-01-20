@@ -26,7 +26,9 @@ from ..notify_events import (
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_password_reset_email_task.delay"
 )
-def test_send_account_password_reset_event(mocked_email_task, customer_user):
+def test_send_account_password_reset_event(
+    mocked_email_task, customer_user, user_email_plugin
+):
     token = "token123"
     payload = {
         "user": get_default_user_payload(customer_user),
@@ -38,16 +40,17 @@ def test_send_account_password_reset_event(mocked_email_task, customer_user):
     }
     config = {"host": "localhost", "port": "1025"}
     send_account_password_reset_event(
-        payload=payload,
-        config=config,
+        payload=payload, config=config, plugin=user_email_plugin()
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
+    )
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_account_confirmation_email_task.delay"
 )
-def test_send_account_confirmation(mocked_email_task, customer_user):
+def test_send_account_confirmation(mocked_email_task, customer_user, user_email_plugin):
     token = "token123"
     payload = {
         "user": get_default_user_payload(customer_user),
@@ -59,16 +62,19 @@ def test_send_account_confirmation(mocked_email_task, customer_user):
     }
     config = {"host": "localhost", "port": "1025"}
     send_account_confirmation(
-        payload=payload,
-        config=config,
+        payload=payload, config=config, plugin=user_email_plugin()
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
+    )
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_request_email_change_email_task.delay"
 )
-def test_send_account_change_email_request(mocked_email_task, customer_user):
+def test_send_account_change_email_request(
+    mocked_email_task, customer_user, user_email_plugin
+):
     token = "token123"
     payload = {
         "user": get_default_user_payload(customer_user),
@@ -82,17 +88,20 @@ def test_send_account_change_email_request(mocked_email_task, customer_user):
     }
     config = {"host": "localhost", "port": "1025"}
     send_account_change_email_request(
-        payload=payload,
-        config=config,
+        payload=payload, config=config, plugin=user_email_plugin()
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
+    )
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_user_change_email_notification_task."
     "delay"
 )
-def test_send_account_change_email_confirm(mocked_email_task, customer_user):
+def test_send_account_change_email_confirm(
+    mocked_email_task, customer_user, user_email_plugin
+):
     payload = {
         "user": get_default_user_payload(customer_user),
         "recipient_email": "user@example.com",
@@ -101,17 +110,18 @@ def test_send_account_change_email_confirm(mocked_email_task, customer_user):
     }
     config = {"host": "localhost", "port": "1025"}
     send_account_change_email_confirm(
-        payload=payload,
-        config=config,
+        payload=payload, config=config, plugin=user_email_plugin()
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
+    )
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events."
     "send_account_delete_confirmation_email_task.delay"
 )
-def test_send_account_delete(mocked_email_task, customer_user):
+def test_send_account_delete(mocked_email_task, customer_user, user_email_plugin):
     token = "token123"
     payload = {
         "user": get_default_user_payload(customer_user),
@@ -122,17 +132,18 @@ def test_send_account_delete(mocked_email_task, customer_user):
         "domain": "localhost:8000",
     }
     config = {"host": "localhost", "port": "1025"}
-    send_account_delete(
-        payload=payload,
-        config=config,
+    send_account_delete(payload=payload, config=config, plugin=user_email_plugin())
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_set_user_password_email_task.delay"
 )
-def test_send_account_set_customer_password(mocked_email_task, customer_user):
+def test_send_account_set_customer_password(
+    mocked_email_task, customer_user, user_email_plugin
+):
     token = "token123"
     payload = {
         "user": get_default_user_payload(customer_user),
@@ -144,16 +155,15 @@ def test_send_account_set_customer_password(mocked_email_task, customer_user):
     }
     config = {"host": "localhost", "port": "1025"}
     send_account_set_customer_password(
-        payload=payload,
-        config=config,
+        payload=payload, config=config, plugin=user_email_plugin()
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
+    )
 
 
 @mock.patch("saleor.plugins.user_email.notify_events.send_invoice_email_task.delay")
-def test_send_invoice(
-    mocked_email_task,
-):
+def test_send_invoice(mocked_email_task, user_email_plugin):
     payload = {
         "invoice": {
             "id": 1,
@@ -165,17 +175,16 @@ def test_send_invoice(
         "domain": "localhost:8000",
     }
     config = {"host": "localhost", "port": "1025"}
-    send_invoice(
-        payload=payload,
-        config=config,
+    send_invoice(payload=payload, config=config, plugin=user_email_plugin())
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_order_confirmation_email_task.delay"
 )
-def test_send_order_confirmation(mocked_email_task, order):
+def test_send_order_confirmation(mocked_email_task, order, user_email_plugin):
     payload = {
         "order": get_default_order_payload(order, "http://localhost:8000/redirect"),
         "recipient_email": "user@example.com",
@@ -183,44 +192,49 @@ def test_send_order_confirmation(mocked_email_task, order):
         "domain": "localhost:8000",
     }
     config = {"host": "localhost", "port": "1025"}
-    send_order_confirmation(
-        payload=payload,
-        config=config,
+    send_order_confirmation(payload=payload, config=config, plugin=user_email_plugin())
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_fulfillment_confirmation_email_task."
     "delay"
 )
-def test_send_fulfillment_confirmation(mocked_email_task, order, fulfillment):
+def test_send_fulfillment_confirmation(
+    mocked_email_task, order, fulfillment, user_email_plugin
+):
     payload = get_default_fulfillment_payload(order, fulfillment)
     config = {"host": "localhost", "port": "1025"}
     send_fulfillment_confirmation(
-        payload=payload,
-        config=config,
+        payload=payload, config=config, plugin=user_email_plugin()
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
+    )
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_fulfillment_update_email_task.delay"
 )
-def test_send_fulfillment_update(mocked_email_task, order, fulfillment):
+def test_send_fulfillment_update(
+    mocked_email_task, order, fulfillment, user_email_plugin
+):
     payload = get_default_fulfillment_payload(order, fulfillment)
     config = {"host": "localhost", "port": "1025"}
-    send_fulfillment_update(
-        payload=payload,
-        config=config,
+    send_fulfillment_update(payload=payload, config=config, plugin=user_email_plugin())
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_payment_confirmation_email_task.delay"
 )
-def test_send_payment_confirmation(mocked_email_task, order, payment_dummy):
+def test_send_payment_confirmation(
+    mocked_email_task, order, payment_dummy, user_email_plugin
+):
     payload = {
         "order": get_default_order_payload(order, "http://localhost:8000/redirect"),
         "recipient_email": "user@example.com",
@@ -237,16 +251,17 @@ def test_send_payment_confirmation(mocked_email_task, order, payment_dummy):
     }
     config = {"host": "localhost", "port": "1025"}
     send_payment_confirmation(
-        payload=payload,
-        config=config,
+        payload=payload, config=config, plugin=user_email_plugin()
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
+    )
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_order_canceled_email_task.delay"
 )
-def test_send_order_canceled(mocked_email_task, order):
+def test_send_order_canceled(mocked_email_task, order, user_email_plugin):
     payload = {
         "order": get_default_order_payload(order, "http://localhost:8000/redirect"),
         "recipient_email": "user@example.com",
@@ -254,17 +269,16 @@ def test_send_order_canceled(mocked_email_task, order):
         "domain": "localhost:8000",
     }
     config = {"host": "localhost", "port": "1025"}
-    send_order_canceled(
-        payload=payload,
-        config=config,
+    send_order_canceled(payload=payload, config=config, plugin=user_email_plugin())
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_order_refund_email_task.delay"
 )
-def test_send_order_refund(mocked_email_task, order):
+def test_send_order_refund(mocked_email_task, order, user_email_plugin):
     payload = {
         "order": get_default_order_payload(order, "http://localhost:8000/redirect"),
         "recipient_email": "user@example.com",
@@ -274,17 +288,16 @@ def test_send_order_refund(mocked_email_task, order):
         "domain": "localhost:8000",
     }
     config = {"host": "localhost", "port": "1025"}
-    send_order_refund(
-        payload=payload,
-        config=config,
+    send_order_refund(payload=payload, config=config, plugin=user_email_plugin())
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)
 
 
 @mock.patch(
     "saleor.plugins.user_email.notify_events.send_order_confirmed_email_task.delay"
 )
-def test_send_order_confirmed(mocked_email_task, order):
+def test_send_order_confirmed(mocked_email_task, order, user_email_plugin):
     payload = {
         "order": get_default_order_payload(order, "http://localhost:8000/redirect"),
         "recipient_email": "user@example.com",
@@ -292,8 +305,7 @@ def test_send_order_confirmed(mocked_email_task, order):
         "domain": "localhost:8000",
     }
     config = {"host": "localhost", "port": "1025"}
-    send_order_confirmed(
-        payload=payload,
-        config=config,
+    send_order_confirmed(payload=payload, config=config, plugin=user_email_plugin())
+    mocked_email_task.assert_called_with(
+        payload["recipient_email"], payload, config, mock.ANY, mock.ANY
     )
-    mocked_email_task.assert_called_with(payload["recipient_email"], payload, config)

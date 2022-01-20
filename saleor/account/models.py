@@ -5,6 +5,7 @@ from django.contrib.auth.models import _user_has_perm  # type: ignore
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
+    Group,
     Permission,
     PermissionsMixin,
 )
@@ -12,6 +13,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.db.models import JSONField  # type: ignore
 from django.db.models import Q, QuerySet, Value
+from django.db.models.expressions import Exists, OuterRef
 from django.forms.models import model_to_dict
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -19,9 +21,11 @@ from django_countries.fields import Country, CountryField
 from phonenumber_field.modelfields import PhoneNumber, PhoneNumberField
 from versatileimagefield.fields import VersatileImageField
 
+from ..app.models import App
 from ..core.models import ModelWithMetadata
 from ..core.permissions import AccountPermissions, BasePermissionEnum, get_permissions
 from ..core.utils.json_serializer import CustomJsonEncoder
+from ..order.models import Order
 from . import CustomerEvents
 from .validators import validate_possible_number
 
@@ -64,12 +68,20 @@ class Address(models.Model):
     postal_code = models.CharField(max_length=20, blank=True)
     country = CountryField()
     country_area = models.CharField(max_length=128, blank=True)
-    phone = PossiblePhoneNumberField(blank=True, default="")
+    phone = PossiblePhoneNumberField(blank=True, default="", db_index=True)
 
-    objects = AddressQueryset.as_manager()
+    objects = models.Manager.from_queryset(AddressQueryset)()
 
     class Meta:
         ordering = ("pk",)
+        indexes = [
+            GinIndex(
+                name="address_search_gin",
+                # `opclasses` and `fields` should be the same length
+                fields=["first_name", "last_name", "city", "country"],
+                opclasses=["gin_trgm_ops"] * 4,
+            ),
+        ]
 
     @property
     def full_name(self):
@@ -127,8 +139,10 @@ class UserManager(BaseUserManager):
         )
 
     def customers(self):
+        orders = Order.objects.values("user_id")
         return self.get_queryset().filter(
-            Q(is_staff=False) | (Q(is_staff=True) & Q(orders__isnull=False))
+            Q(is_staff=False)
+            | (Q(is_staff=True) & (Exists(orders.filter(user_id=OuterRef("pk")))))
         )
 
     def staff(self):
@@ -170,11 +184,17 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         permissions = (
             (AccountPermissions.MANAGE_USERS.codename, "Manage customers."),
             (AccountPermissions.MANAGE_STAFF.codename, "Manage staff."),
+            (AccountPermissions.IMPERSONATE_USER.codename, "Impersonate user."),
         )
         indexes = [
             *ModelWithMetadata.Meta.indexes,
             # Orders searching index
-            GinIndex(fields=["email", "first_name", "last_name"]),
+            GinIndex(
+                name="user_search_gin",
+                # `opclasses` and `fields` should be the same length
+                fields=["email", "first_name", "last_name"],
+                opclasses=["gin_trgm_ops"] * 3,
+            ),
         ]
 
     def __init__(self, *args, **kwargs):
@@ -186,8 +206,36 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         if self._effective_permissions is None:
             self._effective_permissions = get_permissions()
             if not self.is_superuser:
+
+                UserPermission = User.user_permissions.through
+                user_permission_queryset = UserPermission.objects.filter(
+                    user_id=self.pk
+                ).values("permission_id")
+
+                UserGroup = User.groups.through
+                GroupPermission = Group.permissions.through
+                user_group_queryset = UserGroup.objects.filter(user_id=self.pk).values(
+                    "group_id"
+                )
+                group_permission_queryset = GroupPermission.objects.filter(
+                    Exists(user_group_queryset.filter(group_id=OuterRef("group_id")))
+                ).values("permission_id")
+
                 self._effective_permissions = self._effective_permissions.filter(
-                    Q(user=self) | Q(group__user=self)
+                    Q(
+                        Exists(
+                            user_permission_queryset.filter(
+                                permission_id=OuterRef("pk")
+                            )
+                        )
+                    )
+                    | Q(
+                        Exists(
+                            group_permission_queryset.filter(
+                                permission_id=OuterRef("pk")
+                            )
+                        )
+                    )
                 )
         return self._effective_permissions
 
@@ -247,7 +295,10 @@ class CustomerEvent(models.Model):
     )
     order = models.ForeignKey("order.Order", on_delete=models.SET_NULL, null=True)
     parameters = JSONField(blank=True, default=dict, encoder=CustomJsonEncoder)
-    user = models.ForeignKey(User, related_name="events", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name="events", on_delete=models.CASCADE, null=True
+    )
+    app = models.ForeignKey(App, related_name="+", on_delete=models.SET_NULL, null=True)
 
     class Meta:
         ordering = ("date",)

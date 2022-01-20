@@ -14,11 +14,11 @@ from ...streaming.stream_ticket import (
 from ...tests import settings
 
 stream_ticket_test_data = [
-    ({'GAME_ID': 1234}, 'single', 'none'),
-    ({'SEASON_ID': 11}, 'season', 'none'),
-    ({'SEASON_ID': 11, 'TEAM_IDS': [22]}, 'season', 'none'),
-    ({'LEAGUE_IDS': [1], 'EXPIRES': 'm', 'START_TIME': '%d' % datetime.utcnow().timestamp()}, 'timed', 'month'),
-    ({'LEAGUE_IDS': [1], 'EXPIRES': 'd', 'START_TIME': '%d' % datetime.utcnow().timestamp()}, 'timed', 'day'),
+    ({'GAME_ID': 1234, 'STREAM_TYPE': 'g'}, 'single', 'none'),
+    ({'SEASON_ID': 11, 'STREAM_TYPE': 'g'}, 'season', 'none'),
+    ({'SEASON_ID': 11, 'STREAM_TYPE': 'g', 'TEAM_IDS': [22]}, 'season', 'none'),
+    ({'LEAGUE_IDS': [1], 'STREAM_TYPE': 'g', 'EXPIRES': 'm', 'START_TIME': '%d' % datetime.utcnow().timestamp()}, 'timed', 'month'),
+    ({'LEAGUE_IDS': [1], 'STREAM_TYPE': 'g', 'EXPIRES': 'd', 'START_TIME': '%d' % datetime.utcnow().timestamp()}, 'timed', 'day'),
 ]
 
 
@@ -34,36 +34,36 @@ def test_create_single_stream_ticket(order_with_lines: "Order", meta, ticket_typ
 
 
 ticket_type_valid_test_data = [
-    ("1", None, None, "single"),
-    ("2", None, None, "single"),
-    (None, "1", None, "season"),
-    (None, "2", None, "season"),
-    (None, None, "m", "timed"),
-    (None, None, "d", "timed"),
+    ("1", None, None, None, "single"),
+    ("2", None, None, None, "single"),
+    (None, None, "1", None, "season"),
+    (None, None, "2", None, "season"),
+    (None, None, None, "m", "timed"),
+    (None, None, None, "d", "timed"),
 ]
 
 
-@pytest.mark.parametrize('game_id,season_id,expires,type', ticket_type_valid_test_data)
-def test_determine_stream_ticket_type(game_id, season_id, expires, type):
-    result = determine_stream_ticket_type(game_id, season_id, expires)
+@pytest.mark.parametrize('game_id,video_id,season_id,expires,type', ticket_type_valid_test_data)
+def test_determine_stream_ticket_type(game_id, video_id, season_id, expires, type):
+    result = determine_stream_ticket_type(game_id, video_id, season_id, expires)
     assert result == type
 
 
 ticket_type_invalid_test_data = [
-    ("1", "1", "d"),
-    ("1", "1", "m"),
-    ("1", "1", None),
-    ("1", None, "d"),
-    ("1", None, "m"),
-    (None, "1", "m"),
-    (None, "1", "d"),
+    ("1", None, "1", "d"),
+    ("1", None, "1", "m"),
+    ("1", None, "1", None),
+    ("1", None, None, "d"),
+    ("1", None, None, "m"),
+    (None, None, "1", "m"),
+    (None, None, "1", "d"),
 ]
 
 
-@pytest.mark.parametrize('game_id,season_id,expires', ticket_type_invalid_test_data)
-def test_determine_stream_ticket_type_invalid(game_id, season_id, expires):
+@pytest.mark.parametrize('game_id,video_id,season_id,expires', ticket_type_invalid_test_data)
+def test_determine_stream_ticket_type_invalid(game_id, video_id, season_id, expires):
     with pytest.raises(ValidationError):
-        determine_stream_ticket_type(game_id, season_id, expires)
+        determine_stream_ticket_type(game_id, video_id, season_id, expires)
 
 
 timed_type_data = [

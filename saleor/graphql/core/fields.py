@@ -5,10 +5,13 @@ import graphene
 from graphene.relay import PageInfo
 from graphene_django.fields import DjangoConnectionField
 from graphql.error import GraphQLError
+from graphql.language.ast import FragmentSpread
 from graphql_relay.connection.arrayconnection import connection_from_list_slice
 from promise import Promise
 
+from ...channel.exceptions import ChannelNotDefined, NoDefaultChannel
 from ..channel import ChannelContext, ChannelQsContext
+from ..channel.utils import get_default_channel_slug_or_graphql_error
 from ..utils.sorting import sort_queryset_for_connection
 from .connection import connection_from_queryset_slice
 
@@ -131,12 +134,7 @@ class FilterInputConnectionField(BaseDjangoConnectionField):
         info,
         **args,
     ):
-        # Disable `enforce_first_or_last` if not querying for `edges`.
-        values = [
-            field.name.value for field in info.field_asts[0].selection_set.selections
-        ]
-        if "edges" not in values:
-            enforce_first_or_last = False
+        enforce_first_or_last = cls.is_first_or_last_required(info)
 
         first = args.get("first")
         last = args.get("last")
@@ -174,6 +172,10 @@ class FilterInputConnectionField(BaseDjangoConnectionField):
             cls.resolve_connection, connection, args, max_limit=max_limit
         )
 
+        # for nested filters get channel from ChannelContext object
+        if "channel" not in args and hasattr(root, "channel_slug"):
+            args["channel"] = root.channel_slug
+
         iterable = cls.filter_iterable(
             iterable, filterset_class, filters_name, info, **args
         )
@@ -183,8 +185,42 @@ class FilterInputConnectionField(BaseDjangoConnectionField):
         return on_resolve(iterable)
 
     @classmethod
+    def is_first_or_last_required(cls, info):
+        """Disable `enforce_first_or_last` if not querying for `edges`."""
+        selections = info.field_asts[0].selection_set.selections
+        values = [field.name.value for field in selections]
+        if "edges" in values:
+            return True
+
+        fragments = [
+            field.name.value
+            for field in selections
+            if isinstance(field, FragmentSpread)
+        ]
+
+        for fragment in fragments:
+            fragment_values = [
+                field.name.value
+                for field in info.fragments[fragment].selection_set.selections
+            ]
+            if "edges" in fragment_values:
+                return True
+
+        return False
+
+    @classmethod
     def filter_iterable(cls, iterable, filterset_class, filters_name, info, **args):
         filter_input = args.get(filters_name)
+        if filter_input:
+            try:
+                filter_channel = str(filter_input["channel"])
+            except (NoDefaultChannel, ChannelNotDefined, GraphQLError, KeyError):
+                filter_channel = None
+            filter_input["channel"] = (
+                args.get("channel")
+                or filter_channel
+                or get_default_channel_slug_or_graphql_error()
+            )
         if filter_input and filterset_class:
             instance = filterset_class(
                 data=dict(filter_input), queryset=iterable, request=info.context

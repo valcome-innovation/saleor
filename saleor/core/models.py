@@ -2,7 +2,7 @@ import datetime
 from typing import Any
 
 from django.contrib.postgres.indexes import GinIndex
-from django.db import models
+from django.db import models, transaction
 from django.db.models import JSONField  # type: ignore
 from django.db.models import F, Max, Q
 
@@ -31,6 +31,7 @@ class SortableModel(models.Model):
             self.sort_order = 0 if existing_max is None else existing_max + 1
         super().save(*args, **kwargs)
 
+    @transaction.atomic
     def delete(self, *args, **kwargs):
         if self.sort_order is not None:
             qs = self.get_ordering_queryset()
@@ -48,19 +49,12 @@ class PublishedQuerySet(models.QuerySet):
             is_published=True,
         )
 
-    def visible_to_user(self, requestor):
-        from ..account.utils import requestor_is_staff_member_or_app
-
-        if requestor_is_staff_member_or_app(requestor):
-            return self.all()
-        return self.published()
-
 
 class PublishableModel(models.Model):
     publication_date = models.DateField(blank=True, null=True)
     is_published = models.BooleanField(default=False)
 
-    objects = PublishedQuerySet.as_manager()
+    objects = models.Manager.from_queryset(PublishedQuerySet)()
 
     class Meta:
         abstract = True

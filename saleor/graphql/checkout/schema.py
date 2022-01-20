@@ -1,7 +1,6 @@
 import graphene
 
 from ...core.permissions import CheckoutPermissions
-from ...core.tracing import traced_resolver
 from ..core.fields import BaseDjangoConnectionField, PrefetchingConnectionField
 from ..core.scalars import UUID
 from ..decorators import permission_required
@@ -17,6 +16,7 @@ from .mutations import (
     CheckoutLanguageCodeUpdate,
     CheckoutLineDelete,
     CheckoutLinesAdd,
+    CheckoutLinesDelete,
     CheckoutLinesUpdate,
     CheckoutRemovePromoCode,
     CheckoutShippingAddressUpdate,
@@ -40,11 +40,6 @@ class CheckoutQueries(graphene.ObjectType):
             description="Slug of a channel for which the data should be returned."
         ),
     )
-    checkout_line = graphene.Field(
-        CheckoutLine,
-        id=graphene.Argument(graphene.ID, description="ID of the checkout line."),
-        description="Look up a checkout line by ID.",
-    )
     checkout_lines = PrefetchingConnectionField(
         CheckoutLine, description="List of checkout lines."
     )
@@ -53,15 +48,10 @@ class CheckoutQueries(graphene.ObjectType):
         return resolve_checkout(info, token)
 
     @permission_required(CheckoutPermissions.MANAGE_CHECKOUTS)
-    @traced_resolver
     def resolve_checkouts(self, *_args, channel=None, **_kwargs):
         return resolve_checkouts(channel)
 
-    def resolve_checkout_line(self, info, id):
-        return graphene.Node.get_node_from_global_id(info, id, CheckoutLine)
-
     @permission_required(CheckoutPermissions.MANAGE_CHECKOUTS)
-    @traced_resolver
     def resolve_checkout_lines(self, *_args, **_kwargs):
         return resolve_checkout_lines()
 
@@ -74,7 +64,13 @@ class CheckoutMutations(graphene.ObjectType):
     checkout_customer_attach = CheckoutCustomerAttach.Field()
     checkout_customer_detach = CheckoutCustomerDetach.Field()
     checkout_email_update = CheckoutEmailUpdate.Field()
-    checkout_line_delete = CheckoutLineDelete.Field()
+    checkout_line_delete = CheckoutLineDelete.Field(
+        deprecation_reason=(
+            "DEPRECATED: Will be removed in Saleor 4.0. "
+            "Use `checkoutLinesDelete` instead."
+        )
+    )
+    checkout_lines_delete = CheckoutLinesDelete.Field()
     checkout_lines_add = CheckoutLinesAdd.Field()
     checkout_lines_update = CheckoutLinesUpdate.Field()
     checkout_remove_promo_code = CheckoutRemovePromoCode.Field()

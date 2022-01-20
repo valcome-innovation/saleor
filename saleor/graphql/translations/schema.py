@@ -2,7 +2,6 @@ import graphene
 
 from ...attribute.models import Attribute, AttributeValue
 from ...core.permissions import SitePermissions
-from ...core.tracing import traced_resolver
 from ...discount.models import Sale, Voucher
 from ...menu.models import MenuItem
 from ...page.models import Page
@@ -59,7 +58,7 @@ class TranslatableKinds(graphene.Enum):
     PAGE = "Page"
     PRODUCT = "Product"
     SALE = "Sale"
-    SHIPPING_METHOD = "ShippingMethod"
+    SHIPPING_METHOD = "ShippingMethodType"
     VARIANT = "ProductVariant"
     VOUCHER = "Voucher"
 
@@ -85,16 +84,15 @@ class TranslationQueries(graphene.ObjectType):
     )
 
     @permission_required(SitePermissions.MANAGE_TRANSLATIONS)
-    @traced_resolver
     def resolve_translations(self, info, kind, **_kwargs):
         if kind == TranslatableKinds.PRODUCT:
             return resolve_products(info)
         elif kind == TranslatableKinds.COLLECTION:
             return resolve_collections(info)
         elif kind == TranslatableKinds.CATEGORY:
-            return resolve_categories(info, query=None)
+            return resolve_categories(info)
         elif kind == TranslatableKinds.PAGE:
-            return resolve_pages(info, query=None)
+            return resolve_pages(info)
         elif kind == TranslatableKinds.SHIPPING_METHOD:
             return resolve_shipping_methods(info)
         elif kind == TranslatableKinds.VOUCHER:
@@ -106,12 +104,11 @@ class TranslationQueries(graphene.ObjectType):
         elif kind == TranslatableKinds.VARIANT:
             return resolve_product_variants(info)
         elif kind == TranslatableKinds.MENU_ITEM:
-            return resolve_menu_items(info, query=None)
+            return resolve_menu_items(info)
         elif kind == TranslatableKinds.SALE:
             return resolve_sales(info)
 
     @permission_required(SitePermissions.MANAGE_TRANSLATIONS)
-    @traced_resolver
     def resolve_translation(self, info, id, kind, **_kwargs):
         _type, kind_id = from_global_id_or_error(id)
         if not _type == kind:

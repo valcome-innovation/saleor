@@ -16,12 +16,15 @@ from ...discount.models import NotApplicable, Voucher, VoucherChannelListing
 from ...payment.models import Payment
 from ...plugins.manager import get_plugins_manager
 from ...shipping.models import ShippingZone
+from ...shipping.utils import convert_to_shipping_method_data
 from .. import AddressType, calculations
 from ..fetch import (
     CheckoutInfo,
     CheckoutLineInfo,
+    DeliveryMethodBase,
     fetch_checkout_info,
     fetch_checkout_lines,
+    get_delivery_method_info,
 )
 from ..models import Checkout
 from ..utils import (
@@ -32,7 +35,7 @@ from ..utils import (
     change_shipping_address_in_checkout,
     clear_shipping_method,
     get_voucher_discount_for_checkout,
-    get_voucher_for_checkout,
+    get_voucher_for_checkout_info,
     is_fully_paid,
     is_valid_shipping_method,
     recalculate_checkout_discount,
@@ -72,8 +75,8 @@ def test_clear_shipping_method(checkout, shipping_method):
     clear_shipping_method(checkout_info)
     checkout.refresh_from_db()
     assert not checkout.shipping_method
-    assert not checkout_info.shipping_method
-    assert not checkout_info.shipping_method_channel_listings
+    assert not checkout_info.delivery_method_info.delivery_method
+    assert isinstance(checkout_info.delivery_method_info, DeliveryMethodBase)
 
 
 def test_last_change_update(checkout):
@@ -141,13 +144,12 @@ def test_get_discount_for_checkout_value_voucher(
     )
     checkout_info = CheckoutInfo(
         checkout=checkout,
-        shipping_method=None,
+        delivery_method_info=get_delivery_method_info(None),
         shipping_address=None,
         billing_address=None,
         channel=channel_USD,
         user=None,
-        shipping_method_channel_listings=None,
-        valid_shipping_methods=[],
+        all_shipping_methods=[],
     )
     lines = [
         CheckoutLineInfo(
@@ -181,7 +183,12 @@ def test_get_voucher_discount_for_checkout_voucher_validation(
     subtotal = manager.calculate_checkout_subtotal(checkout_info, lines, address, [])
     customer_email = checkout_with_voucher.get_customer_email()
     mock_validate_voucher.assert_called_once_with(
-        voucher, subtotal.gross, quantity, customer_email, checkout_with_voucher.channel
+        voucher,
+        subtotal,
+        quantity,
+        customer_email,
+        checkout_with_voucher.channel,
+        checkout_info.user,
     )
 
 
@@ -230,13 +237,12 @@ def test_get_discount_for_checkout_entire_order_voucher_not_applicable(
     )
     checkout_info = CheckoutInfo(
         checkout=checkout,
-        shipping_method=None,
+        delivery_method_info=get_delivery_method_info(None),
         shipping_address=None,
         billing_address=None,
         channel=channel_USD,
         user=None,
-        shipping_method_channel_listings=None,
-        valid_shipping_methods=[],
+        all_shipping_methods=[],
     )
     manager = get_plugins_manager()
     with pytest.raises(NotApplicable):
@@ -343,13 +349,12 @@ def test_get_discount_for_checkout_specific_products_voucher_not_applicable(
     checkout = Mock(quantity=total_quantity, spec=Checkout, channel=channel_USD)
     checkout_info = CheckoutInfo(
         checkout=checkout,
-        shipping_method=None,
+        delivery_method_info=get_delivery_method_info(None),
         shipping_address=None,
         billing_address=None,
         channel=channel_USD,
         user=None,
-        shipping_method_channel_listings=None,
-        valid_shipping_methods=[],
+        all_shipping_methods=[],
     )
     with pytest.raises(NotApplicable):
         get_voucher_discount_for_checkout(
@@ -414,13 +419,17 @@ def test_get_discount_for_checkout_shipping_voucher(
     )
     checkout_info = CheckoutInfo(
         checkout=checkout,
-        shipping_method=shipping_method,
+        delivery_method_info=get_delivery_method_info(
+            shipping_method
+            and convert_to_shipping_method_data(
+                shipping_method, shipping_method.channel_listings.get()
+            )
+        ),
         shipping_address=Mock(spec=Address, country=Mock(code="PL")),
         billing_address=None,
         channel=channel_USD,
         user=None,
-        shipping_method_channel_listings=None,
-        valid_shipping_methods=[],
+        all_shipping_methods=[],
     )
     discount = get_voucher_discount_for_checkout(
         manager, voucher, checkout_info, [], None, None
@@ -472,13 +481,17 @@ def test_get_discount_for_checkout_shipping_voucher_all_countries(
     manager = get_plugins_manager()
     checkout_info = CheckoutInfo(
         checkout=checkout,
-        shipping_method=shipping_method,
+        delivery_method_info=get_delivery_method_info(
+            shipping_method
+            and convert_to_shipping_method_data(
+                shipping_method, shipping_method.channel_listings.get()
+            )
+        ),
         shipping_address=Mock(spec=Address, country=Mock(code="PL")),
         billing_address=None,
         channel=channel_USD,
         user=None,
-        shipping_method_channel_listings=None,
-        valid_shipping_methods=[],
+        all_shipping_methods=[],
     )
     discount = get_voucher_discount_for_checkout(
         manager, voucher, checkout_info, [], None, None
@@ -517,13 +530,12 @@ def test_get_discount_for_checkout_shipping_voucher_limited_countries(
 
     checkout_info = CheckoutInfo(
         checkout=checkout,
-        shipping_method=None,
+        delivery_method_info=get_delivery_method_info(None),
         shipping_address=Mock(spec=Address, country=Mock(code="PL")),
         billing_address=None,
         channel=channel_USD,
         user=None,
-        shipping_method_channel_listings=None,
-        valid_shipping_methods=[],
+        all_shipping_methods=[],
     )
     manager = get_plugins_manager()
     with pytest.raises(NotApplicable):
@@ -662,13 +674,17 @@ def test_get_discount_for_checkout_shipping_voucher_not_applicable(
     )
     checkout_info = CheckoutInfo(
         checkout=checkout,
-        shipping_method=shipping_method,
+        delivery_method_info=get_delivery_method_info(
+            shipping_method
+            and convert_to_shipping_method_data(
+                shipping_method, shipping_method.channel_listings.get()
+            )
+        ),
         shipping_address=Mock(spec=Address, country=Mock(code="PL")),
         billing_address=None,
         channel=channel_USD,
         user=None,
-        shipping_method_channel_listings=None,
-        valid_shipping_methods=[],
+        all_shipping_methods=[],
     )
     with pytest.raises(NotApplicable) as e:
         get_voucher_discount_for_checkout(
@@ -677,27 +693,27 @@ def test_get_discount_for_checkout_shipping_voucher_not_applicable(
     assert str(e.value) == error_msg
 
 
-def test_get_voucher_for_checkout(checkout_with_voucher, voucher):
+def test_get_voucher_for_checkout_info(checkout_with_voucher, voucher):
     manager = get_plugins_manager()
     checkout_info = fetch_checkout_info(checkout_with_voucher, [], [], manager)
-    checkout_voucher = get_voucher_for_checkout(checkout_info)
+    checkout_voucher = get_voucher_for_checkout_info(checkout_info)
     assert checkout_voucher == voucher
 
 
-def test_get_voucher_for_checkout_expired_voucher(checkout_with_voucher, voucher):
+def test_get_voucher_for_checkout_info_expired_voucher(checkout_with_voucher, voucher):
     date_yesterday = timezone.now() - datetime.timedelta(days=1)
     voucher.end_date = date_yesterday
     voucher.save()
     manager = get_plugins_manager()
     checkout_info = fetch_checkout_info(checkout_with_voucher, [], [], manager)
-    checkout_voucher = get_voucher_for_checkout(checkout_info)
+    checkout_voucher = get_voucher_for_checkout_info(checkout_info)
     assert checkout_voucher is None
 
 
-def test_get_voucher_for_checkout_no_voucher_code(checkout):
+def test_get_voucher_for_checkout_info_no_voucher_code(checkout):
     manager = get_plugins_manager()
     checkout_info = fetch_checkout_info(checkout, [], [], manager)
-    checkout_voucher = get_voucher_for_checkout(checkout_info)
+    checkout_voucher = get_voucher_for_checkout_info(checkout_info)
     assert checkout_voucher is None
 
 
@@ -983,6 +999,48 @@ def test_add_voucher_to_checkout(checkout_with_item, voucher):
     checkout_info = fetch_checkout_info(checkout_with_item, lines, [], manager)
     add_voucher_to_checkout(manager, checkout_info, lines, voucher)
     assert checkout_with_item.voucher_code == voucher.code
+
+
+def test_add_staff_voucher_to_anonymous_checkout(checkout_with_item, voucher):
+    voucher.only_for_staff = True
+    voucher.save()
+
+    assert checkout_with_item.voucher_code is None
+    manager = get_plugins_manager()
+    lines = fetch_checkout_lines(checkout_with_item)
+    checkout_info = fetch_checkout_info(checkout_with_item, lines, [], manager)
+    with pytest.raises(NotApplicable):
+        add_voucher_to_checkout(manager, checkout_info, lines, voucher)
+
+
+def test_add_staff_voucher_to_customer_checkout(
+    checkout_with_item, voucher, customer_user
+):
+    checkout_with_item.user = customer_user
+    checkout_with_item.save()
+    voucher.only_for_staff = True
+    voucher.save()
+
+    assert checkout_with_item.voucher_code is None
+    manager = get_plugins_manager()
+    lines = fetch_checkout_lines(checkout_with_item)
+    checkout_info = fetch_checkout_info(checkout_with_item, lines, [], manager)
+    with pytest.raises(NotApplicable):
+        add_voucher_to_checkout(manager, checkout_info, lines, voucher)
+
+
+def test_add_staff_voucher_to_staff_checkout(checkout_with_item, voucher, staff_user):
+    checkout_with_item.user = staff_user
+    checkout_with_item.save()
+    voucher.only_for_staff = True
+    voucher.save()
+
+    assert checkout_with_item.voucher_code is None
+    manager = get_plugins_manager()
+    lines = fetch_checkout_lines(checkout_with_item)
+    checkout_info = fetch_checkout_info(checkout_with_item, lines, [], manager)
+
+    add_voucher_to_checkout(manager, checkout_info, lines, voucher)
 
 
 def test_add_voucher_to_checkout_fail(

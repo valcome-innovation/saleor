@@ -1,10 +1,8 @@
-import graphene
-
 from saleor.graphql.tests.utils import get_graphql_content
 
 MUTATION_CHECKOUT_UPDATE_LANGUAGE_CODE = """
-mutation checkoutLanguageCodeUpdate($checkoutId: ID!, $languageCode: LanguageCodeEnum!){
-  checkoutLanguageCodeUpdate(checkoutId:$checkoutId, languageCode: $languageCode){
+mutation checkoutLanguageCodeUpdate($token: UUID, $languageCode: LanguageCodeEnum!){
+  checkoutLanguageCodeUpdate(token: $token, languageCode: $languageCode){
     checkout{
       id
       languageCode
@@ -12,6 +10,7 @@ mutation checkoutLanguageCodeUpdate($checkoutId: ID!, $languageCode: LanguageCod
     errors{
       field
       message
+      code
     }
   }
 }
@@ -24,8 +23,8 @@ def test_checkout_update_language_code(
 ):
     language_code = "PL"
     checkout = checkout_with_gift_card
-    checkout_id = graphene.Node.to_global_id("Checkout", checkout.pk)
-    variables = {"checkoutId": checkout_id, "languageCode": language_code}
+    previous_last_change = checkout.last_change
+    variables = {"token": checkout.token, "languageCode": language_code}
 
     response = user_api_client.post_graphql(
         MUTATION_CHECKOUT_UPDATE_LANGUAGE_CODE, variables
@@ -38,3 +37,4 @@ def test_checkout_update_language_code(
     assert data["checkout"]["languageCode"] == language_code
     checkout.refresh_from_db()
     assert checkout.language_code == language_code.lower()
+    assert checkout.last_change != previous_last_change

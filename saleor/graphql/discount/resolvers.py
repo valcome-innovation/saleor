@@ -1,25 +1,37 @@
-from ...core.tracing import traced_resolver
 from ...discount import models
-from ..channel import ChannelQsContext
-from ..utils.filters import filter_by_query_param
-
-VOUCHER_SEARCH_FIELDS = ("name", "code")
-SALE_SEARCH_FIELDS = ("name", "value", "type")
+from ..channel import ChannelContext, ChannelQsContext
+from .filters import filter_sale_search, filter_voucher_search
 
 
-@traced_resolver
-def resolve_vouchers(info, query, channel_slug, **_kwargs) -> ChannelQsContext:
+def resolve_voucher(id, channel):
+    sale = models.Voucher.objects.filter(id=id).first()
+    return ChannelContext(node=sale, channel_slug=channel) if sale else None
+
+
+def resolve_vouchers(info, channel_slug, **kwargs) -> ChannelQsContext:
     qs = models.Voucher.objects.all()
-    qs = filter_by_query_param(qs, query, VOUCHER_SEARCH_FIELDS)
     if channel_slug:
         qs = qs.filter(channel_listings__channel__slug=channel_slug)
+
+    # DEPRECATED: remove filtering by `query` argument when it's removed from the schema
+    if query := kwargs.get("query"):
+        qs = filter_voucher_search(qs, None, query)
+
     return ChannelQsContext(qs=qs, channel_slug=channel_slug)
 
 
-@traced_resolver
-def resolve_sales(info, query, channel_slug, **_kwargs) -> ChannelQsContext:
+def resolve_sale(id, channel):
+    sale = models.Sale.objects.filter(id=id).first()
+    return ChannelContext(node=sale, channel_slug=channel) if sale else None
+
+
+def resolve_sales(info, channel_slug, **kwargs) -> ChannelQsContext:
     qs = models.Sale.objects.all()
-    qs = filter_by_query_param(qs, query, SALE_SEARCH_FIELDS)
     if channel_slug:
         qs = qs.filter(channel_listings__channel__slug=channel_slug)
+
+    # DEPRECATED: remove filtering by `query` argument when it's removed from the schema
+    if query := kwargs.get("query"):
+        qs = filter_sale_search(qs, None, query)
+
     return ChannelQsContext(qs=qs, channel_slug=channel_slug)

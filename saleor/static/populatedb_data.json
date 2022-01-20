@@ -4181,8 +4181,8 @@
     "fields": {
       "private_metadata": {},
       "metadata": {},
-      "sku": "lake-tunes-mp3",
-      "name": "MP3",
+      "sku": "lake-tunes-cd",
+      "name": "CD / Signed: Yes",
       "product": 120,
       "track_inventory": true,
       "weight": null,
@@ -4223,8 +4223,8 @@
     "fields": {
       "private_metadata": {},
       "metadata": {},
-      "sku": "lagoon-chants-mp3",
-      "name": "MP3",
+      "sku": "lagoon-chants-vinyl",
+      "name": "Signed: No / Vinyl",
       "product": 123,
       "track_inventory": true,
       "weight": null,
@@ -8388,7 +8388,7 @@
       "variant": 317,
       "assignment": 8,
       "values": [
-        85
+        84
       ]
     }
   },
@@ -8421,7 +8421,7 @@
       "variant": 320,
       "assignment": 8,
       "values": [
-        85
+        63
       ]
     }
   },
@@ -8477,6 +8477,50 @@
         "assignment": 10,
         "values": [
           99
+        ]
+    }
+  },
+   {
+    "model": "attribute.assignedvariantattribute",
+    "pk": 131,
+    "fields": {
+        "variant": 317,
+        "assignment": 11,
+        "values": [
+          101
+        ]
+    }
+  },
+  {
+    "model": "attribute.assignedvariantattribute",
+    "pk": 132,
+    "fields": {
+        "variant": 320,
+        "assignment": 11,
+        "values": [
+          102
+        ]
+    }
+  },
+  {
+    "model": "attribute.assignedvariantattribute",
+    "pk": 133,
+    "fields": {
+        "variant": 317,
+        "assignment": 12,
+        "values": [
+          103
+        ]
+    }
+  },
+  {
+    "model": "attribute.assignedvariantattribute",
+    "pk": 134,
+    "fields": {
+        "variant": 320,
+        "assignment": 12,
+        "values": [
+          104
         ]
     }
   },
@@ -8653,6 +8697,24 @@
         "sort_order": null,
         "attribute": 33,
         "product_type": 12
+    }
+  },
+  {
+    "model": "attribute.attributevariant",
+    "pk": 11,
+    "fields": {
+        "sort_order": null,
+        "attribute": 34,
+        "product_type": 15
+    }
+  },
+  {
+    "model": "attribute.attributevariant",
+    "pk": 12,
+    "fields": {
+        "sort_order": null,
+        "attribute": 35,
+        "product_type": 15
     }
   },
   {
@@ -9048,6 +9110,48 @@
           "storefront_search_position": 0,
           "available_in_grid": true
       }
+  },
+  {
+    "model": "attribute.attribute",
+    "pk": 34,
+    "fields": {
+        "private_metadata": {},
+        "metadata": {},
+        "slug": "signed",
+        "name": "Signed",
+        "type": "product-type",
+        "input_type": "boolean",
+        "entity_type": null,
+        "unit": null,
+        "value_required": false,
+        "is_variant_only": false,
+        "visible_in_storefront": true,
+        "filterable_in_storefront": true,
+        "filterable_in_dashboard": true,
+        "storefront_search_position": 0,
+        "available_in_grid": true
+    }
+  },
+    {
+    "model": "attribute.attribute",
+    "pk": 35,
+    "fields": {
+        "private_metadata": {},
+        "metadata": {},
+        "slug": "release-date",
+        "name": "Release Date",
+        "type": "product-type",
+        "input_type": "date-time",
+        "entity_type": null,
+        "unit": null,
+        "value_required": false,
+        "is_variant_only": false,
+        "visible_in_storefront": true,
+        "filterable_in_storefront": true,
+        "filterable_in_dashboard": true,
+        "storefront_search_position": 0,
+        "available_in_grid": true
+    }
   },
   {
     "model": "attribute.attributevalue",
@@ -9754,6 +9858,64 @@
         "file_url": null,
         "content_type": null,
         "attribute": 32
+    }
+  },
+  {
+    "model": "attribute.attributevalue",
+    "pk": 101,
+    "fields": {
+        "sort_order": 1,
+        "name": "Signed: Yes",
+        "value": "",
+        "slug": "34_true",
+        "file_url": null,
+        "content_type": null,
+        "boolean": true,
+        "attribute": 34
+    }
+  },
+  {
+    "model": "attribute.attributevalue",
+    "pk": 102,
+    "fields": {
+        "sort_order": 1,
+        "name": "Signed: No",
+        "value": "",
+        "slug": "34_false",
+        "file_url": null,
+        "content_type": null,
+        "boolean": false,
+        "attribute": 34
+    }
+  },
+    {
+    "model": "attribute.attributevalue",
+    "pk": 103,
+    "fields": {
+        "sort_order": 1,
+        "name": "2021-06-03 00:15:00+00:00",
+        "value": "",
+        "slug": "320_35",
+        "file_url": null,
+        "content_type": null,
+        "boolean": true,
+        "date_time": "2021-06-03 00:15:00+00:00",
+        "attribute": 35
+    }
+  },
+  {
+    "model": "attribute.attributevalue",
+    "pk": 104,
+    "fields": {
+        "sort_order": 2,
+        "name": "2021-06-01 14:15:00+00:00",
+        "value": "",
+        "slug": "317_35",
+        "file_url": null,
+        "content_type": null,
+        "boolean": false,
+        "date_time": "2021-06-01 14:15:00+00:00",
+        "attribute": 35
     }
   },
   {

@@ -11,7 +11,7 @@ from graphene.utils.str_converters import to_camel_case
 
 from ...account import events as account_events
 from ...account.error_codes import AccountErrorCode
-from ...core.permissions import AccountPermissions
+from ...core.permissions import AccountPermissions, has_one_of_permissions
 
 if TYPE_CHECKING:
     from django.db.models import QuerySet
@@ -66,8 +66,10 @@ class CustomerDeleteMixin(UserDeleteMixin):
 
     @classmethod
     def post_process(cls, info, deleted_count=1):
-        account_events.staff_user_deleted_a_customer_event(
-            staff_user=info.context.user, deleted_count=deleted_count
+        account_events.customer_deleted_event(
+            staff_user=info.context.user,
+            app=info.context.app,
+            deleted_count=deleted_count,
         )
 
 
@@ -152,6 +154,11 @@ class StaffDeleteMixin(UserDeleteMixin):
 def get_required_fields_camel_case(required_fields: set) -> set:
     """Return set of AddressValidationRules required fields in camel case."""
     return {validation_field_to_camel_case(field) for field in required_fields}
+
+
+def get_upper_fields_camel_case(upper_fields: set) -> set:
+    """Return set of AddressValidationRules upper fields in camel case."""
+    return {validation_field_to_camel_case(field) for field in upper_fields}
 
 
 def validation_field_to_camel_case(name: str) -> str:
@@ -456,14 +463,16 @@ def look_for_permission_in_users_with_manage_staff(
 
 
 def requestor_has_access(
-    requestor: Union["User", "App"], owner: Optional["User"], perm
+    requestor: Union["User", "App"], owner: Optional["User"], *perms
 ):
     """Check if requestor can access data.
 
     Args:
         requestor: requestor user or app
         owner: data owner
-        perm: permission which give the access to the data
+        perms: permissions which can give the access to the data.
+               Requestor needs to have at least one of given permissions
+               to get access to protected resource.
 
     """
-    return requestor == owner or requestor.has_perm(perm)
+    return requestor == owner or has_one_of_permissions(requestor, perms)

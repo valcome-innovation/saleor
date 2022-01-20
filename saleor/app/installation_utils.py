@@ -6,12 +6,17 @@ from ..app.validators import AppURLValidator
 from .models import App, AppInstallation
 from .types import AppType
 
-REQUEST_TIMEOUT = 30
+REQUEST_TIMEOUT = 25
 
 
 def send_app_token(target_url: str, token: str):
     domain = Site.objects.get_current().domain
-    headers = {"x-saleor-domain": domain, "Content-Type": "application/json"}
+    headers = {
+        "Content-Type": "application/json",
+        # X- headers will be deprecated in Saleor 4.0, proper headers are without X-
+        "x-saleor-domain": domain,
+        "saleor-domain": domain,
+    }
     json_data = {"auth_token": token}
     response = requests.post(
         target_url, json=json_data, headers=headers, timeout=REQUEST_TIMEOUT

@@ -1,7 +1,11 @@
+from typing import List
+
 import graphene
 from django.conf import settings
 
+from ...attribute import AttributeInputType
 from ...attribute import models as attribute_models
+from ...attribute.models import AttributeValue
 from ...core.permissions import DiscountPermissions, ShippingPermissions
 from ...core.tracing import traced_resolver
 from ...discount import models as discount_models
@@ -16,6 +20,11 @@ from ..core.enums import LanguageCodeEnum
 from ..core.types import LanguageDisplay
 from ..core.utils import str_to_enum
 from ..decorators import permission_required
+from ..page.dataloaders import SelectedAttributesByPageIdLoader
+from ..product.dataloaders import (
+    SelectedAttributesByProductIdLoader,
+    SelectedAttributesByProductVariantIdLoader,
+)
 from .fields import TranslationField
 
 BASIC_TRANSLATABLE_FIELDS = ["id", "name"]
@@ -26,6 +35,19 @@ EXTENDED_TRANSLATABLE_FIELDS = [
     "seo_title",
     "seo_description",
 ]
+
+
+def get_translatable_attribute_values(attributes: list) -> List[AttributeValue]:
+    """Filter the list of passed attributes.
+
+    Return those which are translatable attributes.
+    """
+    translatable_values = []
+    for assignment in attributes:
+        attr = assignment["attribute"]
+        if attr.input_type in AttributeInputType.TRANSLATABLE_ATTRIBUTES:
+            translatable_values.extend(assignment["values"])
+    return translatable_values
 
 
 class BaseTranslationType(CountableDjangoObjectType):
@@ -66,12 +88,15 @@ class AttributeValueTranslatableContent(CountableDjangoObjectType):
     attribute_value = graphene.Field(
         "saleor.graphql.attribute.types.AttributeValue",
         description="Represents a value of an attribute.",
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
+        ),
     )
 
     class Meta:
         model = attribute_models.AttributeValue
         interfaces = [graphene.relay.Node]
-        only_fields = BASIC_TRANSLATABLE_FIELDS
+        only_fields = BASIC_TRANSLATABLE_FIELDS + ["rich_text"]
 
     @staticmethod
     def resolve_attribute_value(root: attribute_models.AttributeValue, _info):
@@ -90,6 +115,9 @@ class AttributeTranslatableContent(CountableDjangoObjectType):
     attribute = graphene.Field(
         "saleor.graphql.attribute.types.Attribute",
         description="Custom attribute of a product.",
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
+        ),
     )
 
     class Meta:
@@ -118,6 +146,14 @@ class ProductVariantTranslatableContent(CountableDjangoObjectType):
         description=(
             "Represents a version of a product such as different size or color."
         ),
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
+        ),
+    )
+    attribute_values = graphene.List(
+        graphene.NonNull(AttributeValueTranslatableContent),
+        required=True,
+        description="List of product variant attribute values that can be translated.",
     )
 
     class Meta:
@@ -128,6 +164,14 @@ class ProductVariantTranslatableContent(CountableDjangoObjectType):
     @staticmethod
     def resolve_product_variant(root: product_models.ProductVariant, info):
         return ChannelContext(node=root, channel_slug=None)
+
+    @staticmethod
+    def resolve_attribute_values(root: product_models.ProductVariant, info):
+        return (
+            SelectedAttributesByProductVariantIdLoader(info.context)
+            .load(root.id)
+            .then(get_translatable_attribute_values)
+        )
 
 
 class ProductTranslation(BaseTranslationType):
@@ -160,6 +204,14 @@ class ProductTranslatableContent(CountableDjangoObjectType):
     product = graphene.Field(
         "saleor.graphql.product.types.products.Product",
         description="Represents an individual item for sale in the storefront.",
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
+        ),
+    )
+    attribute_values = graphene.List(
+        graphene.NonNull(AttributeValueTranslatableContent),
+        required=True,
+        description="List of product attribute values that can be translated.",
     )
 
     class Meta:
@@ -175,6 +227,14 @@ class ProductTranslatableContent(CountableDjangoObjectType):
     def resolve_description_json(root: product_models.Product, _info):
         description = root.description
         return description if description is not None else {}
+
+    @staticmethod
+    def resolve_attribute_values(root: product_models.Product, info):
+        return (
+            SelectedAttributesByProductIdLoader(info.context)
+            .load(root.id)
+            .then(get_translatable_attribute_values)
+        )
 
 
 class CollectionTranslation(BaseTranslationType):
@@ -207,6 +267,9 @@ class CollectionTranslatableContent(CountableDjangoObjectType):
     collection = graphene.Field(
         "saleor.graphql.product.types.products.Collection",
         description="Represents a collection of products.",
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
+        ),
     )
 
     class Meta:
@@ -215,7 +278,6 @@ class CollectionTranslatableContent(CountableDjangoObjectType):
         only_fields = EXTENDED_TRANSLATABLE_FIELDS
 
     @staticmethod
-    @traced_resolver
     def resolve_collection(root: product_models.Collection, info):
         collection = product_models.Collection.objects.all().filter(pk=root.id).first()
         return (
@@ -258,6 +320,9 @@ class CategoryTranslatableContent(CountableDjangoObjectType):
     category = graphene.Field(
         "saleor.graphql.product.types.products.Category",
         description="Represents a single category of products.",
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
+        ),
     )
 
     class Meta:
@@ -314,6 +379,14 @@ class PageTranslatableContent(CountableDjangoObjectType):
             "A static page that can be manually added by a shop operator ",
             "through the dashboard.",
         ),
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
+        ),
+    )
+    attribute_values = graphene.List(
+        graphene.NonNull(AttributeValueTranslatableContent),
+        required=True,
+        description="List of page content attribute values that can be translated.",
     )
 
     class Meta:
@@ -328,7 +401,6 @@ class PageTranslatableContent(CountableDjangoObjectType):
         ]
 
     @staticmethod
-    @traced_resolver
     def resolve_page(root: page_models.Page, info):
         return (
             page_models.Page.objects.visible_to_user(info.context.user)
@@ -340,6 +412,14 @@ class PageTranslatableContent(CountableDjangoObjectType):
     def resolve_content_json(root: page_models.Page, _info):
         content = root.content
         return content if content is not None else {}
+
+    @staticmethod
+    def resolve_attribute_values(root: page_models.Page, info):
+        return (
+            SelectedAttributesByPageIdLoader(info.context)
+            .load(root.id)
+            .then(get_translatable_attribute_values)
+        )
 
 
 class VoucherTranslation(BaseTranslationType):
@@ -357,6 +437,9 @@ class VoucherTranslatableContent(CountableDjangoObjectType):
             "Vouchers allow giving discounts to particular customers on categories, "
             "collections or specific products. They can be used during checkout by "
             "providing valid voucher codes."
+        ),
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
         ),
     )
 
@@ -385,6 +468,9 @@ class SaleTranslatableContent(CountableDjangoObjectType):
         description=(
             "Sales allow creating discounts for categories, collections "
             "or products and are visible to all the customers."
+        ),
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
         ),
     )
 
@@ -421,6 +507,9 @@ class MenuItemTranslatableContent(CountableDjangoObjectType):
             "Represents a single item of the related menu. Can store categories, "
             "collection or pages."
         ),
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
+        ),
     )
 
     class Meta:
@@ -445,10 +534,13 @@ class ShippingMethodTranslatableContent(CountableDjangoObjectType):
         ShippingMethodTranslation, type_name="shipping method"
     )
     shipping_method = graphene.Field(
-        "saleor.graphql.shipping.types.ShippingMethod",
+        "saleor.graphql.shipping.types.ShippingMethodType",
         description=(
             "Shipping method are the methods you'll use to get customer's orders "
             " to them. They are directly exposed to the customers."
+        ),
+        deprecation_reason=(
+            "Will be removed in Saleor 4.0. " "Get model fields from the root level."
         ),
     )
 

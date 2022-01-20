@@ -20,7 +20,7 @@ from ...account.types import Address, AddressInput, User
 from ...core.mutations import BaseMutation, ModelDeleteMutation, ModelMutation
 from ...core.types import Upload
 from ...core.types.common import AccountError, StaffError
-from ...core.utils import validate_image_file
+from ...core.utils import add_hash_to_file_name, validate_image_file
 from ...decorators import staff_member_required
 from ...utils.validators import check_for_duplicates
 from ..utils import (
@@ -98,6 +98,7 @@ class CustomerUpdate(CustomerCreate):
     ):
         # Retrieve the event base data
         staff_user = info.context.user
+        app = info.context.app
         new_email = new_instance.email
         new_fullname = new_instance.get_full_name()
 
@@ -107,12 +108,12 @@ class CustomerUpdate(CustomerCreate):
 
         # Generate the events accordingly
         if has_new_email:
-            account_events.staff_user_assigned_email_to_a_customer_event(
-                staff_user=staff_user, new_email=new_email
+            account_events.assigned_email_to_a_customer_event(
+                staff_user=staff_user, app=app, new_email=new_email
             )
         if has_new_name:
-            account_events.staff_user_assigned_name_to_a_customer_event(
-                staff_user=staff_user, new_name=new_fullname
+            account_events.assigned_name_to_a_customer_event(
+                staff_user=staff_user, app=app, new_name=new_fullname
             )
 
     @classmethod
@@ -533,8 +534,8 @@ class UserAvatarUpdate(BaseMutation):
     def perform_mutation(cls, _root, info, image):
         user = info.context.user
         image_data = info.context.FILES.get(image)
-        validate_image_file(image_data, "image")
-
+        validate_image_file(image_data, "image", AccountErrorCode)
+        add_hash_to_file_name(image_data)
         if user.avatar:
             user.avatar.delete_sized_images()
             user.avatar.delete()

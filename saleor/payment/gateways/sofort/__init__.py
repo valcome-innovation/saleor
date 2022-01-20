@@ -1,10 +1,10 @@
 import stripe
 from stripe.error import StripeError
 
-from ..stripe import get_currency_for_stripe, get_amount_from_stripe, \
+from ..stripe.deprecated import get_currency_for_stripe, get_amount_from_stripe, \
     get_currency_from_stripe
 from ... import TransactionKind
-from ....payment.gateways.stripe import get_amount_for_stripe
+from ....payment.gateways.stripe.deprecated import get_amount_for_stripe
 from ....payment.interface import (
     GatewayConfig,
     PaymentData,

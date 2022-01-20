@@ -99,6 +99,7 @@ def jwt_refresh_token_middleware(get_response):
         jwt_refresh_token = getattr(request, "refresh_token", None)
         if jwt_refresh_token:
             expires = None
+            secure = not settings.DEBUG
             if settings.JWT_EXPIRE:
                 refresh_token_payload = jwt_decode_with_exception_handler(
                     jwt_refresh_token

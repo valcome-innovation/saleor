@@ -14,6 +14,7 @@ from django.db.models import (
 )
 from django.db.models.expressions import Window
 from django.db.models.functions import Coalesce, DenseRank
+from graphql.error import GraphQLError
 
 from ...product.models import (
     Category,
@@ -21,7 +22,6 @@ from ...product.models import (
     Product,
     ProductChannelListing,
 )
-from ..channel.sorters import validate_channel_slug
 from ..core.types import ChannelSortInputObjectType, SortInputObjectType
 
 
@@ -94,10 +94,9 @@ class CollectionSortField(graphene.Enum):
 
     @staticmethod
     def qs_with_availability(queryset: QuerySet, channel_slug: str) -> QuerySet:
-        validate_channel_slug(channel_slug)
         subquery = Subquery(
             CollectionChannelListing.objects.filter(
-                collection_id=OuterRef("pk"), channel__slug=channel_slug
+                collection_id=OuterRef("pk"), channel__slug=str(channel_slug)
             ).values_list("is_published")[:1]
         )
         return queryset.annotate(
@@ -106,10 +105,9 @@ class CollectionSortField(graphene.Enum):
 
     @staticmethod
     def qs_with_publication_date(queryset: QuerySet, channel_slug: str) -> QuerySet:
-        validate_channel_slug(channel_slug)
         subquery = Subquery(
             CollectionChannelListing.objects.filter(
-                collection_id=OuterRef("pk"), channel__slug=channel_slug
+                collection_id=OuterRef("pk"), channel__slug=str(channel_slug)
             ).values_list("publication_date")[:1]
         )
         return queryset.annotate(
@@ -125,7 +123,7 @@ class CollectionSortingInput(ChannelSortInputObjectType):
 
 class ProductOrderField(graphene.Enum):
     NAME = ["name", "slug"]
-    RANK = ["rank"]
+    RANK = ["rank", "id"]
     PRICE = ["min_variants_price_amount", "name", "slug"]
     MINIMAL_PRICE = ["discounted_price_amount", "name", "slug"]
     DATE = ["updated_at", "name", "slug"]
@@ -163,31 +161,28 @@ class ProductOrderField(graphene.Enum):
 
     @staticmethod
     def qs_with_price(queryset: QuerySet, channel_slug: str) -> QuerySet:
-        validate_channel_slug(channel_slug)
         return queryset.annotate(
             min_variants_price_amount=Min(
                 "variants__channel_listings__price_amount",
-                filter=Q(variants__channel_listings__channel__slug=channel_slug)
+                filter=Q(variants__channel_listings__channel__slug=str(channel_slug))
                 & Q(variants__channel_listings__price_amount__isnull=False),
             )
         )
 
     @staticmethod
     def qs_with_minimal_price(queryset: QuerySet, channel_slug: str) -> QuerySet:
-        validate_channel_slug(channel_slug)
         return queryset.annotate(
             discounted_price_amount=Min(
                 "channel_listings__discounted_price_amount",
-                filter=Q(channel_listings__channel__slug=channel_slug),
+                filter=Q(channel_listings__channel__slug=str(channel_slug)),
             )
         )
 
     @staticmethod
     def qs_with_published(queryset: QuerySet, channel_slug: str) -> QuerySet:
-        validate_channel_slug(channel_slug)
         subquery = Subquery(
             ProductChannelListing.objects.filter(
-                product_id=OuterRef("pk"), channel__slug=channel_slug
+                product_id=OuterRef("pk"), channel__slug=str(channel_slug)
             ).values_list("is_published")[:1]
         )
         return queryset.annotate(
@@ -196,10 +191,9 @@ class ProductOrderField(graphene.Enum):
 
     @staticmethod
     def qs_with_publication_date(queryset: QuerySet, channel_slug: str) -> QuerySet:
-        validate_channel_slug(channel_slug)
         subquery = Subquery(
             ProductChannelListing.objects.filter(
-                product_id=OuterRef("pk"), channel__slug=channel_slug
+                product_id=OuterRef("pk"), channel__slug=str(channel_slug)
             ).values_list("publication_date")[:1]
         )
         return queryset.annotate(
@@ -217,6 +211,12 @@ class ProductOrderField(graphene.Enum):
                 ),
             )
         )
+
+    @staticmethod
+    def qs_with_rank(queryset: QuerySet, **_kwargs) -> QuerySet:
+        if "rank" in queryset.query.annotations.keys():
+            return queryset
+        raise GraphQLError("Sorting by Rank is available only with searching.")
 
 
 class ProductOrder(ChannelSortInputObjectType):

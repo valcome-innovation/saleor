@@ -3,7 +3,11 @@ import graphene
 from ....core.permissions import ProductPermissions
 from ....warehouse.models import Stock, Warehouse
 from ....warehouse.tests.utils import get_quantity_allocated_for_stock
-from ...tests.utils import assert_no_permission, get_graphql_content
+from ...tests.utils import (
+    assert_no_permission,
+    get_graphql_content,
+    get_graphql_content_from_response,
+)
 
 QUERY_STOCK = """
 query stock($id: ID!) {
@@ -80,6 +84,31 @@ def test_query_stock(staff_api_client, stock, permission_manage_products):
     assert content_stock["warehouse"]["name"] == stock.warehouse.name
     assert content_stock["quantity"] == stock.quantity
     assert content_stock["quantityAllocated"] == get_quantity_allocated_for_stock(stock)
+
+
+def test_staff_query_stock_by_invalid_id(
+    staff_api_client, stock, permission_manage_products
+):
+    id = "bh/"
+    variables = {"id": id}
+    response = staff_api_client.post_graphql(
+        QUERY_STOCK, variables, permissions=[permission_manage_products]
+    )
+    content = get_graphql_content_from_response(response)
+    assert len(content["errors"]) == 1
+    assert content["errors"][0]["message"] == f"Couldn't resolve id: {id}."
+    assert content["data"]["stock"] is None
+
+
+def test_staff_query_stock_with_invalid_object_type(
+    staff_api_client, stock, permission_manage_products
+):
+    variables = {"id": graphene.Node.to_global_id("Order", stock.pk)}
+    response = staff_api_client.post_graphql(
+        QUERY_STOCK, variables, permissions=[permission_manage_products]
+    )
+    content = get_graphql_content(response)
+    assert content["data"]["stock"] is None
 
 
 def test_query_stocks_requires_permissions(staff_api_client):
@@ -175,6 +204,7 @@ def test_stock_quantities_in_different_warehouses(
         productVariant(id: $id, channel: $channel) {
             quantityPL: quantityAvailable(address: { country: $country1 })
             quantityUS: quantityAvailable(address: { country: $country2 })
+            quantityNoAddress: quantityAvailable
         }
     }
     """
@@ -199,6 +229,12 @@ def test_stock_quantities_in_different_warehouses(
 
     assert content["data"]["productVariant"]["quantityPL"] == stock_map["PL"]
     assert content["data"]["productVariant"]["quantityUS"] == stock_map["US"]
+
+    # when country is not provided, should return max value of all available stock
+    # quantities
+    assert content["data"]["productVariant"]["quantityNoAddress"] == max(
+        stock_map.values()
+    )
 
 
 def test_stock_quantity_is_max_from_all_warehouses_without_provided_country(

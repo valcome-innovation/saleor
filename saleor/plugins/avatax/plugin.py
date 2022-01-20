@@ -1,19 +1,23 @@
 import logging
 from dataclasses import asdict
 from decimal import Decimal
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Union
 from urllib.parse import urljoin
 
 import opentracing
 import opentracing.tags
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
+from django.utils.functional import SimpleLazyObject
 from django_countries import countries
 from prices import Money, TaxedMoney, TaxedMoneyRange
 
 from ...checkout import base_calculations
 from ...checkout.fetch import fetch_checkout_lines
+from ...checkout.interface import CheckoutTaxedPricesData
 from ...core.taxes import TaxError, TaxType, charge_taxes_on_shipping, zero_taxed_money
 from ...discount import DiscountInfo
+from ...order.interface import OrderTaxedPricesData
 from ...product.models import ProductType
 from ..base_plugin import BasePlugin, ConfigurationTypeField
 from ..error_codes import PluginErrorCode
@@ -67,6 +71,7 @@ class AvataxPlugin(BasePlugin):
         {"name": "from_country", "value": None},
         {"name": "from_country_area", "value": None},
         {"name": "from_postal_code", "value": None},
+        {"name": "shipping_tax_code", "value": "FR000000"},
     ]
     CONFIG_STRUCTURE = {
         "Username or account": {
@@ -124,6 +129,14 @@ class AvataxPlugin(BasePlugin):
             "help_text": "To calculate taxes we need to provide `ship from` details.",
             "label": "Ship from - postal code",
         },
+        "shipping_tax_code": {
+            "type": ConfigurationTypeField.STRING,
+            "help_text": (
+                "Provide Avatax's tax code that will be included in the shipping line "
+                "sent to Avatax."
+            ),
+            "label": "Shipping tax code",
+        },
     }
 
     def __init__(self, *args, **kwargs):
@@ -145,6 +158,7 @@ class AvataxPlugin(BasePlugin):
             from_country=from_country,
             from_country_area=configuration["from_country_area"],
             from_postal_code=configuration["from_postal_code"],
+            shipping_tax_code=configuration["shipping_tax_code"],
         )
 
     def _skip_plugin(
@@ -167,25 +181,6 @@ class AvataxPlugin(BasePlugin):
             return previous_value.net != previous_value.gross
         return False
 
-    def _append_prices_of_not_taxed_lines(
-        self,
-        price: TaxedMoney,
-        lines: Iterable["CheckoutLineInfo"],
-        channel: "Channel",
-        discounts: Iterable[DiscountInfo],
-    ):
-        for line_info in lines:
-            if line_info.product.charge_taxes:
-                continue
-            line_price = base_calculations.base_checkout_line_total(
-                line_info,
-                channel,
-                discounts,
-            )
-            price.gross.amount += line_price.gross.amount
-            price.net.amount += line_price.net.amount
-        return price
-
     def calculate_checkout_total(
         self,
         checkout_info: "CheckoutInfo",
@@ -203,19 +198,60 @@ class AvataxPlugin(BasePlugin):
         response = get_checkout_tax_data(checkout_info, lines, discounts, self.config)
         if not response or "error" in response:
             return checkout_total
-        currency = response.get("currencyCode")
-        tax = Decimal(response.get("totalTax", 0.0))
-        total_net = Decimal(response.get("totalAmount", 0.0))
-        total_gross = Money(amount=total_net + tax, currency=currency)
-        total_net = Money(amount=total_net, currency=currency)
-        taxed_total = TaxedMoney(net=total_net, gross=total_gross)
-        total = self._append_prices_of_not_taxed_lines(
-            taxed_total, lines, checkout_info.channel, discounts
+
+        tax_included = (
+            lambda: Site.objects.get_current().settings.include_taxes_in_prices
         )
+
+        currency = checkout_info.checkout.currency
+        taxed_total = CheckoutTaxedPricesData(
+            price_with_discounts=zero_taxed_money(currency),
+            price_with_sale=zero_taxed_money(currency),
+            undiscounted_price=zero_taxed_money(currency),
+        )
+
+        for line in lines:
+            taxed_line_total_data = self._calculate_checkout_line_total_price(
+                taxes_data=response,
+                item_code=line.variant.sku,
+                tax_included=tax_included,
+                # for some cases we will need a base_value but no need to call it for
+                # each line
+                base_value=SimpleLazyObject(  # type:ignore
+                    lambda: base_calculations.base_checkout_line_total(
+                        line, checkout_info.channel, discounts
+                    )
+                ),
+            )
+            taxed_total.undiscounted_price += taxed_line_total_data.undiscounted_price
+            taxed_total.price_with_sale += taxed_line_total_data.price_with_sale
+            taxed_total.price_with_discounts += (
+                taxed_line_total_data.price_with_discounts
+            )
+
+        base_shipping_price = base_calculations.base_checkout_delivery_price(
+            checkout_info, lines
+        )
+        shipping_price = self._calculate_checkout_shipping(
+            currency, response.get("lines", []), base_shipping_price
+        )
+
+        taxed_total.undiscounted_price += shipping_price
+        taxed_total.price_with_sale += shipping_price
+        taxed_total.price_with_discounts += shipping_price
+
         voucher_value = checkout_info.checkout.discount
-        if voucher_value:
-            total -= voucher_value
-        return max(total, zero_taxed_money(total.currency))
+        # if price with voucher and without is the same it means that we didn't apply
+        # any voucher for specifc product. The rest of the vouchers is applied to total
+        if (
+            voucher_value
+            and taxed_total.price_with_sale == taxed_total.price_with_discounts
+        ):
+            taxed_total.price_with_discounts -= voucher_value
+        return max(
+            taxed_total.price_with_discounts,
+            zero_taxed_money(taxed_total.price_with_discounts.currency),
+        )
 
     def _calculate_checkout_shipping(
         self, currency: str, lines: List[Dict], shipping_price: TaxedMoney
@@ -228,8 +264,21 @@ class AvataxPlugin(BasePlugin):
                 shipping_tax = Decimal(line["tax"])
                 break
 
-        shipping_gross = Money(amount=shipping_net + shipping_tax, currency=currency)
-        shipping_net = Money(amount=shipping_net, currency=currency)
+        tax_included = (
+            lambda: Site.objects.get_current().settings.include_taxes_in_prices
+        )
+        if currency == "JPY" and tax_included():
+            shipping_gross = Money(
+                amount=shipping_price.gross.amount, currency=currency
+            )
+            shipping_net = Money(
+                amount=shipping_gross.amount - shipping_tax, currency=currency
+            )
+        else:
+            shipping_gross = Money(
+                amount=shipping_net + shipping_tax, currency=currency
+            )
+            shipping_net = Money(amount=shipping_net, currency=currency)
         return TaxedMoney(net=shipping_net, gross=shipping_gross)
 
     def calculate_checkout_shipping(
@@ -333,8 +382,8 @@ class AvataxPlugin(BasePlugin):
         checkout_line_info: "CheckoutLineInfo",
         address: Optional["Address"],
         discounts: Iterable["DiscountInfo"],
-        previous_value: TaxedMoney,
-    ) -> TaxedMoney:
+        previous_value: CheckoutTaxedPricesData,
+    ) -> CheckoutTaxedPricesData:
         if self._skip_plugin(previous_value):
             return previous_value
 
@@ -345,10 +394,73 @@ class AvataxPlugin(BasePlugin):
         if not _validate_checkout(checkout_info, lines):
             return base_total
 
-        taxes_data = get_checkout_tax_data(checkout_info, lines, discounts, self.config)
-        return self._calculate_line_total_price(
-            taxes_data, checkout_line_info.variant.sku, previous_value
+        tax_included = (
+            lambda: Site.objects.get_current().settings.include_taxes_in_prices
         )
+
+        taxes_data = get_checkout_tax_data(checkout_info, lines, discounts, self.config)
+        return self._calculate_checkout_line_total_price(
+            taxes_data, checkout_line_info.variant.sku, tax_included, previous_value
+        )
+
+    @staticmethod
+    def _calculate_checkout_line_total_price(
+        taxes_data: Dict[str, Any],
+        item_code: str,
+        tax_included: Callable[[], bool],
+        base_value: CheckoutTaxedPricesData,
+    ) -> CheckoutTaxedPricesData:
+        if not taxes_data or "error" in taxes_data:
+            return base_value
+
+        currency = taxes_data.get("currencyCode")
+        undiscounted_line_price = None
+        line_price = None
+        line_price_with_discounts = None
+
+        for line in taxes_data.get("lines", []):
+            if line.get("itemCode") != item_code:
+                continue
+            is_sale_record = line.get("ref1")
+            is_voucher_record = line.get("ref2")
+
+            tax = Decimal(line.get("tax", 0.0))
+            net = Decimal(line["lineAmount"])
+
+            if currency == "JPY" and tax_included():
+                line_gross = base_value.undiscounted_price.gross
+                if is_sale_record:
+                    line_gross = base_value.price_with_sale.gross
+                elif is_voucher_record:
+                    line_gross = base_value.price_with_discounts.gross
+                line_net = Money(amount=line_gross.amount - tax, currency=currency)
+            else:
+                line_gross = Money(amount=net + tax, currency=currency)
+                line_net = Money(amount=net, currency=currency)
+
+            total = TaxedMoney(net=line_net, gross=line_gross)
+            if is_sale_record:
+                line_price = total
+            elif is_voucher_record:
+                line_price_with_discounts = total
+            else:
+                undiscounted_line_price = total
+
+        if undiscounted_line_price is not None:
+            price = line_price if not line_price is None else undiscounted_line_price
+            if line_price_with_discounts is None:
+                price_with_discounts = (
+                    line_price if not line_price is None else undiscounted_line_price
+                )
+            else:
+                price_with_discounts = line_price_with_discounts
+            return CheckoutTaxedPricesData(
+                undiscounted_price=undiscounted_line_price,
+                price_with_sale=price,
+                price_with_discounts=price_with_discounts,
+            )
+
+        return base_value
 
     def calculate_order_line_total(
         self,
@@ -356,8 +468,8 @@ class AvataxPlugin(BasePlugin):
         order_line: "OrderLine",
         variant: "ProductVariant",
         product: "Product",
-        previous_value: TaxedMoney,
-    ) -> TaxedMoney:
+        previous_value: OrderTaxedPricesData,
+    ) -> OrderTaxedPricesData:
         if self._skip_plugin(previous_value):
             return previous_value
 
@@ -365,29 +477,64 @@ class AvataxPlugin(BasePlugin):
             return previous_value
 
         if not _validate_order(order):
-            return zero_taxed_money(order.total.currency)
+            return previous_value
+
+        tax_included = (
+            lambda: Site.objects.get_current().settings.include_taxes_in_prices
+        )
 
         taxes_data = self._get_order_tax_data(order, previous_value)
-        return self._calculate_line_total_price(taxes_data, variant.sku, previous_value)
+        return self._calculate_order_line_total_price(
+            taxes_data, variant.sku, tax_included, previous_value
+        )
 
     @staticmethod
-    def _calculate_line_total_price(
+    def _calculate_order_line_total_price(
         taxes_data: Dict[str, Any],
         item_code: str,
+        tax_included: Callable[[], bool],
         base_value: TaxedMoney,
-    ):
+    ) -> OrderTaxedPricesData:
         if not taxes_data or "error" in taxes_data:
             return base_value
 
         currency = taxes_data.get("currencyCode")
-        for line in taxes_data.get("lines", []):
-            if line.get("itemCode") == item_code:
-                tax = Decimal(line.get("tax", 0.0))
-                net = Decimal(line["lineAmount"])
+        undiscounted_line_price = None
+        line_price_with_discounts = None
 
+        for line in taxes_data.get("lines", []):
+            if line.get("itemCode") != item_code:
+                continue
+            is_discount_record = line.get("ref1")
+
+            tax = Decimal(line.get("tax", 0.0))
+            net = Decimal(line["lineAmount"])
+
+            if currency == "JPY" and tax_included():
+                line_gross = base_value.undiscounted_price.gross
+                if is_discount_record:
+                    line_gross = base_value.price_with_discounts.gross
+                line_net = Money(amount=line_gross.amount - tax, currency=currency)
+            else:
                 line_gross = Money(amount=net + tax, currency=currency)
                 line_net = Money(amount=net, currency=currency)
-                return TaxedMoney(net=line_net, gross=line_gross)
+
+            total = TaxedMoney(net=line_net, gross=line_gross)
+            if is_discount_record:
+                line_price_with_discounts = total
+            else:
+                undiscounted_line_price = total
+
+        if undiscounted_line_price is not None:
+            price_with_discounts = (
+                line_price_with_discounts
+                if line_price_with_discounts is not None
+                else undiscounted_line_price
+            )
+            return OrderTaxedPricesData(
+                undiscounted_price=undiscounted_line_price,
+                price_with_discounts=price_with_discounts,
+            )
 
         return base_value
 
@@ -398,18 +545,37 @@ class AvataxPlugin(BasePlugin):
         checkout_line_info: "CheckoutLineInfo",
         address: Optional["Address"],
         discounts: Iterable["DiscountInfo"],
-        previous_value: TaxedMoney,
-    ):
-        if not checkout_line_info.product.charge_taxes:
+        previous_value: CheckoutTaxedPricesData,
+    ) -> CheckoutTaxedPricesData:
+        if self._skip_plugin(previous_value):
             return previous_value
-        taxes_data = self._get_checkout_tax_data(
-            checkout_info, lines, discounts, previous_value
+
+        base_total = previous_value
+        if not checkout_line_info.product.charge_taxes:
+            return base_total
+
+        if not _validate_checkout(checkout_info, lines):
+            return base_total
+
+        tax_included = (
+            lambda: Site.objects.get_current().settings.include_taxes_in_prices
         )
-        return self._calculate_unit_price(
-            taxes_data,
-            checkout_line_info.line,
-            checkout_line_info.variant.sku,
-            previous_value,
+
+        quantity = checkout_line_info.line.quantity
+        taxes_data = get_checkout_tax_data(checkout_info, lines, discounts, self.config)
+        default_total = CheckoutTaxedPricesData(
+            price_with_discounts=previous_value.price_with_discounts * quantity,
+            price_with_sale=previous_value.price_with_sale * quantity,
+            undiscounted_price=previous_value.undiscounted_price * quantity,
+        )
+        taxed_total_prices_data = self._calculate_checkout_line_total_price(
+            taxes_data, checkout_line_info.variant.sku, tax_included, default_total
+        )
+        return CheckoutTaxedPricesData(
+            undiscounted_price=taxed_total_prices_data.undiscounted_price / quantity,
+            price_with_sale=taxed_total_prices_data.price_with_sale / quantity,
+            price_with_discounts=taxed_total_prices_data.price_with_discounts
+            / quantity,
         )
 
     def calculate_order_line_unit(
@@ -418,35 +584,29 @@ class AvataxPlugin(BasePlugin):
         order_line: "OrderLine",
         variant: "ProductVariant",
         product: "Product",
-        previous_value: TaxedMoney,
-    ) -> TaxedMoney:
+        previous_value: OrderTaxedPricesData,
+    ) -> OrderTaxedPricesData:
         if not variant or (variant and not product.charge_taxes):
             return previous_value
-        taxes_data = self._get_order_tax_data(order, previous_value)
-        return self._calculate_unit_price(
-            taxes_data, order_line, variant.sku, previous_value
+
+        tax_included = (
+            lambda: Site.objects.get_current().settings.include_taxes_in_prices
         )
 
-    @staticmethod
-    def _calculate_unit_price(
-        taxes_data: Dict[str, Any],
-        line: Union["CheckoutLine", "OrderLine"],
-        item_code: str,
-        base_value: TaxedMoney,
-    ):
-        if taxes_data is None:
-            return base_value
-        currency = taxes_data.get("currencyCode")
-        for line_data in taxes_data.get("lines", []):
-            if line_data.get("itemCode") == item_code:
-                tax = Decimal(line_data.get("tax", 0.0)) / line.quantity
-                net = Decimal(line_data.get("lineAmount", 0.0)) / line.quantity
-
-                gross = Money(amount=net + tax, currency=currency)
-                net = Money(amount=net, currency=currency)
-                return TaxedMoney(net=net, gross=gross)
-
-        return base_value
+        quantity = order_line.quantity
+        taxes_data = self._get_order_tax_data(order, previous_value)
+        default_total = OrderTaxedPricesData(
+            price_with_discounts=previous_value.price_with_discounts * quantity,
+            undiscounted_price=previous_value.undiscounted_price * quantity,
+        )
+        taxed_total_prices_data = self._calculate_order_line_total_price(
+            taxes_data, variant.sku, tax_included, default_total
+        )
+        return OrderTaxedPricesData(
+            undiscounted_price=taxed_total_prices_data.undiscounted_price / quantity,
+            price_with_discounts=taxed_total_prices_data.price_with_discounts
+            / quantity,
+        )
 
     def calculate_order_shipping(
         self, order: "Order", previous_value: TaxedMoney
@@ -458,15 +618,23 @@ class AvataxPlugin(BasePlugin):
             return previous_value
 
         if not _validate_order(order):
-            return zero_taxed_money(order.total.currency)
+            return previous_value
         taxes_data = get_order_tax_data(order, self.config, False)
+
+        tax_included = (
+            lambda: Site.objects.get_current().settings.include_taxes_in_prices
+        )
         currency = taxes_data.get("currencyCode")
         for line in taxes_data.get("lines", []):
             if line["itemCode"] == "Shipping":
                 tax = Decimal(line.get("tax", 0.0))
                 net = Decimal(line.get("lineAmount", 0.0))
-                gross = Money(amount=net + tax, currency=currency)
-                net = Money(amount=net, currency=currency)
+                if currency == "JPY" and tax_included():
+                    gross = previous_value.gross
+                    net = Money(amount=gross.amount - tax, currency=currency)
+                else:
+                    gross = Money(amount=net + tax, currency=currency)
+                    net = Money(amount=net, currency=currency)
                 return TaxedMoney(net=net, gross=gross)
         return TaxedMoney(
             # Ignore typing checks because it is checked in _validate_order
@@ -552,7 +720,9 @@ class AvataxPlugin(BasePlugin):
 
         return response
 
-    def _get_order_tax_data(self, order: "Order", base_value: Decimal):
+    def _get_order_tax_data(
+        self, order: "Order", base_value: Union[Decimal, OrderTaxedPricesData]
+    ):
         if self._skip_plugin(base_value):
             return None
 
@@ -582,12 +752,9 @@ class AvataxPlugin(BasePlugin):
                     return base_rate
                 # when tax is equal to 0 tax rate for product is still provided
                 # in the response
-                tax = Decimal(details[0].get("tax", 0.0))
-                return (
-                    Decimal(details[0].get("rate", 0.0))
-                    if tax != Decimal(0.0)
-                    else base_rate
-                )
+                tax = Decimal(sum([detail.get("tax", 0.0) for detail in details]))
+                rate = Decimal(sum([detail.get("rate", 0.0) for detail in details]))
+                return rate if tax != Decimal(0.0) else base_rate
         return base_rate
 
     @staticmethod
@@ -602,8 +769,10 @@ class AvataxPlugin(BasePlugin):
             if line["itemCode"] == "Shipping":
                 line_details = line.get("details")
                 if not line_details:
-                    return
-                return Decimal(line_details[0].get("rate", 0.0))
+                    return base_rate
+                return sum(
+                    [Decimal(detail.get("rate", 0.0)) for detail in line_details]
+                )
         return base_rate
 
     def assign_tax_code_to_object_meta(
@@ -687,7 +856,9 @@ class AvataxPlugin(BasePlugin):
             )
 
     @classmethod
-    def validate_plugin_configuration(cls, plugin_configuration: "PluginConfiguration"):
+    def validate_plugin_configuration(
+        cls, plugin_configuration: "PluginConfiguration", **kwargs
+    ):
         """Validate if provided configuration is correct."""
         missing_fields = []
         configuration = plugin_configuration.configuration

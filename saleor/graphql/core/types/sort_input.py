@@ -40,7 +40,11 @@ class SortInputObjectType(graphene.InputObjectType):
 class ChannelSortInputObjectType(SortInputObjectType):
     channel = graphene.Argument(
         graphene.String,
-        description="Specifies the channel in which to sort the data.",
+        description=(
+            "Specifies the channel in which to sort the data. "
+            "DEPRECATED: Will be removed in Saleor 4.0."
+            "Use root-level channel argument instead."
+        ),
     )
 
     class Meta:

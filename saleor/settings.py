@@ -22,6 +22,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
 from . import patched_print_object
+from .core.languages import LANGUAGES as CORE_LANGUAGES
 
 
 def get_list(text):
@@ -63,67 +64,29 @@ ALLOWED_CLIENT_HOSTS = get_list(ALLOWED_CLIENT_HOSTS)
 INTERNAL_IPS = get_list(os.environ.get("INTERNAL_IPS", "127.0.0.1"))
 
 stream_settings.setup_database_url()
+DATABASE_CONNECTION_DEFAULT_NAME = "default"
+# TODO: For local envs will be activated in separate PR.
+# We need to update docs an saleor platform.
+# This variable should be set to `replica`
+DATABASE_CONNECTION_REPLICA_NAME = "default"
+
 DATABASES = {
-    "default": dj_database_url.config(
+    DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
         default="postgres://saleor:saleor@localhost:5442/saleor", conn_max_age=600
-    )
+    ),
+    # TODO: We need to add read only user to saleor platfrom, and we need to update
+    # docs.
+    # DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
+    #     default="postgres://saleor_read_only:saleor@localhost:5432/saleor",
+    #     conn_max_age=600,
+    # ),
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 TIME_ZONE = "UTC"
 LANGUAGE_CODE = "en"
-LANGUAGES = [
-    ("ar", "Arabic"),
-    ("az", "Azerbaijani"),
-    ("bg", "Bulgarian"),
-    ("bn", "Bengali"),
-    ("ca", "Catalan"),
-    ("cs", "Czech"),
-    ("da", "Danish"),
-    ("de", "German"),
-    ("el", "Greek"),
-    ("en", "English"),
-    ("es", "Spanish"),
-    ("es-co", "Colombian Spanish"),
-    ("et", "Estonian"),
-    ("fa", "Persian"),
-    ("fi", "Finnish"),
-    ("fr", "French"),
-    ("hi", "Hindi"),
-    ("hu", "Hungarian"),
-    ("hy", "Armenian"),
-    ("id", "Indonesian"),
-    ("is", "Icelandic"),
-    ("it", "Italian"),
-    ("ja", "Japanese"),
-    ("ka", "Georgian"),
-    ("km", "Khmer"),
-    ("ko", "Korean"),
-    ("lt", "Lithuanian"),
-    ("mn", "Mongolian"),
-    ("my", "Burmese"),
-    ("nb", "Norwegian"),
-    ("nl", "Dutch"),
-    ("pl", "Polish"),
-    ("pt", "Portuguese"),
-    ("pt-br", "Brazilian Portuguese"),
-    ("ro", "Romanian"),
-    ("ru", "Russian"),
-    ("sk", "Slovak"),
-    ("sl", "Slovenian"),
-    ("sq", "Albanian"),
-    ("sr", "Serbian"),
-    ("sv", "Swedish"),
-    ("sw", "Swahili"),
-    ("ta", "Tamil"),
-    ("th", "Thai"),
-    ("tr", "Turkish"),
-    ("uk", "Ukrainian"),
-    ("vi", "Vietnamese"),
-    ("zh-hans", "Simplified Chinese"),
-    ("zh-hant", "Traditional Chinese"),
-]
+LANGUAGES = CORE_LANGUAGES
 LOCALE_PATHS = [os.path.join(PROJECT_ROOT, "locale")]
 USE_I18N = True
 USE_L10N = True
@@ -234,6 +197,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.auth",
     "django.contrib.postgres",
+    "django_celery_beat",
     # Local apps
     "saleor.plugins",
     "saleor.account",
@@ -270,7 +234,7 @@ INSTALLED_APPS = [
     "django_filters",
     "phonenumber_field",
 ]
-stream_settings.add_apps(INSTALLED_APPS) # VALCOME
+stream_settings.add_apps(INSTALLED_APPS)  # VALCOME
 
 ENABLE_DJANGO_EXTENSIONS = get_bool_from_env("ENABLE_DJANGO_EXTENSIONS", False)
 if ENABLE_DJANGO_EXTENSIONS:
@@ -321,6 +285,21 @@ LOGGING = {
                 + "%(pathname)s %(process)d %(threadName)s"
             ),
         },
+        "celery_json": {
+            "()": "saleor.core.logging.JsonCeleryFormatter",
+            "datefmt": "%Y-%m-%dT%H:%M:%SZ",
+            "format": (
+                "%(asctime)s %(levelname)s %(celeryTaskId)s %(celeryTaskName)s "
+            ),
+        },
+        "celery_task_json": {
+            "()": "saleor.core.logging.JsonCeleryTaskFormatter",
+            "datefmt": "%Y-%m-%dT%H:%M:%SZ",
+            "format": (
+                "%(asctime)s %(levelname)s %(celeryTaskId)s %(celeryTaskName)s "
+                "%(message)s "
+            ),
+        },
         "verbose": {
             "format": (
                 "%(levelname)s %(name)s %(message)s [PID:%(process)d:%(threadName)s]"
@@ -338,6 +317,16 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "django.server" if DEBUG else "json",
         },
+        "celery_app": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose" if DEBUG else "celery_json",
+        },
+        "celery_task": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose" if DEBUG else "celery_task_json",
+        },
         "null": {
             "class": "logging.NullHandler",
         },
@@ -346,6 +335,16 @@ LOGGING = {
         "django": {"level": "INFO", "propagate": True},
         "django.server": {
             "handlers": ["django.server"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "celery.app.trace": {
+            "handlers": ["celery_app"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "celery.task": {
+            "handlers": ["celery_task"],
             "level": "INFO",
             "propagate": False,
         },
@@ -422,16 +421,18 @@ AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", None)
 AWS_SECRET_ACCESS_KEY = get_docker_secret("aws_secret_key", default=os.environ.get("AWS_SECRET_ACCESS_KEY", ""), secrets_dir="/run/secrets")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 AWS_DEFAULT_ACL = os.environ.get("AWS_DEFAULT_ACL", None)
+AWS_S3_FILE_OVERWRITE = get_bool_from_env("AWS_S3_FILE_OVERWRITE", True)
 
 # Google Cloud Storage configuration
 GS_PROJECT_ID = os.environ.get("GS_PROJECT_ID")
-GS_STORAGE_BUCKET_NAME = os.environ.get("GS_STORAGE_BUCKET_NAME")
+GS_BUCKET_NAME = os.environ.get("GS_BUCKET_NAME")
 GS_MEDIA_BUCKET_NAME = os.environ.get("GS_MEDIA_BUCKET_NAME")
 GS_AUTO_CREATE_BUCKET = get_bool_from_env("GS_AUTO_CREATE_BUCKET", False)
 GS_QUERYSTRING_AUTH = get_bool_from_env("GS_QUERYSTRING_AUTH", False)
 GS_DEFAULT_ACL = os.environ.get("GS_DEFAULT_ACL", None)
 GS_MEDIA_CUSTOM_ENDPOINT = os.environ.get("GS_MEDIA_CUSTOM_ENDPOINT", None)
-GS_EXPIRATION = os.environ.get("GS_EXPIRATION", None)
+GS_EXPIRATION = timedelta(seconds=parse(os.environ.get("GS_EXPIRATION", "1 day")))
+GS_FILE_OVERWRITE = get_bool_from_env("GS_FILE_OVERWRITE", True)
 
 # If GOOGLE_APPLICATION_CREDENTIALS is set there is no need to load OAuth token
 # See https://django-storages.readthedocs.io/en/latest/backends/gcloud.html
@@ -440,7 +441,7 @@ if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
 
 if AWS_STORAGE_BUCKET_NAME:
     STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-elif GS_STORAGE_BUCKET_NAME:
+elif GS_BUCKET_NAME:
     STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 
 if AWS_MEDIA_BUCKET_NAME:
@@ -521,6 +522,13 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", None)
 
+CELERY_BEAT_SCHEDULE = {
+    "delete-empty-allocations": {
+        "task": "saleor.warehouse.tasks.delete_empty_allocations_task",
+        "schedule": timedelta(days=1),
+    },
+}
+
 # Change this value if your application is running behind a proxy,
 # e.g. HTTP_CF_Connecting_IP for Cloudflare or X_FORWARDED_FOR
 REAL_IP_ENVIRON = os.environ.get("X_FORWARDED_FOR", "REMOTE_ADDR")
@@ -535,41 +543,69 @@ DEFAULT_CHANNEL_SLUG = os.environ.get("DEFAULT_CHANNEL_SLUG", "default-channel")
 #  Sentry
 sentry_sdk.utils.MAX_STRING_LENGTH = 4096
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
-if SENTRY_DSN:
-    sentry_sdk.init(
-        dsn=SENTRY_DSN, integrations=[CeleryIntegration(), DjangoIntegration()]
-    )
+SENTRY_OPTS = {"integrations": [CeleryIntegration(), DjangoIntegration()]}
+
+
+def SENTRY_INIT(dsn: str, sentry_opts: dict):
+    """Init function for sentry.
+
+    Will only be called if SENTRY_DSN is not None, during core start, can be
+    overriden in separate settings file.
+    """
+    sentry_sdk.init(dsn, **sentry_opts)
     ignore_logger("graphql.execution.utils")
+
 
 GRAPHENE = {
     "RELAY_CONNECTION_ENFORCE_FIRST_OR_LAST": True,
     "RELAY_CONNECTION_MAX_LIMIT": 100,
     "MIDDLEWARE": [
+        # Those middlewares are executed from bottom to top
         "saleor.graphql.middleware.JWTMiddleware",
         "saleor.graphql.middleware.app_middleware",
     ],
 }
 
-PLUGINS = [
+# Max number entities that can be requested in single query by Apollo Federation
+# Federation protocol implements no securities on its own part - malicious actor
+# may build a query that requests for potentially few thousands of entities.
+# Set FEDERATED_QUERY_MAX_ENTITIES=0 in env to disable (not recommended)
+FEDERATED_QUERY_MAX_ENTITIES = int(os.environ.get("FEDERATED_QUERY_MAX_ENTITIES", 100))
+
+BUILTIN_PLUGINS = [
     "saleor.plugins.avatax.plugin.AvataxPlugin",
     "saleor.plugins.vatlayer.plugin.VatlayerPlugin",
     "saleor.plugins.webhook.plugin.WebhookPlugin",
     "saleor.payment.gateways.dummy.plugin.DummyGatewayPlugin",
     "saleor.payment.gateways.dummy_credit_card.plugin.DummyCreditCardGatewayPlugin",
+    "saleor.payment.gateways.stripe.deprecated.plugin.DeprecatedStripeGatewayPlugin",
     "saleor.payment.gateways.stripe.plugin.StripeGatewayPlugin",
     "saleor.payment.gateways.braintree.plugin.BraintreeGatewayPlugin",
     "saleor.payment.gateways.razorpay.plugin.RazorpayGatewayPlugin",
+    "saleor.payment.gateways.adyen.plugin.AdyenGatewayPlugin",
+    "saleor.payment.gateways.authorize_net.plugin.AuthorizeNetGatewayPlugin",
+    "saleor.payment.gateways.np_atobarai.plugin.NPAtobaraiGatewayPlugin",
+    "saleor.plugins.invoicing.plugin.InvoicingPlugin",
+    "saleor.plugins.user_email.plugin.UserEmailPlugin",
+    "saleor.plugins.admin_email.plugin.AdminEmailPlugin",
+    "saleor.plugins.sendgrid.plugin.SendgridEmailPlugin",
 ]
-stream_settings.add_plugins(PLUGINS)
 
 # Plugin discovery
+EXTERNAL_PLUGINS = []
+
+# VALCOME
+stream_settings.add_plugins(EXTERNAL_PLUGINS)
+
 installed_plugins = pkg_resources.iter_entry_points("saleor.plugins")
 for entry_point in installed_plugins:
     plugin_path = "{}.{}".format(entry_point.module_name, entry_point.attrs[0])
-    if plugin_path not in PLUGINS:
+    if plugin_path not in BUILTIN_PLUGINS and plugin_path not in EXTERNAL_PLUGINS:
         if entry_point.name not in INSTALLED_APPS:
             INSTALLED_APPS.append(entry_point.name)
-        PLUGINS.append(plugin_path)
+        EXTERNAL_PLUGINS.append(plugin_path)
+
+PLUGINS = BUILTIN_PLUGINS + EXTERNAL_PLUGINS
 
 if (
     not DEBUG
@@ -580,6 +616,16 @@ if (
         "Make sure you've added storefront address to ALLOWED_CLIENT_HOSTS "
         "if ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL is enabled."
     )
+
+# Timeouts for webhook requests. Sync webhooks (eg. payment webhook) need more time
+# for getting response from the server.
+WEBHOOK_TIMEOUT = 10
+WEBHOOK_SYNC_TIMEOUT = 20
+
+# This is deprecated env which will be removed in Saleor 3.1
+WEBHOOK_EXCLUDED_SHIPPING_REQUEST_TIMEOUT = int(
+    os.environ.get("WEBHOOK_EXCLUDED_SHIPPING_REQUEST_TIMEOUT", 2)
+)
 
 # Initialize a simple and basic Jaeger Tracing integration
 # for open-tracing if enabled.
@@ -627,7 +673,7 @@ JWT_TTL_REQUEST_EMAIL_CHANGE = timedelta(
 
 # Support multiple interface notation in schema for Apollo tooling.
 
-# In `graphql-core` V2 separator for interaces is `,`.
+# In `graphql-core` V2 separator for interface is `,`.
 # Apollo tooling to generate TypeScript types using `&` as interfaces separator.
 # https://github.com/graphql-python/graphql-core-legacy/pull/258
 # https://github.com/graphql-python/graphql-core-legacy/issues/176

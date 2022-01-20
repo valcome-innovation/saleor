@@ -1,5 +1,6 @@
 from decimal import Decimal
 from functools import partial
+from typing import TYPE_CHECKING, Optional
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -9,12 +10,17 @@ from django.utils import timezone
 from django_countries.fields import CountryField
 from django_prices.models import MoneyField
 from django_prices.templatetags.prices import amount
-from prices import Money, fixed_discount, percentage_discount
+from prices import Money, TaxedMoney, fixed_discount, percentage_discount
 
 from ..channel.models import Channel
+from ..core.models import ModelWithMetadata
 from ..core.permissions import DiscountPermissions
-from ..core.utils.translations import TranslationProxy
+from ..core.taxes import display_gross_prices
+from ..core.utils.translations import Translation, TranslationProxy
 from . import DiscountValueType, OrderDiscountType, VoucherType
+
+if TYPE_CHECKING:
+    from ..account.models import User
 
 
 class NotApplicable(ValueError):
@@ -52,12 +58,12 @@ class VoucherQueryset(models.QuerySet):
         )
 
 
-class Voucher(models.Model):
+class Voucher(ModelWithMetadata):
     type = models.CharField(
         max_length=20, choices=VoucherType.CHOICES, default=VoucherType.ENTIRE_ORDER
     )
     name = models.CharField(max_length=255, null=True, blank=True)
-    code = models.CharField(max_length=12, unique=True, db_index=True)
+    code = models.CharField(max_length=255, unique=True, db_index=True)
     usage_limit = models.PositiveIntegerField(null=True, blank=True)
     used = models.PositiveIntegerField(default=0, editable=False)
     start_date = models.DateTimeField(default=timezone.now)
@@ -66,6 +72,8 @@ class Voucher(models.Model):
     # individually to every item
     apply_once_per_order = models.BooleanField(default=False)
     apply_once_per_customer = models.BooleanField(default=False)
+
+    only_for_staff = models.BooleanField(default=False)
 
     discount_value_type = models.CharField(
         max_length=10,
@@ -77,10 +85,11 @@ class Voucher(models.Model):
     countries = CountryField(multiple=True, blank=True)
     min_checkout_items_quantity = models.PositiveIntegerField(null=True, blank=True)
     products = models.ManyToManyField("product.Product", blank=True)
+    variants = models.ManyToManyField("product.ProductVariant", blank=True)
     collections = models.ManyToManyField("product.Collection", blank=True)
     categories = models.ManyToManyField("product.Category", blank=True)
 
-    objects = VoucherQueryset.as_manager()
+    objects = models.Manager.from_queryset(VoucherQueryset)()
     translated = TranslationProxy()
 
     class Meta:
@@ -94,7 +103,17 @@ class Voucher(models.Model):
         )
 
     def get_discount(self, channel: Channel):
-        voucher_channel_listing = self.channel_listings.filter(channel=channel).first()
+        """Return proper discount amount for given channel.
+
+        It operates over all channel listings as assuming that we have prefetched them.
+        """
+        voucher_channel_listing = None
+
+        for channel_listing in self.channel_listings.all():
+            if channel.id == channel_listing.channel_id:
+                voucher_channel_listing = channel_listing
+                break
+
         if not voucher_channel_listing:
             raise NotApplicable("This voucher is not assigned to this channel")
         if self.discount_value_type == DiscountValueType.FIXED:
@@ -115,7 +134,8 @@ class Voucher(models.Model):
             return price
         return price - after_discount
 
-    def validate_min_spent(self, value: Money, channel: Channel):
+    def validate_min_spent(self, value: TaxedMoney, channel: Channel):
+        value = value.gross if display_gross_prices() else value.net
         voucher_channel_listing = self.channel_listings.filter(channel=channel).first()
         if not voucher_channel_listing:
             raise NotApplicable("This voucher is not assigned to this channel")
@@ -142,6 +162,14 @@ class Voucher(models.Model):
         )
         if voucher_customer:
             msg = "This offer is valid only once per customer."
+            raise NotApplicable(msg)
+
+    def validate_only_for_staff(self, customer: Optional["User"]):
+        if not self.only_for_staff:
+            return
+
+        if not customer or not customer.is_staff:
+            msg = "This offer is valid only for staff customers."
             raise NotApplicable(msg)
 
 
@@ -206,32 +234,38 @@ class SaleQueryset(models.QuerySet):
         return self.filter(end_date__lt=date, start_date__lt=date)
 
 
-class VoucherTranslation(models.Model):
-    language_code = models.CharField(max_length=10)
-    name = models.CharField(max_length=255, null=True, blank=True)
+class VoucherTranslation(Translation):
     voucher = models.ForeignKey(
         Voucher, related_name="translations", on_delete=models.CASCADE
     )
+    name = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         ordering = ("language_code", "voucher", "pk")
         unique_together = (("language_code", "voucher"),)
 
+    def get_translated_object_id(self):
+        return "Voucher", self.voucher_id
 
-class Sale(models.Model):
+    def get_translated_keys(self):
+        return {"name": self.name}
+
+
+class Sale(ModelWithMetadata):
     name = models.CharField(max_length=255)
     type = models.CharField(
         max_length=10,
         choices=DiscountValueType.CHOICES,
         default=DiscountValueType.FIXED,
     )
-    products = models.ManyToManyField("product.Product", blank=True)
     categories = models.ManyToManyField("product.Category", blank=True)
     collections = models.ManyToManyField("product.Collection", blank=True)
+    products = models.ManyToManyField("product.Product", blank=True)
+    variants = models.ManyToManyField("product.ProductVariant", blank=True)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(null=True, blank=True)
 
-    objects = SaleQueryset.as_manager()
+    objects = models.Manager.from_queryset(SaleQueryset)()
     translated = TranslationProxy()
 
     class Meta:
@@ -298,8 +332,7 @@ class SaleChannelListing(models.Model):
         ordering = ("pk",)
 
 
-class SaleTranslation(models.Model):
-    language_code = models.CharField(max_length=10)
+class SaleTranslation(Translation):
     name = models.CharField(max_length=255, null=True, blank=True)
     sale = models.ForeignKey(
         Sale, related_name="translations", on_delete=models.CASCADE
@@ -308,6 +341,12 @@ class SaleTranslation(models.Model):
     class Meta:
         ordering = ("language_code", "name", "pk")
         unique_together = (("language_code", "sale"),)
+
+    def get_translated_object_id(self):
+        return "Sale", self.sale_id
+
+    def get_translated_keys(self):
+        return {"name": self.name}
 
 
 class OrderDiscount(models.Model):

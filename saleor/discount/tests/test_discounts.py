@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import pytest
 from django.utils import timezone
-from prices import Money
+from prices import Money, TaxedMoney
 
 from ...checkout.fetch import fetch_checkout_info, fetch_checkout_lines
 from ...checkout.utils import get_voucher_discount_for_checkout
@@ -29,11 +29,12 @@ from ..utils import (
 )
 
 
-@pytest.mark.parametrize(
-    "min_spent_amount, value",
-    [(Money(5, "USD"), Money(10, "USD")), (Money(10, "USD"), Money(10, "USD"))],
-)
-def test_valid_voucher_min_spent_amount(min_spent_amount, value, channel_USD):
+def test_valid_voucher_min_spent_amount_with_display_gross_prices(
+    channel_USD, site_settings
+):
+    site_settings.display_gross_prices = True
+    site_settings.save()
+
     voucher = Voucher.objects.create(
         code="unique",
         type=VoucherType.SHIPPING,
@@ -43,10 +44,34 @@ def test_valid_voucher_min_spent_amount(min_spent_amount, value, channel_USD):
         voucher=voucher,
         channel=channel_USD,
         discount=Money(10, "USD"),
-        min_spent=min_spent_amount,
+        min_spent=Money(7, "USD"),
     )
+    value = TaxedMoney(net=Money(5, "USD"), gross=Money(7, "USD"))
 
     voucher.validate_min_spent(value, channel_USD)
+
+
+def test_valid_voucher_min_spent_amount_without_display_gross_prices(
+    channel_USD, site_settings
+):
+    site_settings.display_gross_prices = False
+    site_settings.save()
+
+    voucher = Voucher.objects.create(
+        code="unique",
+        type=VoucherType.SHIPPING,
+        discount_value_type=DiscountValueType.FIXED,
+    )
+    VoucherChannelListing.objects.create(
+        voucher=voucher,
+        channel=channel_USD,
+        discount=Money(10, "USD"),
+        min_spent=Money(7, "USD"),
+    )
+    value = TaxedMoney(net=Money(5, "USD"), gross=Money(7, "USD"))
+
+    with pytest.raises(NotApplicable):
+        voucher.validate_min_spent(value, channel_USD)
 
 
 def test_valid_voucher_min_spent_amount_voucher_not_assigned_to_channel(
@@ -63,8 +88,10 @@ def test_valid_voucher_min_spent_amount_voucher_not_assigned_to_channel(
         discount=Money(10, channel_USD.currency_code),
         min_spent=(Money(5, channel_USD.currency_code)),
     )
+    price = Money(10, channel_PLN.currency_code)
+    total_price = TaxedMoney(net=price, gross=price)
     with pytest.raises(NotApplicable):
-        voucher.validate_min_spent(Money(10, channel_PLN.currency_code), channel_PLN)
+        voucher.validate_min_spent(total_price, channel_PLN)
 
 
 def test_valid_voucher_min_checkout_items_quantity(voucher):
@@ -78,6 +105,74 @@ def test_valid_voucher_min_checkout_items_quantity(voucher):
         str(e.value)
         == "This offer is only valid for orders with a minimum of 3 quantity."
     )
+
+
+@pytest.mark.integration
+@pytest.mark.django_db(transaction=True)
+def test_discount_for_variants_is_applied_to_single_variant(product, channel_USD):
+    discount_value = 5
+    variant = product.variants.get()
+    variant_channel_listing = variant.channel_listings.get(channel=channel_USD)
+    sale = Sale.objects.create(type=DiscountValueType.FIXED)
+    sale_channel_listing = SaleChannelListing.objects.create(
+        sale=sale,
+        discount_value=discount_value,
+        currency=channel_USD.currency_code,
+        channel=channel_USD,
+    )
+    old_price = variant.get_price(
+        product, [], channel_USD, variant_channel_listing, discounts=[]
+    )
+
+    discount_info = DiscountInfo(
+        sale=sale,
+        channel_listings={channel_USD.slug: sale_channel_listing},
+        product_ids=set(),
+        category_ids=set(),
+        collection_ids=set(),
+        variants_ids={variant.id},
+    )
+
+    new_price = variant.get_price(
+        product, [], channel_USD, variant_channel_listing, discounts=[discount_info]
+    )
+
+    assert new_price == old_price - Money(discount_value, "USD")
+
+
+@pytest.mark.integration
+@pytest.mark.django_db(transaction=True)
+def test_discount_for_variants_are_not_applied_twice_for_variant_assigned_to_product(
+    product, channel_USD
+):
+    discount_value = 5
+    variant = product.variants.get()
+    variant_channel_listing = variant.channel_listings.get(channel=channel_USD)
+    sale = Sale.objects.create(type=DiscountValueType.FIXED)
+    sale_channel_listing = SaleChannelListing.objects.create(
+        sale=sale,
+        discount_value=discount_value,
+        currency=channel_USD.currency_code,
+        channel=channel_USD,
+    )
+    old_price = variant.get_price(
+        product, [], channel_USD, variant_channel_listing, discounts=[]
+    )
+
+    discount_info = DiscountInfo(
+        sale=sale,
+        channel_listings={channel_USD.slug: sale_channel_listing},
+        product_ids={product.id},
+        category_ids=set(),
+        collection_ids=set(),
+        variants_ids={variant.id},
+    )
+
+    new_price = variant.get_price(
+        product, [], channel_USD, variant_channel_listing, discounts=[discount_info]
+    )
+
+    assert new_price == old_price - Money(discount_value, "USD")
 
 
 @pytest.mark.integration
@@ -97,6 +192,7 @@ def test_variant_discounts(product, channel_USD):
         product_ids={product.id},
         category_ids=set(),
         collection_ids=set(),
+        variants_ids=set(),
     )
     sale = Sale.objects.create(type=DiscountValueType.FIXED)
     sale_channel_listing = SaleChannelListing.objects.create(
@@ -111,6 +207,7 @@ def test_variant_discounts(product, channel_USD):
         product_ids={product.id},
         category_ids=set(),
         collection_ids=set(),
+        variants_ids=set(),
     )
     high_sale = Sale.objects.create(type=DiscountValueType.FIXED)
     high_sale_channel_listing = SaleChannelListing.objects.create(
@@ -125,6 +222,7 @@ def test_variant_discounts(product, channel_USD):
         product_ids={product.id},
         category_ids=set(),
         collection_ids=set(),
+        variants_ids=set(),
     )
     variant_channel_listing = variant.channel_listings.get(channel=channel_USD)
     final_price = variant.get_price(
@@ -135,6 +233,85 @@ def test_variant_discounts(product, channel_USD):
         discounts=[low_discount, discount, high_discount],
     )
     assert final_price == Money(0, "USD")
+
+
+@pytest.mark.integration
+@pytest.mark.django_db(transaction=True)
+def test_discount_for_variants_when_sale_for_specific_variants_only(
+    product, channel_USD
+):
+    discount_value = 5
+    variant = ProductVariant.objects.create(product=product, sku="456")
+    ProductVariantChannelListing.objects.create(
+        variant=variant,
+        channel=channel_USD,
+        price_amount=Decimal(20),
+        cost_price_amount=Decimal(1),
+        currency=channel_USD.currency_code,
+    )
+    variant = ProductVariant.objects.create(product=product, sku="789")
+    ProductVariantChannelListing.objects.create(
+        variant=variant,
+        channel=channel_USD,
+        price_amount=Decimal(20),
+        cost_price_amount=Decimal(1),
+        currency=channel_USD.currency_code,
+    )
+    product.refresh_from_db()
+
+    all_variants = product.variants.all()
+    first_variant, *rest_variants = all_variants
+
+    first_variant_channel_listing = first_variant.channel_listings.get(
+        channel=channel_USD
+    )
+    sale = Sale.objects.create(type=DiscountValueType.FIXED)
+    sale_channel_listing = SaleChannelListing.objects.create(
+        sale=sale,
+        discount_value=discount_value,
+        currency=channel_USD.currency_code,
+        channel=channel_USD,
+    )
+
+    old_price = first_variant.get_price(
+        product, [], channel_USD, first_variant_channel_listing, discounts=[]
+    )
+
+    old_price_for_applied_variants = []
+
+    for variant in rest_variants:
+        variant_channel_listing = variant.channel_listings.get(channel=channel_USD)
+        old_price_for_applied_variants.append(
+            variant.get_price(
+                product, [], channel_USD, variant_channel_listing, discounts=[]
+            )
+        )
+
+    discount = DiscountInfo(
+        sale=sale,
+        channel_listings={channel_USD.slug: sale_channel_listing},
+        product_ids=set(),
+        category_ids=set(),
+        collection_ids=set(),
+        variants_ids={variant.id for variant in rest_variants},
+    )
+
+    new_price = first_variant.get_price(
+        product, [], channel_USD, first_variant_channel_listing, discounts=[discount]
+    )
+
+    new_price_for_applied_variants = []
+    for variant in rest_variants:
+        variant_channel_listing = variant.channel_listings.get(channel=channel_USD)
+        new_price_for_applied_variants.append(
+            variant.get_price(
+                product, [], channel_USD, variant_channel_listing, discounts=[discount]
+            )
+        )
+
+    assert new_price == old_price
+    for p1, p2 in zip(new_price_for_applied_variants, old_price_for_applied_variants):
+        assert p1 == p2 - Money(discount_value, "USD")
 
 
 @pytest.mark.integration
@@ -154,6 +331,7 @@ def test_percentage_discounts(product, channel_USD):
         product_ids={product.id},
         category_ids=set(),
         collection_ids=set(),
+        variants_ids=set(),
     )
     variant_channel_listing = variant.channel_listings.get(channel=channel_USD)
     final_price = variant.get_price(
@@ -282,8 +460,9 @@ def test_sale_applies_to_correct_products(product_type, category, channel_USD):
         product_ids={product.id},
         category_ids=set(),
         collection_ids=set(),
+        variants_ids=set(),
     )
-    product_discount = get_product_discount_on_sale(
+    _, product_discount = get_product_discount_on_sale(
         variant.product, set(), discount, channel_USD
     )
 
@@ -387,9 +566,68 @@ def test_validate_voucher(
         min_spent_amount=min_spent_amount,
     )
     total_price = Money(total, "USD")
+    price = TaxedMoney(gross=total_price, net=total_price)
     validate_voucher(
-        voucher, total_price, total_quantity, "test@example.com", channel_USD
+        voucher, price, total_quantity, "test@example.com", channel_USD, None
     )
+
+
+def test_validate_staff_voucher_for_anonymous(
+    channel_USD,
+):
+    voucher = Voucher.objects.create(
+        code="unique",
+        type=VoucherType.ENTIRE_ORDER,
+        discount_value_type=DiscountValueType.PERCENTAGE,
+        only_for_staff=True,
+    )
+    VoucherChannelListing.objects.create(
+        voucher=voucher,
+        channel=channel_USD,
+        discount=Money(50, channel_USD.currency_code),
+    )
+    total_price = Money(100, "USD")
+    price = TaxedMoney(gross=total_price, net=total_price)
+    with pytest.raises(NotApplicable):
+        validate_voucher(voucher, price, 2, "test@example.com", channel_USD, None)
+
+
+def test_validate_staff_voucher_for_normal_customer(channel_USD, customer_user):
+    voucher = Voucher.objects.create(
+        code="unique",
+        type=VoucherType.ENTIRE_ORDER,
+        discount_value_type=DiscountValueType.PERCENTAGE,
+        only_for_staff=True,
+    )
+    VoucherChannelListing.objects.create(
+        voucher=voucher,
+        channel=channel_USD,
+        discount=Money(50, channel_USD.currency_code),
+    )
+    total_price = Money(100, "USD")
+    price = TaxedMoney(gross=total_price, net=total_price)
+    with pytest.raises(NotApplicable):
+        validate_voucher(
+            voucher, price, 2, customer_user.email, channel_USD, customer_user
+        )
+
+
+def test_validate_staff_voucher_for_staff_customer(channel_USD, staff_user):
+    voucher = Voucher.objects.create(
+        code="unique",
+        type=VoucherType.ENTIRE_ORDER,
+        discount_value_type=DiscountValueType.PERCENTAGE,
+        only_for_staff=True,
+    )
+    VoucherChannelListing.objects.create(
+        voucher=voucher,
+        channel=channel_USD,
+        discount=Money(50, channel_USD.currency_code),
+    )
+    total_price = Money(100, "USD")
+    price = TaxedMoney(gross=total_price, net=total_price)
+
+    validate_voucher(voucher, price, 2, staff_user.email, channel_USD, staff_user)
 
 
 @pytest.mark.parametrize(
@@ -423,9 +661,11 @@ def test_validate_voucher_not_applicable(
         min_spent_amount=min_spent_amount,
     )
     total_price = Money(total, "USD")
+    price = TaxedMoney(net=total_price, gross=total_price)
+
     with pytest.raises(NotApplicable):
         validate_voucher(
-            voucher, total_price, total_quantity, "test@example.com", channel_USD
+            voucher, price, total_quantity, "test@example.com", channel_USD, None
         )
 
 
@@ -435,8 +675,12 @@ def test_validate_voucher_not_applicable_once_per_customer(
     voucher.apply_once_per_customer = True
     voucher.save()
     VoucherCustomer.objects.create(voucher=voucher, customer_email=customer_user.email)
+    price = Money(0, "USD")
+    total_price = TaxedMoney(net=price, gross=price)
     with pytest.raises(NotApplicable):
-        validate_voucher(voucher, 0, 0, customer_user.email, channel_USD)
+        validate_voucher(
+            voucher, total_price, 0, customer_user.email, channel_USD, customer_user
+        )
 
 
 date_time_now = timezone.now()

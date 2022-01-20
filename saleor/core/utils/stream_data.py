@@ -31,7 +31,7 @@ def create_test_user(how_many=100):
 
 def create_users(how_many=10):
     for dummy in range(how_many):
-        user = random_data.create_fake_user()
+        user = random_data.create_fake_user("password")
         yield "User: %s" % (user.email,)
 
 

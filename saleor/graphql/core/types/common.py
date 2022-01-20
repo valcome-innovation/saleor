@@ -133,6 +133,11 @@ class CheckoutError(Error):
         description="List of varint IDs which causes the error.",
         required=False,
     )
+    lines = graphene.List(
+        graphene.NonNull(graphene.ID),
+        description="List of line Ids which cause the error.",
+        required=False,
+    )
     address_type = AddressTypeEnum(
         description="A type of address that causes the error.", required=False
     )
@@ -176,8 +181,9 @@ class OrderError(Error):
         description="Warehouse ID which causes the error.",
         required=False,
     )
-    order_line = graphene.ID(
-        description="Order line ID which causes the error.",
+    order_lines = graphene.List(
+        graphene.NonNull(graphene.ID),
+        description="List of order line IDs that cause the error.",
         required=False,
     )
     variants = graphene.List(
@@ -380,7 +386,6 @@ class File(graphene.ObjectType):
     )
 
     @staticmethod
-    @traced_resolver
     def resolve_url(root, info):
         return info.context.build_absolute_uri(urljoin(settings.MEDIA_URL, root.url))
 

@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Iterable, List
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 
 
@@ -13,6 +14,7 @@ class BasePermissionEnum(Enum):
 class AccountPermissions(BasePermissionEnum):
     MANAGE_USERS = "account.manage_users"
     MANAGE_STAFF = "account.manage_staff"
+    IMPERSONATE_USER = "account.impersonate_user"
 
 
 class AppPermission(BasePermissionEnum):
@@ -45,6 +47,10 @@ class CheckoutPermissions(BasePermissionEnum):
 
 class OrderPermissions(BasePermissionEnum):
     MANAGE_ORDERS = "order.manage_orders"
+
+
+class PaymentPermissions(BasePermissionEnum):
+    HANDLE_PAYMENTS = "payment.handle_payments"
 
 
 class PagePermissions(BasePermissionEnum):
@@ -83,6 +89,7 @@ PERMISSIONS_ENUMS = [
     OrderPermissions,
     PagePermissions,
     PageTypePermissions,
+    PaymentPermissions,
     ProductPermissions,
     ProductTypePermissions,
     ShippingPermissions,
@@ -152,3 +159,25 @@ def get_permissions_from_codenames(permission_codenames: List[str]):
         .prefetch_related("content_type")
         .order_by("codename")
     )
+
+
+def permissions_required(perms, context):
+    User = get_user_model()
+    if isinstance(context, User):
+        if context.has_perms(perms):
+            return True
+    else:
+        # for now MANAGE_STAFF permission for app is not supported
+        if AccountPermissions.MANAGE_STAFF in perms:
+            return False
+        return context.has_perms(perms)
+    return False
+
+
+def has_one_of_permissions(requestor, permissions=None):
+    if not permissions:
+        return True
+    for perm in permissions:
+        if permissions_required((perm,), requestor):
+            return True
+    return False

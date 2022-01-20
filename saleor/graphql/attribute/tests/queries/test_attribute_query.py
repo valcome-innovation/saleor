@@ -3,10 +3,15 @@ import pytest
 from django.db.models import Q
 from graphene.utils.str_converters import to_camel_case
 
+from .....attribute import AttributeInputType, AttributeType
 from .....attribute.models import Attribute
 from .....product.models import Category, Collection, Product, ProductType
 from .....tests.utils import dummy_editorjs
-from ....tests.utils import assert_no_permission, get_graphql_content
+from ....tests.utils import (
+    assert_no_permission,
+    get_graphql_content,
+    get_graphql_content_from_response,
+)
 
 
 def test_get_single_attribute_by_id_as_customer(
@@ -58,31 +63,36 @@ def test_get_single_attribute_by_slug_as_customer(
 
 
 QUERY_ATTRIBUTE = """
-query($id: ID!) {
-    attribute(id: $id) {
-        id
-        slug
-        name
-        inputType
-        entityType
-        type
-        unit
-        values {
+    query($id: ID!, $query: String) {
+        attribute(id: $id) {
+            id
             slug
+            name
             inputType
-            file {
-                url
-                contentType
+            entityType
+            type
+            unit
+            choices(first: 10, filter: {search: $query}) {
+                edges {
+                    node {
+                        slug
+                        inputType
+                        file {
+                            url
+                            contentType
+                        }
+                    }
+                }
+
             }
+            valueRequired
+            visibleInStorefront
+            filterableInStorefront
+            filterableInDashboard
+            availableInGrid
+            storefrontSearchPosition
         }
-        valueRequired
-        visibleInStorefront
-        filterableInStorefront
-        filterableInDashboard
-        availableInGrid
-        storefrontSearchPosition
     }
-}
 """
 
 
@@ -168,6 +178,29 @@ def test_get_single_product_attribute_by_app(
     )
 
 
+def test_query_attribute_by_invalid_id(
+    staff_api_client, color_attribute_without_values
+):
+    id = "bh/"
+    variables = {"id": id}
+    response = staff_api_client.post_graphql(QUERY_ATTRIBUTE, variables)
+    content = get_graphql_content_from_response(response)
+    assert len(content["errors"]) == 1
+    assert content["errors"][0]["message"] == f"Couldn't resolve id: {id}."
+    assert content["data"]["attribute"] is None
+
+
+def test_query_attribute_with_invalid_object_type(
+    staff_api_client, color_attribute_without_values
+):
+    variables = {
+        "id": graphene.Node.to_global_id("Order", color_attribute_without_values.pk)
+    }
+    response = staff_api_client.post_graphql(QUERY_ATTRIBUTE, variables)
+    content = get_graphql_content(response)
+    assert content["data"]["attribute"] is None
+
+
 def test_get_single_product_attribute_by_staff_no_perm(
     staff_api_client, color_attribute_without_values, permission_manage_pages
 ):
@@ -236,18 +269,7 @@ def test_get_single_product_attribute_with_file_value(
         attribute_data["storefrontSearchPosition"]
         == file_attribute.storefront_search_position
     )
-    assert len(attribute_data["values"]) == file_attribute.values.count()
-    attribute_value_data = []
-    for value in file_attribute.values.all():
-        data = {
-            "slug": value.slug,
-            "inputType": value.input_type.upper(),
-            "file": {"url": value.file_url, "contentType": value.content_type},
-        }
-        attribute_value_data.append(data)
-
-    for data in attribute_value_data:
-        assert data in attribute_data["values"]
+    assert attribute_data["choices"]["edges"] == []
 
 
 def test_get_single_reference_attribute_by_staff(
@@ -259,7 +281,7 @@ def test_get_single_reference_attribute_by_staff(
     )
     query = QUERY_ATTRIBUTE
     content = get_graphql_content(
-        staff_api_client.post_graphql(query, {"id": attribute_gql_id})
+        staff_api_client.post_graphql(query, {"id": attribute_gql_id, "query": ""})
     )
 
     assert content["data"]["attribute"], "Should have found an attribute"
@@ -296,6 +318,7 @@ def test_get_single_reference_attribute_by_staff(
         content["data"]["attribute"]["entityType"]
         == product_type_page_reference_attribute.entity_type.upper()
     )
+    assert not content["data"]["attribute"]["choices"]["edges"]
 
 
 def test_get_single_numeric_attribute_by_staff(
@@ -350,10 +373,14 @@ QUERY_ATTRIBUTES = """
                     id
                     name
                     slug
-                    values {
-                        id
-                        name
-                        slug
+                    choices(first: 10) {
+                        edges {
+                            node {
+                                id
+                                name
+                                slug
+                            }
+                        }
                     }
                 }
             }
@@ -390,7 +417,7 @@ def test_attributes_query_hidden_attribute(user_api_client, product, color_attri
     assert len(attributes_data) == attribute_count
 
 
-def test_attributes_query_hidden_attribute_as_staff_user(
+def test_attributes_query_hidden_attribute_as_staff_user_without_permissions(
     staff_api_client, product, color_attribute
 ):
     query = QUERY_ATTRIBUTES
@@ -402,6 +429,30 @@ def test_attributes_query_hidden_attribute_as_staff_user(
     attribute_count = Attribute.objects.all().count()
 
     response = staff_api_client.post_graphql(query)
+    content = get_graphql_content(response)
+    attributes_data = content["data"]["attributes"]["edges"]
+    assert len(attributes_data) == attribute_count - 1  # invisible doesn't count
+
+
+def test_attributes_query_hidden_attribute_as_staff_user_with_permissions(
+    staff_api_client,
+    product,
+    color_attribute,
+    permission_manage_product_types_and_attributes,
+):
+    query = QUERY_ATTRIBUTES
+
+    # hide the attribute
+    color_attribute.visible_in_storefront = False
+    color_attribute.save(update_fields=["visible_in_storefront"])
+
+    attribute_count = Attribute.objects.all().count()
+
+    response = staff_api_client.post_graphql(
+        query,
+        permissions=[permission_manage_product_types_and_attributes],
+        check_no_permissions=False,
+    )
     content = get_graphql_content(response)
     attributes_data = content["data"]["attributes"]["edges"]
     assert len(attributes_data) == attribute_count
@@ -536,7 +587,7 @@ def test_attributes_in_collection_query(
     """
 
     query = query % {
-        "filter_input": "filter: { %s: $nodeID, channel: $channel }" % tested_field
+        "filter_input": "filter: { %s: $nodeID } channel: $channel" % tested_field
     }
 
     variables = {"nodeID": filtered_by_node_id, "channel": channel_USD.slug}
@@ -547,3 +598,51 @@ def test_attributes_in_collection_query(
     expected_flat_attributes_data = list(expected_qs.values_list("slug", flat=True))
 
     assert flat_attributes_data == expected_flat_attributes_data
+
+
+@pytest.mark.parametrize(
+    "input_type, expected_with_choice_return",
+    [
+        (AttributeInputType.DROPDOWN, True),
+        (AttributeInputType.MULTISELECT, True),
+        (AttributeInputType.FILE, False),
+        (AttributeInputType.REFERENCE, False),
+        (AttributeInputType.NUMERIC, False),
+        (AttributeInputType.RICH_TEXT, False),
+        (AttributeInputType.BOOLEAN, False),
+    ],
+)
+def test_attributes_with_choice_flag(
+    user_api_client,
+    input_type,
+    expected_with_choice_return,
+):
+    attribute = Attribute.objects.create(
+        slug=input_type,
+        name=input_type.upper(),
+        type=AttributeType.PRODUCT_TYPE,
+        input_type=input_type,
+        filterable_in_storefront=True,
+        filterable_in_dashboard=True,
+        available_in_grid=True,
+    )
+
+    attribute_gql_id = graphene.Node.to_global_id("Attribute", attribute.id)
+    query = """
+    query($id: ID!) {
+        attribute(id: $id) {
+            id
+            inputType
+            withChoices
+
+        }
+    }
+    """
+    content = get_graphql_content(
+        user_api_client.post_graphql(query, {"id": attribute_gql_id})
+    )
+    assert content["data"]["attribute"]["id"] == attribute_gql_id
+    assert content["data"]["attribute"]["inputType"] == input_type.upper().replace(
+        "-", "_"
+    )
+    assert content["data"]["attribute"]["withChoices"] == expected_with_choice_return

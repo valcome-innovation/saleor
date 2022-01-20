@@ -1,11 +1,16 @@
+import re
 from collections import defaultdict
 from dataclasses import dataclass
+from datetime import datetime
 from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Tuple, Union
+from urllib.parse import urlparse
 
 import graphene
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.template.defaultfilters import truncatechars
+from django.utils import timezone
 from django.utils.text import slugify
 from graphql.error import GraphQLError
 
@@ -35,6 +40,9 @@ class AttrValuesInput:
     file_url: Optional[str] = None
     content_type: Optional[str] = None
     rich_text: Optional[dict] = None
+    boolean: Optional[bool] = None
+    date: Optional[str] = None
+    date_time: Optional[str] = None
 
 
 T_INSTANCE = Union[
@@ -118,9 +126,12 @@ class AttributeAssignmentMixin:
     @classmethod
     def _resolve_attribute_global_id(cls, error_class, global_id: str) -> int:
         """Resolve an Attribute global ID into an internal ID (int)."""
-        graphene_type, internal_id = from_global_id_or_error(
-            global_id, only_type="Attribute"
-        )
+        try:
+            graphene_type, internal_id = from_global_id_or_error(
+                global_id, only_type="Attribute"
+            )
+        except GraphQLError as e:
+            raise ValidationError(str(e), code=error_class.GRAPHQL_ERROR.value)
         if not internal_id.isnumeric():
             raise ValidationError(
                 f"An invalid ID value was passed: {global_id}",
@@ -151,6 +162,8 @@ class AttributeAssignmentMixin:
         attribute: attribute_models.Attribute,
         attr_values: AttrValuesInput,
     ):
+        if not attr_values.values:
+            return tuple()
         defaults = {
             "name": attr_values.values[0],
         }
@@ -166,10 +179,52 @@ class AttributeAssignmentMixin:
         defaults = {
             "rich_text": attr_values.rich_text,
             "name": truncatechars(
-                clean_editor_js(attr_values.rich_text, to_string=True), 50
+                clean_editor_js(attr_values.rich_text, to_string=True), 200
             ),
         }
         return cls._update_or_create_value(instance, attribute, defaults)
+
+    @classmethod
+    def _pre_save_boolean_values(
+        cls,
+        instance: T_INSTANCE,
+        attribute: attribute_models.Attribute,
+        attr_values: AttrValuesInput,
+    ):
+        get_or_create = attribute.values.get_or_create
+        boolean = bool(attr_values.boolean)
+        value, _ = get_or_create(
+            attribute=attribute,
+            slug=slugify(f"{attribute.id}_{boolean}", allow_unicode=True),
+            defaults={
+                "name": f"{attribute.name}: {'Yes' if boolean else 'No'}",
+                "boolean": boolean,
+            },
+        )
+        return (value,)
+
+    @classmethod
+    def _pre_save_date_time_values(
+        cls,
+        instance: T_INSTANCE,
+        attribute: attribute_models.Attribute,
+        attr_values: AttrValuesInput,
+    ):
+        is_date_attr = attribute.input_type == AttributeInputType.DATE
+        value = attr_values.date if is_date_attr else attr_values.date_time
+
+        tz = timezone.get_current_timezone()
+        date_time = (
+            datetime(
+                value.year, value.month, value.day, 0, 0, tzinfo=tz  # type: ignore
+            )
+            if is_date_attr
+            else value
+        )
+        defaults = {"name": value, "date_time": date_time}
+        return (
+            cls._update_or_create_value(instance, attribute, defaults) if value else ()
+        )
 
     @classmethod
     def _update_or_create_value(
@@ -335,10 +390,13 @@ class AttributeAssignmentMixin:
             values = AttrValuesInput(
                 global_id=global_id,
                 values=attribute_input.get("values", []),
-                file_url=attribute_input.get("file"),
+                file_url=cls._clean_file_url(attribute_input.get("file")),
                 content_type=attribute_input.get("content_type"),
                 references=attribute_input.get("references", []),
                 rich_text=attribute_input.get("rich_text"),
+                boolean=attribute_input.get("boolean"),
+                date=attribute_input.get("date"),
+                date_time=attribute_input.get("date_time"),
             )
 
             if global_id:
@@ -395,6 +453,15 @@ class AttributeAssignmentMixin:
 
         return cleaned_input
 
+    @staticmethod
+    def _clean_file_url(file_url: Optional[str]):
+        # extract storage path from file URL
+        return (
+            re.sub(f"^{settings.MEDIA_URL}", "", urlparse(file_url).path)
+            if file_url is not None
+            else file_url
+        )
+
     @classmethod
     def _validate_references(
         cls, error_class, attribute: attribute_models.Attribute, values: AttrValuesInput
@@ -424,6 +491,9 @@ class AttributeAssignmentMixin:
             AttributeInputType.REFERENCE: cls._pre_save_reference_values,
             AttributeInputType.RICH_TEXT: cls._pre_save_rich_text_values,
             AttributeInputType.NUMERIC: cls._pre_save_numeric_values,
+            AttributeInputType.BOOLEAN: cls._pre_save_boolean_values,
+            AttributeInputType.DATE: cls._pre_save_date_time_values,
+            AttributeInputType.DATE_TIME: cls._pre_save_date_time_values,
         }
         clean_assignment = []
         for attribute, attr_values in cleaned_input:
@@ -529,6 +599,13 @@ def validate_attributes_input(
             validate_reference_attributes_input(*attrs)
         elif attribute.input_type == AttributeInputType.RICH_TEXT:
             validate_rich_text_attributes_input(*attrs)
+        elif attribute.input_type == AttributeInputType.BOOLEAN:
+            validate_boolean_input(*attrs)
+        elif attribute.input_type in [
+            AttributeInputType.DATE,
+            AttributeInputType.DATE_TIME,
+        ]:
+            validate_date_time_input(*attrs)
         # validation for other input types
         else:
             validate_standard_attributes_input(*attrs)
@@ -578,6 +655,19 @@ def validate_reference_attributes_input(
             )
 
 
+def validate_boolean_input(
+    attribute: "Attribute",
+    attr_values: "AttrValuesInput",
+    attribute_errors: T_ERROR_DICT,
+    variant_validation: bool,
+):
+    attribute_id = attr_values.global_id
+    value = attr_values.boolean
+
+    if attribute.value_required and value is None:
+        attribute_errors[AttributeInputErrors.ERROR_BLANK_VALUE].append(attribute_id)
+
+
 def validate_rich_text_attributes_input(
     attribute: "Attribute",
     attr_values: "AttrValuesInput",
@@ -618,6 +708,26 @@ def validate_standard_attributes_input(
         attr_values.values,
         attribute_errors,
     )
+
+
+def validate_date_time_input(
+    attribute: "Attribute",
+    attr_values: "AttrValuesInput",
+    attribute_errors: T_ERROR_DICT,
+    variant_validation: bool,
+):
+    is_blank_date = (
+        attribute.input_type == AttributeInputType.DATE and not attr_values.date
+    )
+    is_blank_date_time = (
+        attribute.input_type == AttributeInputType.DATE_TIME
+        and not attr_values.date_time
+    )
+
+    if attribute.value_required and (is_blank_date or is_blank_date_time):
+        attribute_errors[AttributeInputErrors.ERROR_NO_VALUE_GIVEN].append(
+            attr_values.global_id
+        )
 
 
 def validate_values(

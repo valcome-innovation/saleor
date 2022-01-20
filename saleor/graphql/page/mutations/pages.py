@@ -8,6 +8,8 @@ from django.core.exceptions import ValidationError
 
 from ....attribute import AttributeType
 from ....core.caching import invalidate_cache, CachePrefix
+from ....attribute import AttributeInputType, AttributeType
+from ....attribute import models as attribute_models
 from ....core.permissions import PagePermissions, PageTypePermissions
 from ....core.tracing import traced_atomic_transaction
 from ....page import models
@@ -18,6 +20,7 @@ from ...core.mutations import ModelDeleteMutation, ModelMutation
 from ...core.types.common import PageError, SeoInput
 from ...core.utils import clean_seo_fields, validate_slug_and_generate_if_needed
 from ...utils.validators import check_for_duplicates
+from ..types import PageType
 
 if TYPE_CHECKING:
     from ....attribute.models import Attribute
@@ -147,12 +150,21 @@ class PageDelete(ModelDeleteMutation):
         error_type_field = "page_errors"
 
     @classmethod
+    @traced_atomic_transaction()
     @invalidate_cache(CachePrefix.PAGE_PATTERN)
     def perform_mutation(cls, _root, info, **data):
         page = cls.get_instance(info, **data)
+        cls.delete_assigned_attribute_values(page)
         response = super().perform_mutation(_root, info, **data)
         info.context.plugins.page_deleted(page)
         return response
+
+    @staticmethod
+    def delete_assigned_attribute_values(instance):
+        attribute_models.AttributeValue.objects.filter(
+            pageassignments__page_id=instance.id,
+            attribute__input_type__in=AttributeInputType.TYPES_WITH_UNIQUE_VALUES,
+        ).delete()
 
 
 class PageTypeCreateInput(graphene.InputObjectType):
@@ -305,3 +317,20 @@ class PageTypeDelete(ModelDeleteMutation):
         permissions = (PageTypePermissions.MANAGE_PAGE_TYPES_AND_ATTRIBUTES,)
         error_type_class = PageError
         error_type_field = "page_errors"
+
+    @classmethod
+    @traced_atomic_transaction()
+    def perform_mutation(cls, _root, info, **data):
+        node_id = data.get("id")
+        page_type_pk = cls.get_global_id_or_error(
+            node_id, only_type=PageType, field="pk"
+        )
+        cls.delete_assigned_attribute_values(page_type_pk)
+        return super().perform_mutation(_root, info, **data)
+
+    @staticmethod
+    def delete_assigned_attribute_values(instance_pk):
+        attribute_models.AttributeValue.objects.filter(
+            attribute__input_type__in=AttributeInputType.TYPES_WITH_UNIQUE_VALUES,
+            pageassignments__assignment__page_type_id=instance_pk,
+        ).delete()

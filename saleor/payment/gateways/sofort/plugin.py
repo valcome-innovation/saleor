@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, List
 
-from ..stripe import list_client_sources
+from ..stripe.deprecated import list_client_sources
 from ....plugins.base_plugin import BasePlugin, ConfigurationTypeField
 from ....streaming import stream_settings
 

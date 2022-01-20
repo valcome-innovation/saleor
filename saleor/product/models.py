@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
-from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.indexes import BTreeIndex, GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.db.models import JSONField  # type: ignore
@@ -35,16 +35,21 @@ from mptt.managers import TreeManager
 from mptt.models import MPTTModel
 from versatileimagefield.fields import PPOIField, VersatileImageField
 
-from ..account.utils import requestor_is_staff_member_or_app
 from ..channel.models import Channel
 from ..core.db.fields import SanitizedJSONField
 from ..core.models import ModelWithMetadata, PublishableModel, SortableModel
-from ..core.permissions import ProductPermissions, ProductTypePermissions
+from ..core.permissions import (
+    DiscountPermissions,
+    OrderPermissions,
+    ProductPermissions,
+    ProductTypePermissions,
+    has_one_of_permissions,
+)
 from ..core.units import WeightUnits
 from ..core.utils import build_absolute_uri
 from ..core.utils.draftjs import json_content_to_raw_text
 from ..core.utils.editorjs import clean_editor_js
-from ..core.utils.translations import TranslationProxy
+from ..core.utils.translations import Translation, TranslationProxy
 from ..core.weight import zero_weight
 from ..discount import DiscountInfo
 from ..discount.utils import calculate_discounted_price
@@ -59,11 +64,20 @@ if TYPE_CHECKING:
     from ..account.models import User
     from ..app.models import App
 
+ALL_PRODUCTS_PERMISSIONS = [
+    # List of permissions, where each of them allows viewing all products
+    # (including unpublished).
+    OrderPermissions.MANAGE_ORDERS,
+    DiscountPermissions.MANAGE_DISCOUNTS,
+    ProductPermissions.MANAGE_PRODUCTS,
+]
+
 
 class Category(ModelWithMetadata, MPTTModel, SeoModel):
     name = models.CharField(max_length=250)
     slug = models.SlugField(max_length=255, unique=True, allow_unicode=True)
     description = SanitizedJSONField(blank=True, null=True, sanitizer=clean_editor_js)
+    description_plaintext = TextField(blank=True)
     parent = models.ForeignKey(
         "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
     )
@@ -76,23 +90,33 @@ class Category(ModelWithMetadata, MPTTModel, SeoModel):
     tree = TreeManager()
     translated = TranslationProxy()
 
+    class Meta:
+        indexes = [
+            *ModelWithMetadata.Meta.indexes,
+            GinIndex(
+                name="category_search_name_slug_gin",
+                # `opclasses` and `fields` should be the same length
+                fields=["name", "slug", "description_plaintext"],
+                opclasses=["gin_trgm_ops"] * 3,
+            ),
+        ]
+
     def __str__(self) -> str:
         return self.name
 
 
 class CategoryTranslation(SeoModelTranslation):
-    language_code = models.CharField(max_length=10)
     category = models.ForeignKey(
         Category, related_name="translations", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, blank=True, null=True)
     description = SanitizedJSONField(blank=True, null=True, sanitizer=clean_editor_js)
 
     class Meta:
         unique_together = (("language_code", "category"),)
 
     def __str__(self) -> str:
-        return self.name
+        return self.name if self.name else str(self.pk)
 
     def __repr__(self) -> str:
         class_ = type(self)
@@ -102,6 +126,19 @@ class CategoryTranslation(SeoModelTranslation):
             self.name,
             self.category_id,
         )
+
+    def get_translated_object_id(self):
+        return "Category", self.category_id
+
+    def get_translated_keys(self):
+        translated_keys = super().get_translated_keys()
+        translated_keys.update(
+            {
+                "name": self.name,
+                "description": self.description,
+            }
+        )
+        return translated_keys
 
 
 class ProductType(ModelWithMetadata):
@@ -125,6 +162,15 @@ class ProductType(ModelWithMetadata):
                 "Manage product types and attributes.",
             ),
         )
+        indexes = [
+            *ModelWithMetadata.Meta.indexes,
+            GinIndex(
+                name="product_type_search_gin",
+                # `opclasses` and `fields` should be the same length
+                fields=["name", "slug"],
+                opclasses=["gin_trgm_ops"] * 2,
+            ),
+        ]
 
     def __str__(self) -> str:
         return self.name
@@ -175,7 +221,7 @@ class ProductsQueryset(models.QuerySet):
         return published.filter(Exists(variants.filter(product_id=OuterRef("pk"))))
 
     def visible_to_user(self, requestor: Union["User", "App"], channel_slug: str):
-        if requestor_is_staff_member_or_app(requestor):
+        if has_one_of_permissions(requestor, ALL_PRODUCTS_PERMISSIONS):
             if channel_slug:
                 channels = Channel.objects.filter(slug=str(channel_slug)).values("id")
                 channel_listings = ProductChannelListing.objects.filter(
@@ -367,7 +413,7 @@ class Product(SeoModel, ModelWithMetadata):
     )
     rating = models.FloatField(null=True, blank=True)
 
-    objects = ProductsQueryset.as_manager()
+    objects = models.Manager.from_queryset(ProductsQueryset)()
     translated = TranslationProxy()
 
     class Meta:
@@ -411,18 +457,17 @@ class Product(SeoModel, ModelWithMetadata):
 
 
 class ProductTranslation(SeoModelTranslation):
-    language_code = models.CharField(max_length=10)
     product = models.ForeignKey(
         Product, related_name="translations", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=250)
+    name = models.CharField(max_length=250, blank=True, null=True)
     description = SanitizedJSONField(blank=True, null=True, sanitizer=clean_editor_js)
 
     class Meta:
         unique_together = (("language_code", "product"),)
 
     def __str__(self) -> str:
-        return self.name
+        return self.name if self.name else str(self.pk)
 
     def __repr__(self) -> str:
         class_ = type(self)
@@ -432,6 +477,19 @@ class ProductTranslation(SeoModelTranslation):
             self.name,
             self.product_id,
         )
+
+    def get_translated_object_id(self):
+        return "Product", self.product_id
+
+    def get_translated_keys(self):
+        translated_keys = super().get_translated_keys()
+        translated_keys.update(
+            {
+                "name": self.name,
+                "description": self.description,
+            }
+        )
+        return translated_keys
 
 
 class ProductVariantQueryset(models.QuerySet):
@@ -446,7 +504,7 @@ class ProductVariantQueryset(models.QuerySet):
     def available_in_channel(self, channel_slug):
         return self.filter(
             channel_listings__price_amount__isnull=False,
-            channel_listings__channel__slug=channel_slug,
+            channel_listings__channel__slug=str(channel_slug),
         )
 
     def prefetched_for_webhook(self):
@@ -490,6 +548,7 @@ class ProductChannelListing(PublishableModel):
         ordering = ("pk",)
         indexes = [
             models.Index(fields=["publication_date"]),
+            BTreeIndex(fields=["discounted_price_amount"]),
         ]
 
     def is_available_for_purchase(self):
@@ -515,7 +574,7 @@ class ProductVariant(SortableModel, ModelWithMetadata):
         null=True,
     )
 
-    objects = ProductVariantQueryset.as_manager()
+    objects = models.Manager.from_queryset(ProductVariantQueryset)()
     translated = TranslationProxy()
 
     class Meta(ModelWithMetadata.Meta):
@@ -533,12 +592,14 @@ class ProductVariant(SortableModel, ModelWithMetadata):
         channel_listing: "ProductVariantChannelListing",
         discounts: Optional[Iterable[DiscountInfo]] = None,
     ) -> "Money":
+
         return calculate_discounted_price(
             product=product,
             price=channel_listing.price,
             discounts=discounts,
             collections=collections,
             channel=channel,
+            variant_id=self.id,
         )
 
     def get_weight(self):
@@ -567,8 +628,7 @@ class ProductVariant(SortableModel, ModelWithMetadata):
         return self.product.variants.all()
 
 
-class ProductVariantTranslation(models.Model):
-    language_code = models.CharField(max_length=10)
+class ProductVariantTranslation(Translation):
     product_variant = models.ForeignKey(
         ProductVariant, related_name="translations", on_delete=models.CASCADE
     )
@@ -590,6 +650,12 @@ class ProductVariantTranslation(models.Model):
 
     def __str__(self):
         return self.name or str(self.product_variant)
+
+    def get_translated_object_id(self):
+        return "ProductVariant", self.product_variant_id
+
+    def get_translated_keys(self):
+        return {"name": self.name}
 
 
 class ProductVariantChannelListing(models.Model):
@@ -735,7 +801,7 @@ class CollectionsQueryset(models.QuerySet):
         )
 
     def visible_to_user(self, requestor: Union["User", "App"], channel_slug: str):
-        if requestor_is_staff_member_or_app(requestor):
+        if has_one_of_permissions(requestor, ALL_PRODUCTS_PERMISSIONS):
             if channel_slug:
                 return self.filter(channel_listings__channel__slug=str(channel_slug))
             return self.all()
@@ -758,12 +824,21 @@ class Collection(SeoModel, ModelWithMetadata):
     background_image_alt = models.CharField(max_length=128, blank=True)
     description = SanitizedJSONField(blank=True, null=True, sanitizer=clean_editor_js)
 
-    objects = CollectionsQueryset.as_manager()
+    objects = models.Manager.from_queryset(CollectionsQueryset)()
 
     translated = TranslationProxy()
 
     class Meta(ModelWithMetadata.Meta):
         ordering = ("slug",)
+        indexes = [
+            *ModelWithMetadata.Meta.indexes,
+            GinIndex(
+                name="collection_search_gin",
+                # `opclasses` and `fields` should be the same length
+                fields=["name", "slug"],
+                opclasses=["gin_trgm_ops"] * 2,
+            ),
+        ]
 
     def __str__(self) -> str:
         return self.name
@@ -791,11 +866,10 @@ class CollectionChannelListing(PublishableModel):
 
 
 class CollectionTranslation(SeoModelTranslation):
-    language_code = models.CharField(max_length=10)
     collection = models.ForeignKey(
         Collection, related_name="translations", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, blank=True, null=True)
     description = SanitizedJSONField(blank=True, null=True, sanitizer=clean_editor_js)
 
     class Meta:
@@ -811,4 +885,17 @@ class CollectionTranslation(SeoModelTranslation):
         )
 
     def __str__(self) -> str:
-        return self.name
+        return self.name if self.name else str(self.pk)
+
+    def get_translated_object_id(self):
+        return "Collection", self.collection_id
+
+    def get_translated_keys(self):
+        translated_keys = super().get_translated_keys()
+        translated_keys.update(
+            {
+                "name": self.name,
+                "description": self.description,
+            }
+        )
+        return translated_keys
