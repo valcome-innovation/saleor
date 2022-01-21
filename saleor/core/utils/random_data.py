@@ -859,6 +859,7 @@ def create_channel(channel_name, currency_code, slug=None):
             "name": channel_name,
             "currency_code": currency_code,
             "is_active": True,
+            "default_country": "AT"
         },
     )
     return f"Channel: {channel}"
