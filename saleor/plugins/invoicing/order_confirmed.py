@@ -31,8 +31,11 @@ def create_and_send_invoice(order: "Order"):
     order_events.invoice_generated_event(
         order=order,
         user=order.user,
-        invoice_number=invoice.number,
+        app=None,  # VALCOME
+        invoice_number=invoice.number
     )
 
     manager = get_plugins_manager()
-    send_invoice(invoice, order.user, manager)
+
+    # VALCOME (app=None)
+    send_invoice(invoice, order.user, None, manager)
