@@ -46,7 +46,7 @@ def process_payment(
             customer_id=payment_information.customer_id,
         )
 
-    action_required_data = {"clientSecret": intent.client_secret}
+    action_required_data = { "client_secret": intent.client_secret }
 
     return GatewayResponse(
         is_success=True,

@@ -1,4 +1,4 @@
-from ....models import Payment, Checkout as CheckoutModel
+from ....models import Checkout as CheckoutModel
 from .....graphql.checkout.mutations import CheckoutComplete
 from .....graphql.payment.mutations import CheckoutPaymentCreate
 from .....graphql.checkout.types import Checkout
