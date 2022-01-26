@@ -9,7 +9,10 @@ from graphql_relay import to_global_id
 def handle_sofort(payment_intent, info):
     checkout_token = str(payment_intent.metadata.checkout_token)
     if not _is_checkout_processing(checkout_token):
+        # Manually fill request context
         info.context.user = CheckoutModel.objects.get(pk=checkout_token).user
+        info.context.app = None
+
         _update_checkout_webhook_processing(checkout_token, True)
         _complete_checkout(info, checkout_token, payment_intent)
 
@@ -27,16 +30,19 @@ def _complete_checkout(info, checkout_token, payment_intent):
     try:
         data = _create_payment_data(payment_intent)
         global_checkout_id = to_global_id(Checkout._meta.name, checkout_token)
-        CheckoutComplete().perform_mutation(None, info, global_checkout_id, False, **data)
+
+        # Manually call graphql checkoutComplete request (always verify params)
+        CheckoutComplete().perform_mutation(None, info, False, global_checkout_id, None, **data)
     except Exception as e:
         _update_checkout_webhook_processing(checkout_token, False)
         raise e
 
 
+# Creates merged payment data for checkout complete and confirm payment
 def _create_payment_data(payment_intent):
     return {
         "payment_data": {
-            "payment_intent": payment_intent
+            "payment_intent": payment_intent,
+            **payment_intent.metadata
         }
     }
-

@@ -1,6 +1,7 @@
 import json
 import stripe
 
+from ..... import settings
 from .....graphql.api import schema
 from .....streaming import stream_settings
 from django.http import HttpResponse
@@ -37,9 +38,11 @@ def handle_stripe_webhook_event(request, event_type, payment_intent):
         return HttpResponse(status=200)  # skip webhooks not meant for this app
 
 
+# Verify if stripe request comes from same app (skipped for local development)
 def has_matching_app_id(payment_intent):
-    return not hasattr(payment_intent.metadata, "appId") \
-           or payment_intent.metadata.appId == stream_settings.APP_ID
+    return not hasattr(payment_intent.metadata, "app_id") \
+           or payment_intent.metadata.app_id == stream_settings.APP_ID \
+           or settings.DEBUG
 
 
 def has_sofort_payment_method(payment_intent):

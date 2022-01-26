@@ -18,11 +18,12 @@ def process_payment(
 ) -> GatewayResponse:
     currency = payment_information.currency
     amount = payment_information.amount
-    payment_meta = payment_information.data.get("paymentMeta", {})
+
     meta = {
-        "checkout_token": payment_meta.get("checkoutToken", None),
-        "checkout_params": payment_meta.get("checkoutParams", None),
-        "redirect_id": payment_meta.get("redirectId", None)
+        "app_id": payment_information.data.get("app_id", None),
+        "checkout_token": payment_information.data.get("checkout_token", None),
+        "checkout_params": payment_information.data.get("checkout_params", None),
+        "redirect_id": payment_information.data.get("redirect_id", None)
     }
 
     try:
@@ -150,6 +151,7 @@ def create_sofort_payment_intent(config: GatewayConfig, amount, currency, meta):
         confirmation_method='automatic',
         capture_method='automatic',
         metadata={
+            "app_id": meta["app_id"],
             "checkout_token": meta["checkout_token"],
             "checkout_params": meta["checkout_params"],
             "redirect_id": meta["redirect_id"]
