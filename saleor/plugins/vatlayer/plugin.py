@@ -54,10 +54,11 @@ class VatlayerPlugin(BasePlugin):
     PLUGIN_NAME = "Vatlayer"
     META_CODE_KEY = "vatlayer.code"
     META_DESCRIPTION_KEY = "vatlayer.description"
+
     DEFAULT_ACTIVE = stream_settings.VATLAYER_PLUGIN_ACTIVE
     DEFAULT_CONFIGURATION = [
-        {"name": "Access key", "value": None},
-        {"name": "origin_country", "value": None},
+        {"name": "Access key", "value": stream_settings.VATLAYER_ACCESS_KEY},  # VALCOME
+        {"name": "origin_country", "value": settings.DEFAULT_COUNTRY},  # VALCOME
         {"name": "countries_to_calculate_taxes_from_origin", "value": None},
         {"name": "excluded_countries", "value": None},
     ]
