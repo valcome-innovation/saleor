@@ -3,6 +3,7 @@ from stripe.error import StripeError
 
 from ..stripe.deprecated import get_currency_for_stripe, get_amount_from_stripe, \
     get_currency_from_stripe
+from ..stripe.stripe_api import get_or_create_customer
 from ... import TransactionKind
 from ....payment.gateways.stripe.deprecated import get_amount_for_stripe
 from ....payment.interface import (
@@ -18,6 +19,7 @@ def process_payment(
 ) -> GatewayResponse:
     currency = payment_information.currency
     amount = payment_information.amount
+    api_key = config.connection_params.get("private_key")
 
     meta = {
         "app_id": payment_information.data.get("app_id", None),
@@ -26,12 +28,22 @@ def process_payment(
         "redirect_id": payment_information.data.get("redirect_id", None)
     }
 
+    # same implementation as in stripe/plugin.py:189
+    customer = None
+    if payment_information.graphql_customer_id:
+        customer = get_or_create_customer(
+            api_key=api_key,
+            customer_email=payment_information.customer_email,
+            customer_id=payment_information.customer_id,
+        )
+
     try:
         intent = create_sofort_payment_intent(
             config=config,
             amount=payment_information.amount,
             currency=payment_information.currency,
-            meta=meta
+            meta=meta,
+            customer=customer
         )
     except StripeError as exc:
         return GatewayResponse(
@@ -44,7 +56,7 @@ def process_payment(
             error=exc.user_message,
             raw_response=exc.json_body or {},
             payment_method_info=PaymentMethodInfo(type="sofort"),
-            customer_id=payment_information.customer_id,
+            customer_id=customer.id if customer else None,
         )
 
     action_required_data = { "client_secret": intent.client_secret }
@@ -58,7 +70,7 @@ def process_payment(
         raw_response=intent,
         action_required=True,
         action_required_data=action_required_data,
-        customer_id=payment_information.customer_id,
+        customer_id=customer.id if customer else None,
         payment_method_info=PaymentMethodInfo(type="sofort"),
         error=None
     )
@@ -140,7 +152,7 @@ def get_payment_meta(config: GatewayConfig, payment_intent_id):
     return payment_intent.metadata
 
 
-def create_sofort_payment_intent(config: GatewayConfig, amount, currency, meta):
+def create_sofort_payment_intent(config: GatewayConfig, amount, currency, meta, customer):
     client = _get_client(**config.connection_params)
     cents = get_amount_for_stripe(amount, currency)
 
@@ -150,6 +162,7 @@ def create_sofort_payment_intent(config: GatewayConfig, amount, currency, meta):
         currency=currency,
         confirmation_method='automatic',
         capture_method='automatic',
+        customer=customer,
         metadata={
             "app_id": meta["app_id"],
             "checkout_token": meta["checkout_token"],

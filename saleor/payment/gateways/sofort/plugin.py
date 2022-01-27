@@ -15,6 +15,7 @@ from . import (
 )
 
 GATEWAY_NAME = "SOFORT"
+GATEWAY_ID = "mirumee.payments.sofort"
 
 if TYPE_CHECKING:
     # flake8: noqa
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
 
 class SofortGatewayPlugin(BasePlugin):
     PLUGIN_NAME = GATEWAY_NAME
-    PLUGIN_ID = "mirumee.payments.sofort"
+    PLUGIN_ID = GATEWAY_ID
     DEFAULT_ACTIVE = stream_settings.STRIPE_PLUGIN_ACTIVE
     DEFAULT_CONFIGURATION = [
         {"name": "Public API key", "value": stream_settings.STRIPE_PUBLIC_KEY},

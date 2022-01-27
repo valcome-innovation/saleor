@@ -594,7 +594,14 @@ def store_customer_id(user: User, gateway: str, customer_id: str):
 
 
 def prepare_key_for_gateway_customer_id(gateway_name: str) -> str:
-    return (gateway_name.strip().upper()) + ".customer_id"
+    gateway_id = gateway_name.strip()
+
+    # VALCOME: sofort also uses stripe customers.
+    # Therefore, the customer prefix key has to be the same
+    if gateway_id == "mirumee.payments.sofort":
+        gateway_id = "saleor.payments.stripe"
+
+    return (gateway_id.upper()) + ".customer_id"
 
 
 def update_payment(payment: "Payment", gateway_response: "GatewayResponse"):
