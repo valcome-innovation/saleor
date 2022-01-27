@@ -51,8 +51,6 @@ def add_backends(backends):
 
 
 def add_plugins(plugins):
-    plugins.append("saleor.plugins.user_email.plugin.UserEmailPlugin")
-    plugins.append("saleor.plugins.invoicing.plugin.InvoicingPlugin")
     plugins.append("saleor.payment.gateways.paypal.plugin.PaypalGatewayPlugin")
     plugins.append("saleor.payment.gateways.sofort.plugin.SofortGatewayPlugin")
     plugins.append("saleor.plugins.streaming.plugin.StreamingPlugin")
