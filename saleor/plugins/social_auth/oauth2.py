@@ -49,6 +49,11 @@ def validate_social_auth_config():
                               message="Facebook Authentication not configured")
 
 
+# TODO [NWS-1032] Review for following user data
+# {
+#   id: '[Filtered]',
+#   name: 'Patrick Kanzi'
+# }
 def validate_user_email(user_data):
     if not user_data or not (user_data["email"] and user_data["email"].strip()):
         LOG.error('Empty email from social login received')

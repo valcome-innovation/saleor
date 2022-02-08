@@ -25,6 +25,15 @@ JWT_SALEOR_OWNER_NAME = "saleor"
 JWT_OWNER_FIELD = "owner"
 
 
+# VACLOME
+class TokenDeactivatedError(jwt.InvalidTokenError):
+    """
+    Raised when a token already deactivated token gets used.
+    A token gets deactivated if another user logs in with the same account.
+    """
+    pass
+
+
 def jwt_base_payload(
     exp_delta: Optional[timedelta], token_owner: str
 ) -> Dict[str, Any]:
@@ -118,8 +127,9 @@ def get_user_from_payload(payload: Dict[str, Any]) -> Optional[User]:
             "Invalid token. Create new one by using tokenCreate mutation."
         )
     if user.jwt_token_key != user_jwt_token:
-        raise jwt.InvalidTokenError(
-            "Invalid token. Create new one by using tokenCreate mutation."
+        # VALCOME's custom error
+        raise TokenDeactivatedError(
+            "TokenDeactivatedError: This token already got deactivated."
         )
     return user
 

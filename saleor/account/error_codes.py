@@ -27,6 +27,7 @@ class AccountErrorCode(Enum):
     PASSWORD_TOO_SIMILAR = "password_too_similar"
     REQUIRED = "required"
     UNIQUE = "unique"
+    JWT_ALREADY_DEACTIVATED = "jwt_already_deactivated"  # VACLOME custom error
     JWT_SIGNATURE_EXPIRED = "signature_has_expired"
     JWT_INVALID_TOKEN = "invalid_token"
     JWT_DECODE_ERROR = "decode_error"

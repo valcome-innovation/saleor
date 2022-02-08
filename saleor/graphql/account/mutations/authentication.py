@@ -19,6 +19,7 @@ from ....core.jwt import (
     create_refresh_token,
     get_user_from_payload,
     jwt_decode,
+    TokenDeactivatedError,
 )
 from ....core.permissions import get_permissions_from_names
 from ...core.mutations import BaseMutation
@@ -47,6 +48,8 @@ def get_payload(token):
 def get_user(payload):
     try:
         user = get_user_from_payload(payload)
+    except TokenDeactivatedError as e:
+        raise e  # VACLOME pass through custom error
     except Exception:
         user = None
     if not user:
@@ -236,6 +239,11 @@ class RefreshToken(BaseMutation):
             user = get_user(payload)
         except ValidationError as e:
             raise ValidationError({"refresh_token": e})
+        except TokenDeactivatedError as e:  # VALCOME catch custom error
+            raise ValidationError(
+                {"refresh_token": e },
+                code=AccountErrorCode.JWT_ALREADY_DEACTIVATED.value
+            )
         return user
 
     @classmethod
@@ -286,6 +294,11 @@ class VerifyToken(BaseMutation):
             user = get_user(payload)
         except ValidationError as e:
             raise ValidationError({"token": e})
+        except TokenDeactivatedError as e:  # VALCOME catch custom error
+            raise ValidationError(
+                {"refresh_token": e },
+                code=AccountErrorCode.JWT_ALREADY_DEACTIVATED.value
+            )
         return user
 
     @classmethod
