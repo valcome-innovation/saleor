@@ -395,21 +395,22 @@ class ExternalObtainAccessTokens(BaseMutation):
         plugin_id = data["plugin_id"]
         input_data = data["input"]
         manager = info.context.plugins
-        access_tokens_response = manager.external_obtain_access_tokens(
+        response = manager.external_obtain_access_tokens(
             plugin_id, input_data, request
         )
-        info.context.refresh_token = access_tokens_response.refresh_token
+        info.context.refresh_token = response.refresh_token
 
-        if access_tokens_response.user and access_tokens_response.user.id:
-            info.context._cached_user = access_tokens_response.user
-            access_tokens_response.user.last_login = timezone.now()
-            access_tokens_response.user.save(update_fields=["last_login"])
+        if response.user and response.user.id:
+            info.context._cached_user = response.user
+            response.user.jwt_token_key = get_random_string()  # VALCOME user logout
+            response.user.last_login = timezone.now()
+            response.user.save(update_fields=["last_login", "jwt_token_key"])
 
         return cls(
-            token=access_tokens_response.token,
-            refresh_token=access_tokens_response.refresh_token,
-            csrf_token=access_tokens_response.csrf_token,
-            user=access_tokens_response.user,
+            token=response.token,
+            refresh_token=response.refresh_token,
+            csrf_token=response.csrf_token,
+            user=response.user,
         )
 
 

@@ -112,7 +112,7 @@ def jwt_refresh_token_middleware(get_response):
                 JWT_REFRESH_TOKEN_COOKIE_NAME,
                 jwt_refresh_token,
                 expires=expires,
-                httponly=True,  # protects token from leaking
+                httponly=True,   # protects token from leaking to js
                 secure=True,     # VALCOME
                 samesite="None"  # VALCOME
             )

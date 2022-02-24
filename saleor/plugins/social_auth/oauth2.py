@@ -53,19 +53,36 @@ def validate_user_email(user_data):
     if not user_data or not ("email" in user_data and user_data["email"].strip()):
         LOG.error('Empty email from social login received')
         LOG.error(user_data)
-        raise ValidationError(
-            {
-                "email": ValidationError(
-                    "There is no email address associated with your social account.",
-                    code=AccountErrorCode.INVALID_CREDENTIALS,
-                )
-            }
-        )
+        raise ValidationError({
+            "email": ValidationError(
+                "There is no email address associated with your social account.",
+                code=AccountErrorCode.INVALID_CREDENTIALS,
+            )
+        })
 
 
 def do_authenticate(email):
+    user = User.objects.filter(email=email).first()
+
+    # VALCOME error handling (same as CreateToken)
+    if not user.is_active and not user.last_login:
+        raise ValidationError({
+            "email": ValidationError(
+                "Account needs to be confirmed via email.",
+                code=AccountErrorCode.ACCOUNT_NOT_CONFIRMED.value,
+            )
+        })
+
+    # VALCOME error handling (same as CreateToken)
+    if not user.is_active and user.last_login:
+        raise ValidationError({
+            "email": ValidationError(
+                "Account inactive.",
+                code=AccountErrorCode.INACTIVE.value,
+            )
+        })
+
     try:
-        user = User.objects.filter(email=email, is_active=True).first()
         access_token = jwt.create_access_token(user)
         csrf_token = _get_new_csrf_token()
         refresh_token = jwt.create_refresh_token(user, {"csrfToken": csrf_token})
@@ -77,9 +94,7 @@ def do_authenticate(email):
         )
     except BaseException as e:
         print(e)
-        return ExternalObtainAccessTokens(errors=[
-            AccountError(code=AccountErrorCode.GRAPHQL_ERROR, message=str(e))
-        ])
+        raise ValidationError(str(e), code=AccountErrorCode.GRAPHQL_ERROR)
 
 
 def on_resolve(values):
