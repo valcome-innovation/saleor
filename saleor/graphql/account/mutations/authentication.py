@@ -240,10 +240,12 @@ class RefreshToken(BaseMutation):
         except ValidationError as e:
             raise ValidationError({"refresh_token": e})
         except TokenDeactivatedError as e:  # VALCOME catch custom error
-            raise ValidationError(
-                {"refresh_token": e },
-                code=AccountErrorCode.JWT_ALREADY_DEACTIVATED.value
-            )
+            raise ValidationError({
+                "refresh_token": ValidationError(
+                    message=str(e),
+                    code=AccountErrorCode.JWT_ALREADY_DEACTIVATED.value
+                )
+            })
         return user
 
     @classmethod
@@ -295,10 +297,12 @@ class VerifyToken(BaseMutation):
         except ValidationError as e:
             raise ValidationError({"token": e})
         except TokenDeactivatedError as e:  # VALCOME catch custom error
-            raise ValidationError(
-                {"refresh_token": e },
-                code=AccountErrorCode.JWT_ALREADY_DEACTIVATED.value
-            )
+            raise ValidationError({
+                "refresh_token": ValidationError(
+                    message=str(e),
+                    code=AccountErrorCode.JWT_ALREADY_DEACTIVATED.value
+                )
+            })
         return user
 
     @classmethod
