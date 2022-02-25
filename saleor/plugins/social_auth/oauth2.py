@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from social_django.utils import load_strategy, load_backend
 from social_django.compat import reverse
+from django.utils.crypto import get_random_string
 
 from ..base_plugin import ExternalAccessTokens
 from ...core import jwt
@@ -83,9 +84,15 @@ def do_authenticate(email):
         })
 
     try:
+        user.jwt_token_key = get_random_string()  # VALCOME user logout
         access_token = jwt.create_access_token(user)
         csrf_token = _get_new_csrf_token()
         refresh_token = jwt.create_refresh_token(user, {"csrfToken": csrf_token})
+
+        User.objects.filter(email=user.email).update(
+            jwt_token_key=user.jwt_token_key
+        )
+
         return ExternalAccessTokens(
             user=user,
             token=access_token,

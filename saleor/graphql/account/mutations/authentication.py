@@ -406,9 +406,8 @@ class ExternalObtainAccessTokens(BaseMutation):
 
         if response.user and response.user.id:
             info.context._cached_user = response.user
-            response.user.jwt_token_key = get_random_string()  # VALCOME user logout
             response.user.last_login = timezone.now()
-            response.user.save(update_fields=["last_login", "jwt_token_key"])
+            response.user.save(update_fields=["last_login"])
 
         return cls(
             token=response.token,
