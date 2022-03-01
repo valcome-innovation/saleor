@@ -95,6 +95,8 @@ def send_user_change_email_notification(recipient_email, user, manager, channel_
     payload = {
         "user": get_default_user_payload(user),
         "recipient_email": recipient_email,
+        "old_email": recipient_email,  # VALCOME fill payload to prevent Key Error
+        "new_email": user.email,  # VALCOME fill payload to prevent Key Error
         "channel_slug": channel_slug,
         **get_site_context(),
     }

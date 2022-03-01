@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 import graphene
 import jwt
 from django.conf import settings
+from graphql_relay import from_global_id
 
 from ..account.models import User
 from ..app.models import App
@@ -121,10 +122,17 @@ def create_refresh_token(
 
 def get_user_from_payload(payload: Dict[str, Any]) -> Optional[User]:
     user = User.objects.filter(email=payload["email"], is_active=True).first()
+
+    # VALCOME use user_id as backup (to not throw error if user changes email over
+    # multiple tabs)
+    if not user:
+        _, user_id = from_global_id(payload["user_id"])
+        user = User.objects.filter(id=user_id, is_active=True).first()
+
     user_jwt_token = payload.get("token")
     if not user_jwt_token or not user:
         raise jwt.InvalidTokenError(
-            "Invalid token. Create new one by using tokenCreate mutation."
+            "Invalid token (get_user_from_payload). Create new one by using tokenCreate mutation."
         )
     if user.jwt_token_key != user_jwt_token:
         # VALCOME's custom error
@@ -157,7 +165,7 @@ def get_user_from_access_payload(payload: dict) -> Optional[User]:
     jwt_type = payload.get("type")
     if jwt_type not in [JWT_ACCESS_TYPE, JWT_THIRDPARTY_ACCESS_TYPE]:
         raise jwt.InvalidTokenError(
-            "Invalid token. Create new one by using tokenCreate mutation."
+            "Invalid token (get_user_from_access_payload). Create new one by using tokenCreate mutation."
         )
     permissions = payload.get(PERMISSIONS_FIELD, None)
     user = get_user_from_payload(payload)

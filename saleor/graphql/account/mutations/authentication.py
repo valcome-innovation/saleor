@@ -8,6 +8,7 @@ from django.middleware.csrf import _get_new_csrf_token
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from graphene.types.generic import GenericScalar
+from sentry_sdk import capture_exception
 
 from ....account import models
 from ....account.error_codes import AccountErrorCode
@@ -30,17 +31,20 @@ from ..types import User
 def get_payload(token):
     try:
         payload = jwt_decode(token)
-    except jwt.ExpiredSignatureError:
+    except jwt.ExpiredSignatureError as e:
+        capture_exception(e)
         raise ValidationError(
             "Signature has expired", code=AccountErrorCode.JWT_SIGNATURE_EXPIRED.value
         )
-    except jwt.DecodeError:
+    except jwt.DecodeError as e:
+        capture_exception(e)
         raise ValidationError(
             "Error decoding signature", code=AccountErrorCode.JWT_DECODE_ERROR.value
         )
-    except jwt.InvalidTokenError:
+    except jwt.InvalidTokenError as e:
+        capture_exception(e)
         raise ValidationError(
-            "Invalid token", code=AccountErrorCode.JWT_INVALID_TOKEN.value
+            "Invalid token (get_payload)", code=AccountErrorCode.JWT_INVALID_TOKEN.value
         )
     return payload
 
@@ -50,11 +54,12 @@ def get_user(payload):
         user = get_user_from_payload(payload)
     except TokenDeactivatedError as e:
         raise e  # VACLOME pass through custom error
-    except Exception:
+    except Exception as e:
+        capture_exception(e)
         user = None
     if not user:
         raise ValidationError(
-            "Invalid token", code=AccountErrorCode.JWT_INVALID_TOKEN.value
+            "Invalid token (get_user)", code=AccountErrorCode.JWT_INVALID_TOKEN.value
         )
     permissions = payload.get(PERMISSIONS_FIELD)
     if permissions is not None:
