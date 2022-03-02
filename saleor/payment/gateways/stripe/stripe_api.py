@@ -157,8 +157,9 @@ def create_payment_intent(
     if payment_method_types and isinstance(payment_method_types, list):
         additional_params["payment_method_types"] = payment_method_types
 
-    if customer_email:
-        additional_params["receipt_email"] = customer_email
+    # VALCOME do not send Stripe success emails
+    # if customer_email:
+    #     additional_params["receipt_email"] = customer_email
 
     try:
         with stripe_opentracing_trace("stripe.PaymentIntent.create"):
