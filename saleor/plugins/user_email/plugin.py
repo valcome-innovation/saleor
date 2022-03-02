@@ -343,7 +343,7 @@ class UserEmailPlugin(BasePlugin):
         constants.ORDER_PAYMENT_CONFIRMATION_TEMPLATE_FIELD: {
             "type": ConfigurationTypeField.MULTILINE,
             "help_text": DEFAULT_TEMPLATE_HELP_TEXT,
-            "label": "Payment confirmation - template",
+            "label": "Payment confirmation - template (VALCOME: email disabled in code)",
         },
         constants.ORDER_CANCELED_SUBJECT_FIELD: {
             "type": ConfigurationTypeField.STRING,
@@ -465,7 +465,9 @@ class UserEmailPlugin(BasePlugin):
             return previous_value
 
         template_map = get_user_template_map(self.templates)
-        if not template_map.get(event):
+        # VALCOME never send order_payment_confirmations (somehow setting template to
+        # blank in config does not work
+        if not template_map.get(event) or event == 'order_payment_confirmation':
             return previous_value
 
         event_func = event_map[event]
