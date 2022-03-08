@@ -1,6 +1,6 @@
 import logging
-from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, List, Optional, Union
+from dataclasses import asdict
+from typing import TYPE_CHECKING, List, Union
 
 from promise.promise import Promise
 
@@ -462,12 +462,6 @@ class UserEmailPlugin(BasePlugin):
 
         if event not in event_map:
             logger.warning(f"Missing handler for event {event}")
-            return previous_value
-
-        template_map = get_user_template_map(self.templates)
-        # VALCOME never send order_payment_confirmations (somehow setting template to
-        # blank in config does not work
-        if not template_map.get(event) or event == 'order_payment_confirmation':
             return previous_value
 
         event_func = event_map[event]

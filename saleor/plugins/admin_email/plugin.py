@@ -1,6 +1,6 @@
 import logging
-from dataclasses import asdict, dataclass
-from typing import List, Optional, Union
+from dataclasses import asdict
+from typing import List, Union
 
 from django.conf import settings
 from promise.promise import Promise
@@ -263,10 +263,6 @@ class AdminEmailPlugin(BasePlugin):
 
         if event not in event_map:
             logger.warning(f"Missing handler for event {event}")
-            return previous_value
-
-        template_map = get_admin_template_map(self.templates)
-        if not template_map.get(event):
             return previous_value
 
         event_func = event_map[event]
