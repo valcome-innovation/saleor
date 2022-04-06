@@ -1,8 +1,8 @@
 node {
-    withCredentials([usernamePassword(credentialsId: 'ARES_SSH', usernameVariable: 'user', passwordVariable: 'password')]) {
+    withCredentials([sshUserPrivateKey(credentialsId: 'ARES_SSH', keyFileVariable: 'identity', passphraseVariable: 'passphrase', usernameVariable: 'user')]) {
         stage("Build Image") {
             try {
-                trigger_build(user, password)
+                trigger_build(user, passphrase, identity)
             } catch (e) {
                 currentBuild.result = 'FAILURE'
                 echo e
@@ -13,13 +13,13 @@ node {
     }
 }
 
-def trigger_build(user, password) {
-    def build = start_build(user, password)
-    def runningBuild = get_build_status(user, password, build.id)
+def trigger_build(user, passphrase, identity) {
+    def build = start_build(user, passphrase, identity)
+    def runningBuild = get_build_status(user, passphrase, identity, build.id)
 
     while(runningBuild.currentPhase != "COMPLETED") {
         sleep 15
-        runningBuild = get_build_status(user, password, build.id)
+        runningBuild = get_build_status(user, passphrase, identity, build.id)
         echo "ID: " + runningBuild.id
         echo "Phase: " + runningBuild.currentPhase
         echo "Status: " + runningBuild.buildStatus
@@ -34,8 +34,8 @@ def trigger_build(user, password) {
     }
 }
 
-def start_build(user, password) {
-    def result = sshCommand remote: get_remote(user, password), command: """
+def start_build(user, passphrase, identity) {
+    def result = sshCommand remote: get_remote(user, passphrase, identity), command: """
     aws codebuild start-build \
         --project-name saleor \
         --source-version refs/heads/${BRANCH} \
@@ -47,21 +47,22 @@ def start_build(user, password) {
     return json.build
 }
 
-def get_build_status(user, password, build_id) {
-    def result = sshCommand remote: get_remote(user, password), command: """
+def get_build_status(user, passphrase, identity, build_id) {
+    def result = sshCommand remote: get_remote(user, passphrase, identity), command: """
     aws codebuild batch-get-builds --ids ${build_id}
     """
     def json = readJSON text: "" + result
     return json.builds[0]
 }
 
-def get_remote(user, password) {
+def get_remote(user, passphrase, identity) {
     def remote = [:]
     remote.name = "Build Server"
     remote.host = "${HOST}"
     remote.port = 2020
     remote.user = user
-    remote.password = password
+    remote.passphrase = passphrase
+    remote.identityFile = identity
     remote.allowAnyHosts = true
     return remote
 }
