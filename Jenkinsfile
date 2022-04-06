@@ -59,7 +59,6 @@ def get_remote(user, passphrase, identity) {
     def remote = [:]
     remote.name = "Build Server"
     remote.host = "${HOST}"
-    remote.port = 2020
     remote.user = user
     remote.passphrase = passphrase
     remote.identityFile = identity
