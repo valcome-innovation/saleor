@@ -32,6 +32,12 @@ def setup_database_url():
     DB_HOST = os.environ.get("DB_HOST")
     DB_NAME = os.environ.get("DB_NAME")
 
+    print("setup_database_url")
+    print(DB_USER)
+    print(DB_PASSWORD)
+    print(DB_NAME)
+    print(DB_HOST)
+
     if DB_PASSWORD is not None and DB_USER is not None and DB_NAME is not None and DB_HOST is not None:
         os.environ['DATABASE_URL'] =  "postgres://%s:%s@%s/%s" % (DB_USER, DB_PASSWORD, DB_HOST, DB_NAME)
 
