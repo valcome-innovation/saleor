@@ -107,9 +107,6 @@ if not EMAIL_URL:
 SENDGRID_USERNAME = os.environ.get("SENDGRID_USERNAME")
 SENDGRID_PASSWORD = os.environ.get("SENDGRID_PASSWORD")
 
-print("EMAIL_URL ++++++++++++++++++++")
-print(EMAIL_URL)
-
 if not EMAIL_URL and SENDGRID_USERNAME and SENDGRID_PASSWORD:
     EMAIL_URL = "smtp://%s:%s@smtp.sendgrid.net:587/?tls=True" % (
         SENDGRID_USERNAME,
