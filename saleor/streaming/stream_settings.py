@@ -14,16 +14,16 @@ def get_bool_from_env(name, default_value):
     return default_value
 
 
-def get_aws_email_url(email_url):
+def get_aws_email_url():
     AWS_SMTP_USER = get_docker_secret("aws_smtp_user", secrets_dir="/run/secrets")
     AWS_SMTP_PASSWORD = get_docker_secret("aws_smtp_password", secrets_dir="/run/secrets")
 
-    if not email_url and AWS_SMTP_USER and AWS_SMTP_PASSWORD:
+    if AWS_SMTP_USER and AWS_SMTP_PASSWORD:
         return "smtp://%s:%s@email-smtp.eu-central-1.amazonaws.com:587/?tls=True" % (
             AWS_SMTP_USER, AWS_SMTP_PASSWORD,
         )
     else:
-        return email_url
+        return None
 
 
 def setup_database_url():
