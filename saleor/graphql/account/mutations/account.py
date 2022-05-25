@@ -117,6 +117,37 @@ class AccountRegister(ModelMutation):
         data["language_code"] = data.get("language_code", settings.LANGUAGE_CODE)
         return super().clean_input(info, instance, data, input_cls=None)
 
+    # VALCOME resend email for already existing accounts
+    @classmethod
+    def clean_instance(cls, info, user):
+        try:
+            return super().clean_instance(info, user)
+        except ValidationError as error:
+            throw_error = True
+
+            # check if only UNIQUE email error prevents account creation
+            if cls.only_contains_unique_email_error(error):
+
+                # find user only if it wasn't activated already
+                existing_user = models.User.objects \
+                    .filter(email=user.email, is_active=False) \
+                    .first()
+
+                if existing_user:
+                    user.id = existing_user.id  # overwrite user
+                    throw_error = False  # and prevent validation error
+
+            if throw_error:
+                raise error
+
+    # VALCOME
+    @staticmethod
+    def only_contains_unique_email_error(error):
+        if "email" in error.error_dict and len(error.error_dict["email"]) == 1:
+            return error.error_dict["email"][0].code == "unique"
+
+        return False
+
     @classmethod
     @traced_atomic_transaction()
     def save(cls, info, user, cleaned_input):
