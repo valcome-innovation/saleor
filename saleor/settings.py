@@ -96,10 +96,6 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 EMAIL_URL = os.environ.get("EMAIL_URL")
 
-# VALCOME TODO remove passing credentials instead of email_gateway_url [NWS-1112]
-if not EMAIL_URL:
-    EMAIL_URL = stream_settings.get_aws_email_url()
-
 # VALCOME
 if not EMAIL_URL:
     EMAIL_URL = get_docker_secret("email_gateway_url", secrets_dir="/run/secrets")
