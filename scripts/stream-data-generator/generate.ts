@@ -85,12 +85,15 @@ const teamValues = [
   { name: "KAC", slug: "kac" },
   { name: "DEC", slug: "dec" },
   { name: "AVS", slug: "avs" },
-  { name: "BRC", slug: "brc" }
+  { name: "BRC", slug: "brc" },
+  { name: "AEV", slug: "aev" },
+  { name: "PEC", slug: "pec" }
 ].map((config) => createAttributeValue(teamsAttribute, config));
 
 const leagueValues = [
   { name: "ICE", slug: "ice" },
   { name: "AHL", slug: "ahl" },
+  { name: "DOL", slug: "dol" },
 ].map((config) => createAttributeValue(leaguesAttribute, config));
 
 const singleProducts = teamValues
