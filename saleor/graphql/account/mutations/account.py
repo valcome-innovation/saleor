@@ -73,6 +73,7 @@ class AccountRegister(ModelMutation):
 
     @classmethod
     def mutate(cls, root, info, **data):
+        print("schauma moi =============")
         response = super().mutate(root, info, **data)
         response.requires_confirmation = settings.ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL
         return response
@@ -143,6 +144,9 @@ class AccountRegister(ModelMutation):
     # VALCOME
     @staticmethod
     def only_contains_unique_email_error(error):
+        print("jz is soweit =============")
+        print(error)
+        print(error.error_dict)
         if "email" in error.error_dict and len(error.error_dict["email"]) == 1:
             return error.error_dict["email"][0].code == "unique"
 
