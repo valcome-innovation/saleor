@@ -147,6 +147,8 @@ class AccountRegister(ModelMutation):
         print("jz is soweit =============")
         print(error)
         print(error.error_dict)
+        print(error.error_dict["email"])
+        print(error.error_dict["email"][0].code)
         if "email" in error.error_dict and len(error.error_dict["email"]) == 1:
             return error.error_dict["email"][0].code == "unique"
 
