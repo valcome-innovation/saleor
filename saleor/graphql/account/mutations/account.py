@@ -73,7 +73,6 @@ class AccountRegister(ModelMutation):
 
     @classmethod
     def mutate(cls, root, info, **data):
-        print("schauma moi =============")
         response = super().mutate(root, info, **data)
         response.requires_confirmation = settings.ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL
         return response
@@ -128,20 +127,15 @@ class AccountRegister(ModelMutation):
 
             # check if only UNIQUE email error prevents account creation
             if cls.only_contains_unique_email_error(error):
-                print('contains')
-                print(user.email)
 
                 # find user only if it wasn't activated already
                 existing_user = models.User.objects \
                     .filter(email=user.email, is_active=False) \
                     .first()
 
-                print(existing_user)
-
                 if existing_user:
                     user.id = existing_user.id  # overwrite user
                     throw_error = False  # and prevent validation error
-                    print("wenns soweit kummt is komisch")
 
             if throw_error:
                 raise error
@@ -149,11 +143,6 @@ class AccountRegister(ModelMutation):
     # VALCOME
     @staticmethod
     def only_contains_unique_email_error(error):
-        print("jz is soweit =============")
-        print(error)
-        print(error.error_dict)
-        print(error.error_dict["email"])
-        print(error.error_dict["email"][0].code)
         if "email" in error.error_dict and len(error.error_dict["email"]) == 1:
             return error.error_dict["email"][0].code == "unique"
 
