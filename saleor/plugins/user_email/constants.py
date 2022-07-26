@@ -75,13 +75,13 @@ ORDER_CANCELED_SUBJECT_FIELD = "order_canceled_subject"
 ORDER_REFUND_CONFIRMATION_SUBJECT_FIELD = "order_refund_confirmation_subject"
 
 
-ACCOUNT_CONFIRMATION_DEFAULT_SUBJECT = "Account confirmation e-mail"
+ACCOUNT_CONFIRMATION_DEFAULT_SUBJECT = "Please confirm your account"
 ACCOUNT_SET_CUSTOMER_PASSWORD_DEFAULT_SUBJECT = "Hello from {{ site_name }}!"
-ACCOUNT_DELETE_DEFAULT_SUBJECT = "Delete your account"
-ACCOUNT_CHANGE_EMAIL_CONFIRM_DEFAULT_SUBJECT = "Email change e-mail"
-ACCOUNT_CHANGE_EMAIL_REQUEST_DEFAULT_SUBJECT = "Email change e-mail"
-ACCOUNT_PASSWORD_RESET_DEFAULT_SUBJECT = "Password reset e-mail"
-INVOICE_READY_DEFAULT_SUBJECT = "Invoice"
+ACCOUNT_DELETE_DEFAULT_SUBJECT = "Delete your account at {{ site_name }}"
+ACCOUNT_CHANGE_EMAIL_CONFIRM_DEFAULT_SUBJECT = "Email has been changed"
+ACCOUNT_CHANGE_EMAIL_REQUEST_DEFAULT_SUBJECT = "Confirm your new Email"
+ACCOUNT_PASSWORD_RESET_DEFAULT_SUBJECT = "Password reset confirmation"
+INVOICE_READY_DEFAULT_SUBJECT = "Your order at {{ site_name }}"
 ORDER_CONFIRMATION_DEFAULT_SUBJECT = "Order #{{ order.number }} details"
 ORDER_CONFIRMED_DEFAULT_SUBJECT = "Order #{{ order.number }} confirmed"
 ORDER_FULFILLMENT_CONFIRMATION_DEFAULT_SUBJECT = (
@@ -92,4 +92,4 @@ ORDER_FULFILLMENT_UPDATE_DEFAULT_SUBJECT = (
 )
 ORDER_PAYMENT_CONFIRMATION_DEFAULT_SUBJECT = "Order {{ order.number }} payment details"
 ORDER_CANCELED_DEFAULT_SUBJECT = "Order {{ order.number }} canceled"
-ORDER_REFUND_CONFIRMATION_DEFAULT_SUBJECT = "Order {{ order.number }} refunded"
+ORDER_REFUND_CONFIRMATION_DEFAULT_SUBJECT = "Order {{ order.number }} refund"
