@@ -1,6 +1,6 @@
 import logging
-from dataclasses import asdict
-from typing import TYPE_CHECKING, List, Union
+from dataclasses import asdict, dataclass
+from typing import TYPE_CHECKING, List, Optional, Union
 
 from promise.promise import Promise
 

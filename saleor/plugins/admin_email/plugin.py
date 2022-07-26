@@ -1,6 +1,6 @@
 import logging
-from dataclasses import asdict
-from typing import List, Union
+from dataclasses import asdict, dataclass
+from typing import List, Optional, Union
 
 from django.conf import settings
 from promise.promise import Promise
