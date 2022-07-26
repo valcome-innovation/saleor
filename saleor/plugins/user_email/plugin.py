@@ -343,7 +343,7 @@ class UserEmailPlugin(BasePlugin):
         constants.ORDER_PAYMENT_CONFIRMATION_TEMPLATE_FIELD: {
             "type": ConfigurationTypeField.MULTILINE,
             "help_text": DEFAULT_TEMPLATE_HELP_TEXT,
-            "label": "Payment confirmation - template (VALCOME: email disabled in code)",
+            "label": "Payment confirmation - template",
         },
         constants.ORDER_CANCELED_SUBJECT_FIELD: {
             "type": ConfigurationTypeField.STRING,

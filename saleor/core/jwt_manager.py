@@ -114,8 +114,14 @@ class JWTManager(JWTManagerBase):
     @classmethod
     def encode(cls, payload):
         return jwt.encode(
-            payload, cls.get_private_key(), algorithm="RS256", headers={"kid": KID}
+            payload,
+            settings.SECRET_KEY,  # type: ignore
+            "HS256",
         )
+        # VALCOME revert to HS256
+        # return jwt.encode(
+        #     payload, cls.get_private_key(), algorithm="RS256", headers={"kid": KID}
+        # )
 
     @classmethod
     def decode(cls, token, verify_expiration: bool = True):
@@ -136,23 +142,30 @@ class JWTManager(JWTManagerBase):
 
     @classmethod
     def validate_configuration(cls):
-        if not settings.RSA_PRIVATE_KEY:
-            if not settings.DEBUG:
-                raise ImproperlyConfigured(
-                    "Variable RSA_PRIVATE_KEY is not provided. "
-                    "It is required for running in not DEBUG mode."
-                )
-            else:
-                msg = (
-                    "RSA_PRIVATE_KEY is missing. Using temporary key for local "
-                    "development with DEBUG mode."
-                )
-                logger.warning(color_style().WARNING(msg))
+        if not settings.SECRET_KEY:
+            raise ImproperlyConfigured(
+                "Variable SECRET_KEY is not provided. "
+                "It is required for JWT authentication to work."
+            )
 
-        try:
-            cls.get_private_key()
-        except Exception as e:
-            raise ImproperlyConfigured(f"Unable to load provided PEM private key. {e}")
+        # VALCOME use old HS256 alogrithm
+        # if not settings.RSA_PRIVATE_KEY:
+        #     if not settings.DEBUG:
+        #         raise ImproperlyConfigured(
+        #             "Variable RSA_PRIVATE_KEY is not provided. "
+        #             "It is required for running in not DEBUG mode."
+        #         )
+        #     else:
+        #         msg = (
+        #             "RSA_PRIVATE_KEY is missing. Using temporary key for local "
+        #             "development with DEBUG mode."
+        #         )
+        #         logger.warning(color_style().WARNING(msg))
+        #
+        # try:
+        #     cls.get_private_key()
+        # except Exception as e:
+        #     raise ImproperlyConfigured(f"Unable to load provided PEM private key. {e}")
 
 
 def get_jwt_manager() -> JWTManagerBase:
