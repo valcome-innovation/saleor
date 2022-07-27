@@ -133,13 +133,16 @@ class UserEmailPlugin(BasePlugin):
         },
         {
             "name": constants.ACCOUNT_SET_CUSTOMER_PASSWORD_TEMPLATE_FIELD,
-            "value": DEFAULT_EMAIL_VALUE,
+            "value": "",
         },
         {
             "name": constants.ACCOUNT_DELETE_SUBJECT_FIELD,
             "value": constants.ACCOUNT_DELETE_DEFAULT_SUBJECT,
         },
-        {"name": constants.ACCOUNT_DELETE_TEMPLATE_FIELD, "value": DEFAULT_EMAIL_VALUE},
+        {
+            "name": constants.ACCOUNT_DELETE_TEMPLATE_FIELD,
+            "value": DEFAULT_EMAIL_VALUE
+        },
         {
             "name": constants.ACCOUNT_CHANGE_EMAIL_CONFIRM_SUBJECT_FIELD,
             "value": constants.ACCOUNT_CHANGE_EMAIL_CONFIRM_DEFAULT_SUBJECT,
@@ -168,14 +171,17 @@ class UserEmailPlugin(BasePlugin):
             "name": constants.INVOICE_READY_SUBJECT_FIELD,
             "value": constants.INVOICE_READY_DEFAULT_SUBJECT,
         },
-        {"name": constants.INVOICE_READY_TEMPLATE_FIELD, "value": DEFAULT_EMAIL_VALUE},
+        {
+            "name": constants.INVOICE_READY_TEMPLATE_FIELD,
+            "value": DEFAULT_EMAIL_VALUE
+        },
         {
             "name": constants.ORDER_CONFIRMATION_SUBJECT_FIELD,
             "value": constants.ORDER_CONFIRMATION_DEFAULT_SUBJECT,
         },
         {
             "name": constants.ORDER_CONFIRMATION_TEMPLATE_FIELD,
-            "value": DEFAULT_EMAIL_VALUE,
+            "value": "",
         },
         {
             "name": constants.ORDER_CONFIRMED_SUBJECT_FIELD,
@@ -183,7 +189,7 @@ class UserEmailPlugin(BasePlugin):
         },
         {
             "name": constants.ORDER_CONFIRMED_TEMPLATE_FIELD,
-            "value": DEFAULT_EMAIL_VALUE,
+            "value": "",
         },
         {
             "name": constants.ORDER_FULFILLMENT_CONFIRMATION_SUBJECT_FIELD,
@@ -191,7 +197,7 @@ class UserEmailPlugin(BasePlugin):
         },
         {
             "name": constants.ORDER_FULFILLMENT_CONFIRMATION_TEMPLATE_FIELD,
-            "value": DEFAULT_EMAIL_VALUE,
+            "value": "",
         },
         {
             "name": constants.ORDER_FULFILLMENT_UPDATE_SUBJECT_FIELD,
@@ -199,7 +205,7 @@ class UserEmailPlugin(BasePlugin):
         },
         {
             "name": constants.ORDER_FULFILLMENT_UPDATE_TEMPLATE_FIELD,
-            "value": DEFAULT_EMAIL_VALUE,
+            "value": "",
         },
         {
             "name": constants.ORDER_PAYMENT_CONFIRMATION_SUBJECT_FIELD,
@@ -207,13 +213,16 @@ class UserEmailPlugin(BasePlugin):
         },
         {
             "name": constants.ORDER_PAYMENT_CONFIRMATION_TEMPLATE_FIELD,
-            "value": DEFAULT_EMAIL_VALUE,
+            "value": "",
         },
         {
             "name": constants.ORDER_CANCELED_SUBJECT_FIELD,
             "value": constants.ORDER_CANCELED_DEFAULT_SUBJECT,
         },
-        {"name": constants.ORDER_CANCELED_TEMPLATE_FIELD, "value": DEFAULT_EMAIL_VALUE},
+        {
+            "name": constants.ORDER_CANCELED_TEMPLATE_FIELD,
+            "value": ""
+        },
         {
             "name": constants.ORDER_REFUND_CONFIRMATION_SUBJECT_FIELD,
             "value": constants.ORDER_REFUND_CONFIRMATION_DEFAULT_SUBJECT,
