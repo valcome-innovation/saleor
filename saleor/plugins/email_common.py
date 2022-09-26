@@ -40,7 +40,7 @@ DEFAULT_TEMPLATE_HELP_TEXT = (
 )
 DEFAULT_SUBJECT_HELP_TEXT = "An email subject built with Handlebars template language."
 DEFAULT_EMAIL_VALUE = "DEFAULT"
-DEFAULT_EMAIL_TIMEOUT = 5
+DEFAULT_EMAIL_TIMEOUT = 40
 
 
 @dataclass
@@ -201,7 +201,7 @@ def send_email(
         password=config.password,
         use_ssl=config.use_ssl,
         use_tls=config.use_tls,
-        timeout=DEFAULT_EMAIL_TIMEOUT,
+        timeout=DEFAULT_EMAIL_TIMEOUT
     )
     compiler = pybars.Compiler()
     template = compiler.compile(template_str)
