@@ -52,8 +52,6 @@ def validate_social_auth_config():
 
 def validate_user_email(user_data):
     if not user_data or not ("email" in user_data and user_data["email"].strip()):
-        LOG.error('Empty email from social login received')
-        LOG.error(user_data)
         raise ValidationError({
             "email": ValidationError(
                 "There is no email address associated with your social account.",
