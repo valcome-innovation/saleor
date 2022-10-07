@@ -65,12 +65,13 @@ class Command(BaseCommand):
             self.stdout.write(msg)
 
         about = create_page(1, "Impressum", "about")
-        self.stdout.write(about.slug)
         privacy = create_page(2, "Datenschutzerklärung", "privacy")
-        self.stdout.write(privacy.slug)
         terms = create_page(3, "AGB", "terms")
+        faq = create_page(4, "Frequently Asked Questions", "faq")
+
+        self.stdout.write(about.slug)
+        self.stdout.write(privacy.slug)
         self.stdout.write(terms.slug)
-        faq = create_page(4, "Frequently Ask Questions", "faq")
         self.stdout.write(faq.slug)
 
         for msg in create_page_translation(about):
