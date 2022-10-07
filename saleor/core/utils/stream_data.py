@@ -3,8 +3,9 @@ from faker import Factory
 from django.utils import timezone
 
 from .random_data import create_address
-from ...page.models import Page, PageType
+from ...page.models import Page, PageType, PageTranslation
 from ..utils import random_data
+from ...tests.utils import dummy_editorjs
 
 fake = Factory.create()
 
@@ -133,4 +134,16 @@ def create_page(pk, title, slug):
         "is_published": True,
     }
     page, dummy = Page.objects.get_or_create(slug=slug, defaults=page_data)
-    yield "Page %s created" % page.slug
+
+    return page
+
+
+def create_page_translation(page):
+    page_translation, dummy = PageTranslation.objects.get_or_create(
+        language_code="de",
+        page=page,
+        title="Der Titel ist deutsch",
+        content=dummy_editorjs("Diese Seite ist deutsch."),
+    )
+
+    yield "Page %s translated" % page.slug

@@ -19,7 +19,7 @@ from ...utils.stream_data import (
     create_page,
     create_page_type,
     create_users,
-    create_test_user,
+    create_test_user, create_page_translation,
 )
 
 
@@ -61,12 +61,25 @@ class Command(BaseCommand):
             self.stdout.write(msg)
         for msg in create_page_type(3, "AGB", "terms"):
             self.stdout.write(msg)
+        for msg in create_page_type(4, "FAQ", "faq"):
+            self.stdout.write(msg)
 
-        for msg in create_page(1, "Impressum", "about"):
+        about = create_page(1, "Impressum", "about")
+        self.stdout.write(about.slug)
+        privacy = create_page(2, "Datenschutzerklärung", "privacy")
+        self.stdout.write(privacy.slug)
+        terms = create_page(3, "AGB", "terms")
+        self.stdout.write(terms.slug)
+        faq = create_page(4, "Frequently Ask Questions", "faq")
+        self.stdout.write(faq.slug)
+
+        for msg in create_page_translation(about):
             self.stdout.write(msg)
-        for msg in create_page(2, "Datenschutzerklärung", "privacy"):
+        for msg in create_page_translation(privacy):
             self.stdout.write(msg)
-        for msg in create_page(3, "AGB", "terms"):
+        for msg in create_page_translation(terms):
+            self.stdout.write(msg)
+        for msg in create_page_translation(faq):
             self.stdout.write(msg)
 
     def create_stream_ticket(self, user):
