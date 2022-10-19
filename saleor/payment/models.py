@@ -88,8 +88,29 @@ class Payment(models.Model):
     customer_ip_address = models.GenericIPAddressField(blank=True, null=True)
     extra_data = models.TextField(blank=True, default="")
     return_url = models.URLField(blank=True, null=True)
+
     psp_reference = models.CharField(
-        max_length=512, null=True, blank=True, db_index=True
+        max_length=512,
+        null=True,
+        blank=True,
+        db_index=True,
+        default=None,
+    )
+
+    # VALCOME [NWS-1242]
+    psp_state = models.CharField(
+        max_length=512,
+        null=True,
+        blank=True,
+        default=None,
+    )
+
+    # VALCOME [NWS-1242]
+    psp_refund_amount = models.DecimalField(
+        max_digits=settings.DEFAULT_MAX_DIGITS,
+        decimal_places=settings.DEFAULT_DECIMAL_PLACES,
+        default=None,
+        null=True
     )
 
     class Meta:

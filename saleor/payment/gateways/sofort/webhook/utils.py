@@ -1,9 +1,8 @@
+from graphql_relay import to_global_id
+
 from ....models import Checkout as CheckoutModel
 from .....graphql.checkout.mutations import CheckoutComplete
-from .....graphql.payment.mutations import CheckoutPaymentCreate
 from .....graphql.checkout.types import Checkout
-from .....graphql.account.types import models
-from graphql_relay import to_global_id
 
 
 def handle_sofort(payment_intent, info):
