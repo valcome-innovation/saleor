@@ -72,7 +72,8 @@ def process_payment(
         action_required_data=action_required_data,
         customer_id=customer.id if customer else None,
         payment_method_info=PaymentMethodInfo(type="sofort"),
-        error=None
+        error=None,
+        psp_reference=intent.id
     )
 
 
@@ -94,7 +95,8 @@ def confirm_payment(
         raw_response=intent,
         customer_id=payment_information.customer_id,
         payment_method_info=PaymentMethodInfo(type="sofort"),
-        error=None
+        error=None,
+        psp_reference=intent.id
     )
 
 
