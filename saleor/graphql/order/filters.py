@@ -59,13 +59,15 @@ def filter_status(qs, _, value):
 
 
 def filter_customer(qs, _, value):
-    qs = qs.filter(
-        Q(user_email__trigram_similar=value)
-        | Q(user__email__trigram_similar=value)
-        | Q(user__first_name__trigram_similar=value)
-        | Q(user__last_name__trigram_similar=value)
-    )
-    return qs
+    filter_options = Q(user_email__icontains=value) \
+                     | Q(user__email__icontains=value)
+
+    for term in value.split():
+        filter_options = filter_options \
+                         | Q(user__first_name__icontains=term) \
+                         | Q(user__last_name__icontains=term)
+
+    return qs.filter(filter_options)
 
 
 def filter_created_range(qs, _, value):
