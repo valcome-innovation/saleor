@@ -85,6 +85,7 @@ def capture(payment_information: PaymentData, config: GatewayConfig) -> GatewayR
             transaction_id=transaction.id,
             error=None,
             payment_method_info=PaymentMethodInfo(type="paypal"),
+            psp_reference=transaction.id,
         )
 
 
