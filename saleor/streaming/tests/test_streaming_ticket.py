@@ -71,9 +71,9 @@ timed_type_data = [
     ("season", None, 'none'),
     ("timed", 'm', 'month'),
     ("timed", 'd', 'day'),
-    ("wtf", None, 'none'),
-    ("wtf", 'd', 'none'),
-    ("wtf", 'm', 'none'),
+    ("invalid", None, 'none'),
+    ("invalid", 'd', 'none'),
+    ("invalid", 'm', 'none'),
 ]
 
 

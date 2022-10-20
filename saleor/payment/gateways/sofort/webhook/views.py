@@ -15,6 +15,7 @@ class Info:
         self.schema = schema
 
 
+# NOTE: This does handle all stripe payments (not only sofort)
 @csrf_exempt
 def stripe_webhook(request):
     try:

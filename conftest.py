@@ -6,4 +6,5 @@ pytest_plugins = [
     "saleor.graphql.account.tests.benchmark.fixtures",
     "saleor.graphql.order.tests.benchmark.fixtures",
     "saleor.graphql.product.tickets.tests.fixtures",
+    "saleor.payment.gateways.paypal.tests.fixtures",  # VALCOME
 ]

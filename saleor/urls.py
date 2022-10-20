@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .core.views import jwks
 from .graphql.api import schema
 from .graphql.views import GraphQLView
+from .payment.gateways.paypal.webhook.views import paypal_webhook
 from .payment.gateways.sofort.webhook.views import stripe_webhook
 from .plugins.views import (
     handle_global_plugin_webhook,
@@ -16,7 +17,10 @@ from .plugins.views import (
 from .product.views import digital_product
 
 urlpatterns = [
-    url(r"^webhooks/stripe$", csrf_exempt(stripe_webhook), name="stripe_webhooks"),
+    # VALCOME [NWS-1244]
+    url(r"^webhooks/paypal$", csrf_exempt(paypal_webhook), name="paypal_webhook"),
+    # VALCOME
+    url(r"^webhooks/stripe$", csrf_exempt(stripe_webhook), name="stripe_webhook"),
     url(r"^graphql/$", csrf_exempt(GraphQLView.as_view(schema=schema)), name="api"),
     url(
         r"^digital-download/(?P<token>[0-9A-Za-z_\-]+)/$",

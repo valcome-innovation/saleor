@@ -99,16 +99,22 @@ class Payment(models.Model):
 
     # VALCOME [NWS-1242]
     psp_state = models.CharField(
-        max_length=512,
+        max_length=20,
+        choices=ChargeStatus.CHOICES,
         null=True,
-        blank=True,
-        default=None,
+        default=None
     )
 
     # VALCOME [NWS-1242]
     psp_refund_amount = models.DecimalField(
         max_digits=settings.DEFAULT_MAX_DIGITS,
         decimal_places=settings.DEFAULT_DECIMAL_PLACES,
+        default=None,
+        null=True
+    )
+
+    # VALCOME [NWS-1242]
+    psp_refund_date = models.DateTimeField(
         default=None,
         null=True
     )
@@ -150,10 +156,10 @@ class Payment(models.Model):
         # There is no authorized amount anymore when capture is succeeded
         # since capture can only be made once, even it is a partial capture
         if any(
-            [
-                txn.kind == TransactionKind.CAPTURE and txn.is_success
-                for txn in transactions
-            ]
+                [
+                    txn.kind == TransactionKind.CAPTURE and txn.is_success
+                    for txn in transactions
+                ]
         ):
             return money
 
@@ -162,8 +168,8 @@ class Payment(models.Model):
             txn
             for txn in transactions
             if txn.kind == TransactionKind.AUTH
-            and txn.is_success
-            and not txn.action_required
+               and txn.is_success
+               and not txn.action_required
         ]
 
         # Calculate authorized amount from all succeeded auth transactions
