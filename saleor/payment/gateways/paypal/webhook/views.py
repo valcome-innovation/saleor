@@ -15,7 +15,7 @@ def paypal_webhook(request):
     event = json.loads(request.body)
 
     if event['event_type'] == 'PAYMENT.CAPTURE.REFUNDED':
-        refund_amount = event['resource']['amount']
+        refund_amount = get_total_refund_amount(event)
         date = convert_paypal_date(event)
         psp_reference = get_capture_id(event)
         payment = Payment.objects.filter(psp_reference=psp_reference).first()
@@ -46,6 +46,16 @@ def set_psp_data(payment, refund_amount, date):
     payment.save()
 
 
+def get_total_refund_amount(event):
+    return event['resource']['seller_payable_breakdown']['total_refunded_amount']
+
+
+def convert_paypal_date(event):
+    date_string = event['resource']['create_time']
+
+    return datetime.fromisoformat(date_string)
+
+
 def get_capture_id(event):
     # https://developer.paypal.com/api/rest/responses/#link-hateoaslinks
     links = event['resource']['links']
@@ -56,9 +66,3 @@ def get_capture_id(event):
             return link['href'].rsplit('/', 1)[-1]
 
     raise BadRequest('Paypal Webhook Error: Could not find referencing paypal capture')
-
-
-def convert_paypal_date(event):
-    date_string = event['resource']['create_time']
-
-    return datetime.fromisoformat(date_string)

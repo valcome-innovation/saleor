@@ -97,7 +97,7 @@ def paypal_partial_refund_event(paypal_payment_id):
         "resource_type": "refund",
         "resource_version": "2.0",
         "event_type": "PAYMENT.CAPTURE.REFUNDED",
-        "summary": "A EUR 2.9 EUR capture payment was refunded",
+        "summary": "A EUR 1.9 EUR capture payment was refunded",
         "resource": {
             "seller_payable_breakdown": {
                 "total_refunded_amount": {
@@ -105,20 +105,20 @@ def paypal_partial_refund_event(paypal_payment_id):
                     "currency_code": "EUR"
                 },
                 "paypal_fee": {
-                    "value": "0.10",
+                    "value": "0.07",
                     "currency_code": "EUR"
                 },
                 "gross_amount": {
-                    "value": "2.90",
+                    "value": "2.00",
                     "currency_code": "EUR"
                 },
                 "net_amount": {
-                    "value": "2.80",
+                    "value": "1.93",
                     "currency_code": "EUR"
                 }
             },
             "amount": {
-                "value": "2.90",
+                "value": "2.00",
                 "currency_code": "EUR"
             },
             "update_time": "2022-10-20T02:01:39-07:00",
