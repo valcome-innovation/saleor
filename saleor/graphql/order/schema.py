@@ -112,7 +112,7 @@ class OrderQueries(graphene.ObjectType):
         graphene.Boolean,
         description="Returns true if an order exists for a particular checkout token",
         checkout_token=graphene.String(description="The checkout token", required=True)
-    ) # VALCOME
+    )  # VALCOME
 
     @permission_required(OrderPermissions.MANAGE_ORDERS)
     def resolve_homepage_events(self, *_args, **_kwargs):
