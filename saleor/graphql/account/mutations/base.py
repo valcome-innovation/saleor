@@ -110,6 +110,13 @@ class RequestNPasswordResets(BaseMutation):
             required=True,
             description="Email of the user that will be used for password recovery.",
         )
+        redirect_url = graphene.String(
+            required=True,
+            description=(
+                "URL of a view where users should be redirected to "
+                "reset the password. URL in RFC 1808 format."
+            ),
+        )
         n = graphene.Int(
             required=True,
             description="Number of times the email should be sent.",
@@ -124,7 +131,7 @@ class RequestNPasswordResets(BaseMutation):
     def perform_mutation(cls, _root, info, **data):
         email = data["email"]
         n = data["n"]
-        redirect_url = 'https://local1.valcome.tv'
+        redirect_url = data["redirect_url"]
         user = RequestPasswordReset.clean_user(email, redirect_url)
 
         for i in range(0,n):
@@ -133,9 +140,8 @@ class RequestNPasswordResets(BaseMutation):
                 user,
                 info.context.plugins,
                 channel_slug=None,
-                staff=user.is_staff,
             )
-            print("sending email #" + str(i))
+            print("LOG: Sending email #" + str(i) + "to" + email)
 
         return RequestNPasswordResets()
 
