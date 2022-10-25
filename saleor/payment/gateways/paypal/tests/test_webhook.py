@@ -33,7 +33,7 @@ def test_set_psp_to_partially_refunded(
 
     assert response.status_code == 200
     assert actual.psp_state == ChargeStatus.PARTIALLY_REFUNDED
-    assert actual.psp_refund_amount ==  pytest.approx(Decimal(2.900))
+    assert actual.psp_refund_amount == pytest.approx(Decimal(2.900))
     assert actual.psp_refund_date == datetime.fromisoformat('2022-10-20T02:01:39-07:00')
 
 

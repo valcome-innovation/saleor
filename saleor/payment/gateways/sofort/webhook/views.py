@@ -1,62 +1,57 @@
 import json
 import stripe
 
-from ..... import settings
-from .....graphql.api import schema
-from .....streaming import stream_settings
+from .sofort_checkout import complete_sofort_checkout
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .utils import handle_sofort
 
-
-class Info:
-    def __init__(self, context, schema):
-        self.context = context
-        self.schema = schema
+from .stripe_psp_data import update_sofort_failure_psp_data, update_refund_psp_data
+from .utils import get_payment_object, is_sofort_payment, \
+    has_matching_app_id
 
 
 # NOTE: This does handle all stripe payments (not only sofort)
 @csrf_exempt
 def stripe_webhook(request):
+    body = json.loads(request.body)
+
     try:
-        event_type, payment_intent = get_event_type_and_payment_intent(request)
+        event = stripe.Event.construct_from(body, stripe.api_key)
     except ValueError:
         return HttpResponse(status=400)
 
-    return handle_stripe_webhook_event(request, event_type, payment_intent)
+    return handle_sofort_webhook_event(request, event)
 
 
-def get_event_type_and_payment_intent(request):
-    request_body_json = json.loads(request.body)
-    event = stripe.Event.construct_from(request_body_json, stripe.api_key)
-    return event.type, event.data.object
+def handle_sofort_webhook_event(request, event):
+    if event.type == "payment_intent.processing":
+        handle_processing_payments(request, event)
+    elif event.type == "payment_intent.payment_failed":
+        handle_payment_failures(event)
+    elif event.type == "charge.refunded":
+        handle_refunds(event)
+
+    return HttpResponse(status=200)
 
 
-def handle_stripe_webhook_event(request, event_type, payment_intent):
-    if has_matching_app_id(payment_intent) and has_sofort_payment_method(payment_intent):
-        return process_sofort_webhook_event(request, event_type, payment_intent)
-    else:
-        return HttpResponse(status=200)  # skip webhooks not meant for this app
+# Filter SOFORT and APP_ID and complete checkout for webhook processing
+def handle_processing_payments(request, event):
+    payment_intent = get_payment_object(event)
+
+    if is_sofort_payment(payment_intent) and has_matching_app_id(payment_intent):
+        complete_sofort_checkout(request, payment_intent)
 
 
-# Verify if stripe request comes from same app (skipped for local development)
-def has_matching_app_id(payment_intent):
-    return not hasattr(payment_intent.metadata, "app_id") \
-           or payment_intent.metadata.app_id == stream_settings.APP_ID \
-           or settings.DEBUG
+# For CC and SOFORT => Update psp data
+def handle_refunds(event):
+    charge = get_payment_object(event)
+
+    update_refund_psp_data(charge)
 
 
-def has_sofort_payment_method(payment_intent):
-    return hasattr(payment_intent, "payment_method_types") \
-            and "sofort" in payment_intent.payment_method_types
+# Filter SOFORT only and update psp state
+def handle_payment_failures(event):
+    payment_intent = get_payment_object(event)
 
-
-def process_sofort_webhook_event(request, event_type, payment_intent):
-    if event_type == "payment_intent.processing":
-        info = Info(request, schema)
-        handle_sofort(payment_intent, info)
-        return HttpResponse(status=200)
-    elif event_type == "payment_intent.failed":
-        return HttpResponse(status=400)
-    else:
-        return HttpResponse(status=200)
+    if is_sofort_payment(payment_intent):
+        update_sofort_failure_psp_data(payment_intent)
