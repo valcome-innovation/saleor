@@ -13,7 +13,7 @@ import pkg_resources
 import sentry_sdk
 import sentry_sdk.utils
 
-from .core.jwt import TokenDeactivatedError
+from .core.error_codes import TokenDeactivatedError
 from .streaming import stream_settings
 from get_docker_secret import get_docker_secret
 from django.core.exceptions import ImproperlyConfigured

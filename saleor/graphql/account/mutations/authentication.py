@@ -12,6 +12,7 @@ from sentry_sdk import capture_exception
 
 from ....account import models
 from ....account.error_codes import AccountErrorCode
+from ....core.error_codes import TokenDeactivatedError
 from ....core.jwt import (
     JWT_REFRESH_TOKEN_COOKIE_NAME,
     JWT_REFRESH_TYPE,
@@ -19,8 +20,7 @@ from ....core.jwt import (
     create_access_token,
     create_refresh_token,
     get_user_from_payload,
-    jwt_decode,
-    TokenDeactivatedError,
+    jwt_decode
 )
 from ....core.permissions import get_permissions_from_names
 from ...core.mutations import BaseMutation

@@ -6,6 +6,7 @@ import jwt
 from django.conf import settings
 from graphql_relay import from_global_id
 
+from .error_codes import TokenDeactivatedError
 from ..account.models import User
 from ..app.models import App
 from .jwt_manager import get_jwt_manager
@@ -23,15 +24,6 @@ JWT_REFRESH_TOKEN_COOKIE_NAME = "refreshToken"
 PERMISSIONS_FIELD = "permissions"
 JWT_SALEOR_OWNER_NAME = "saleor"
 JWT_OWNER_FIELD = "owner"
-
-
-# VACLOME
-class TokenDeactivatedError(jwt.InvalidTokenError):
-    """
-    Raised when a token already deactivated token gets used.
-    A token gets deactivated if another user logs in with the same account.
-    """
-    pass
 
 
 def jwt_base_payload(

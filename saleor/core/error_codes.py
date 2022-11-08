@@ -1,5 +1,16 @@
 from enum import Enum
 
+import jwt
+
+
+# VACLOME
+class TokenDeactivatedError(jwt.InvalidTokenError):
+    """
+    Raised when a token already deactivated token gets used.
+    A token gets deactivated if another user logs in with the same account.
+    """
+    pass
+
 
 class ShopErrorCode(Enum):
     ALREADY_EXISTS = "already_exists"
