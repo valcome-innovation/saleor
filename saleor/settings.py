@@ -564,7 +564,7 @@ sentry_sdk.utils.MAX_STRING_LENGTH = 4096
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
 SENTRY_OPTS = {
     "integrations": [CeleryIntegration(), DjangoIntegration()],
-    "ignoreErrors": [TokenDeactivatedError]
+    "ignore_errors": [TokenDeactivatedError]
 }
 
 
