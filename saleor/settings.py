@@ -12,6 +12,8 @@ import jaeger_client.config
 import pkg_resources
 import sentry_sdk
 import sentry_sdk.utils
+
+from .core.jwt import TokenDeactivatedError
 from .streaming import stream_settings
 from get_docker_secret import get_docker_secret
 from django.core.exceptions import ImproperlyConfigured
@@ -560,7 +562,10 @@ DEFAULT_CHANNEL_SLUG = os.environ.get("DEFAULT_CHANNEL_SLUG", "default-channel")
 #  Sentry
 sentry_sdk.utils.MAX_STRING_LENGTH = 4096
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
-SENTRY_OPTS = {"integrations": [CeleryIntegration(), DjangoIntegration()]}
+SENTRY_OPTS = {
+    "integrations": [CeleryIntegration(), DjangoIntegration()],
+    "ignoreErrors": [TokenDeactivatedError]
+}
 
 
 def SENTRY_INIT(dsn: str, sentry_opts: dict):
