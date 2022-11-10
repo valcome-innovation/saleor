@@ -1,3 +1,5 @@
+import datetime
+
 import boto3
 import graphene
 import json
@@ -8,35 +10,29 @@ from django.core.management.utils import get_random_secret_key
 
 from .models import StreamTicket
 from ..streaming import stream_settings
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
 
 def create_user_watch_log_from_stream_ticket(stream_ticket: "StreamTicket"):
+    # user watch logs will only be created for single tickets
     if stream_ticket.game_id is not None:
-        send_user_watch_log_to_kinesis_stream_silent(
-            user=stream_ticket.user,
-            game_id=stream_ticket.game_id,
-            access_type=stream_ticket.type
-        )
+        send_user_watch_log_to_kinesis_stream(stream_ticket)
 
 
-def send_user_watch_log_to_kinesis_stream_silent(user, game_id, access_type):
+def send_user_watch_log_to_kinesis_stream(stream_ticket: "StreamTicket"):
     try:
-        send_user_watch_log_to_kinesis_stream(user, game_id, access_type)
+        credentials = retrieve_cognito_credentials()
+        kinesis = create_kinesis_client(credentials)
+        user_watch_log = create_user_watch_log(stream_ticket)
+        put_stream_record(kinesis, user_watch_log)
     except Exception as exc:
         logger.exception(
-            f"[AWS Kinesis] Couldn't create user watch log user_id={user.id}, "
-            f"game_id={game_id}, type={access_type}",
+            f"[AWS Kinesis] Couldn't create user watch log "
+            f"for stream_ticket={stream_ticket.id}",
             exc_info=exc
         )
-
-
-def send_user_watch_log_to_kinesis_stream(user, game_id, access_type):
-    credentials = retrieve_cognito_credentials()
-    kinesis = create_kinesis_client(credentials)
-    user_watch_log = create_user_watch_log(user.id, game_id, access_type)
-    put_stream_record(kinesis, user_watch_log)
 
 
 def retrieve_cognito_credentials():
@@ -61,18 +57,20 @@ def create_kinesis_client(credentials):
         aws_session_token=credentials["SessionToken"])
 
 
-def create_user_watch_log(user_id: str, game_id: str, access_type: str):
-    global_user_id = graphene.Node.to_global_id("User", user_id)
+def create_user_watch_log(stream_ticket: "StreamTicket"):
+    user = stream_ticket.user
+    global_user_id = graphene.Node.to_global_id("User", user.id)
+
     return {
-        'id': f'{game_id}_{global_user_id}',
-        'gameId': f'{game_id}',
+        'gameId': f'{stream_ticket.game_id}',
         'userId': f'{global_user_id}',
-        'access': {
-            'type': f'{access_type}',
-            'withCode': False,
-            'isFree': False,
-        },
-        'watchDuration': 0
+        'streamTicketId': f'{stream_ticket.id}',
+        'fanTeamId': f'{user.favorite_team}',
+        'timestamp': datetime.now(tz=timezone.utc).isoformat(),
+        'hideInAnalytics': False,
+        'type': 'ticket',
+        'watchDuration': 0,
+        'watchThresholdReached': False
     }
 
 
