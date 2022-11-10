@@ -28,6 +28,7 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     ) = get_stream_meta(order)
 
     stream_ticket = StreamTicket()
+    stream_ticket.order = order
     stream_ticket.user = order.user
     stream_ticket.game_id = game_id or None
     stream_ticket.video_id = video_id or None
@@ -39,6 +40,7 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     stream_ticket.expires = get_expire_date(stream_ticket.start_time, expires)
     stream_ticket.type = determine_stream_ticket_type(game_id, video_id, season_id, expires)
     stream_ticket.timed_type = determine_timed_type(stream_ticket.type, expires)
+    stream_ticket.product_slug = None  # TODO [NWS-1222]
 
     validate_stream_ticket_creation(stream_ticket)
     stream_ticket.save()

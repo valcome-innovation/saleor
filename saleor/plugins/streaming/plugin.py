@@ -26,6 +26,7 @@ class StreamingPlugin(BasePlugin):
         super().__init__(*args, **kwargs)
         self.active = True
 
+
     def preprocess_order_creation(self, checkout_info: "CheckoutInfo",
                                   discounts: List["DiscountInfo"],
                                   lines: Optional[Iterable["CheckoutLineInfo"]],
@@ -36,6 +37,7 @@ class StreamingPlugin(BasePlugin):
             checkout_info.checkout,
             list(checkout_lines)
         )
+
 
     def order_created(self, order: "Order", previous_value: Any) -> Any:
         try:
