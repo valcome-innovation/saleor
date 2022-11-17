@@ -213,6 +213,9 @@ class AttributeAssignmentMixin:
         is_date_attr = attribute.input_type == AttributeInputType.DATE
         value = attr_values.date if is_date_attr else attr_values.date_time
 
+        if value is None:
+            return tuple()
+
         tz = timezone.get_current_timezone()
         date_time = (
             datetime(

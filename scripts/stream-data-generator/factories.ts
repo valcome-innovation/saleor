@@ -31,7 +31,7 @@ export function createAttribute(config: AttributeConfig) {
   };
 }
 
-export function createAttributeValue(attribute: Entity, config: AttributeValueConfig) {
+export function createAttributeValue(attribute: Entity, config: AttributeValueConfig, dateTime?: string) {
   attributeValuePk++;
 
   return {
@@ -42,7 +42,8 @@ export function createAttributeValue(attribute: Entity, config: AttributeValueCo
       "name": config.name,
       "slug": config.slug,
       "value": "",
-      "attribute": attribute.pk
+      "attribute": attribute.pk,
+      "date_time": dateTime
     }
   }
 }
