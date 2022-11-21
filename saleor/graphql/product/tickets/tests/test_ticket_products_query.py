@@ -1,9 +1,7 @@
 import pytest
-from django.core.exceptions import ValidationError
 
 from .....graphql.tests.utils import get_graphql_content, \
     assert_graphql_error_with_message
-from .....product.models import Product
 
 QUERY_TICKET_PRODUCTS_WITH_FILTERING = """
     query (

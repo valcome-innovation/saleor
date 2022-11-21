@@ -38,9 +38,9 @@ def ticket_products_for_filtering(category, channel_EUR):
         filterable_in_dashboard=True,
         available_in_grid=True
     )
-    type_day = AttributeValue.objects.create(attribute=ticket_type_attr, name="Day", slug="day")
+    type_timed = AttributeValue.objects.create(attribute=ticket_type_attr, name="Timed", slug="timed")
     type_single = AttributeValue.objects.create(attribute=ticket_type_attr, name="Single", slug="single")
-    type_month = AttributeValue.objects.create(attribute=ticket_type_attr, name="Month", slug="month")
+    type_timed_season = AttributeValue.objects.create(attribute=ticket_type_attr, name="Timed Season", slug="timed-season")
     type_season = AttributeValue.objects.create(attribute=ticket_type_attr, name="Season", slug="season")
 
     teams_attribute = Attribute.objects.create(
@@ -117,24 +117,24 @@ def ticket_products_for_filtering(category, channel_EUR):
 
     # Day
     assign_product_attr_value(day_ahl_20_21, stream_type_ap, game_type)
-    assign_product_attr_value(day_ahl_20_21, ticket_type_ap, type_day)
+    assign_product_attr_value(day_ahl_20_21, ticket_type_ap, type_timed)
     assign_product_attr_value(day_ahl_20_21, leagues_ap, league_20_21)
 
     # Month
     assign_product_attr_value(month_ahl_20_21, stream_type_ap, game_type)
-    assign_product_attr_value(month_ahl_20_21, ticket_type_ap, type_month)
+    assign_product_attr_value(month_ahl_20_21, ticket_type_ap, type_timed_season)
     assign_product_attr_value(month_ahl_20_21, leagues_ap, league_20_21)
     assign_product_attr_value(month_ahl_20_21, teams_ap, team_all)
     assign_product_attr_value(month_swl, stream_type_ap, game_type)
-    assign_product_attr_value(month_swl, ticket_type_ap, type_month)
+    assign_product_attr_value(month_swl, ticket_type_ap, type_timed_season)
     assign_product_attr_value(month_swl, leagues_ap, league_20_21)
     assign_product_attr_value(month_swl, teams_ap, team_swl)
     assign_product_attr_value(month_ka2, stream_type_ap, game_type)
-    assign_product_attr_value(month_ka2, ticket_type_ap, type_month)
+    assign_product_attr_value(month_ka2, ticket_type_ap, type_timed_season)
     assign_product_attr_value(month_ka2, leagues_ap, league_20_21)
     assign_product_attr_value(month_ka2, teams_ap, team_ka2)
     assign_product_attr_value(month_ash, stream_type_ap, game_type)
-    assign_product_attr_value(month_ash, ticket_type_ap, type_month)
+    assign_product_attr_value(month_ash, ticket_type_ap, type_timed_season)
     assign_product_attr_value(month_ash, leagues_ap, league_20_21)
     assign_product_attr_value(month_ash, teams_ap, team_ash)
 
@@ -165,24 +165,24 @@ def ticket_products_for_filtering(category, channel_EUR):
 
     # Day
     assign_variant_attr_value(v_day_ahl_20_21, stream_type_av, game_type)
-    assign_variant_attr_value(v_day_ahl_20_21, ticket_type_av, type_day)
+    assign_variant_attr_value(v_day_ahl_20_21, ticket_type_av, type_timed)
     assign_variant_attr_value(v_day_ahl_20_21, leagues_av, league_20_21)
 
     # Month
     assign_variant_attr_value(v_month_ahl_20_21, stream_type_av, game_type)
-    assign_variant_attr_value(v_month_ahl_20_21, ticket_type_av, type_month)
+    assign_variant_attr_value(v_month_ahl_20_21, ticket_type_av, type_timed_season)
     assign_variant_attr_value(v_month_ahl_20_21, leagues_av, league_20_21)
     assign_variant_attr_value(v_month_ahl_20_21, teams_av, team_all)
     assign_variant_attr_value(v_month_swl, stream_type_av, game_type)
-    assign_variant_attr_value(v_month_swl, ticket_type_av, type_month)
+    assign_variant_attr_value(v_month_swl, ticket_type_av, type_timed_season)
     assign_variant_attr_value(v_month_swl, leagues_av, league_20_21)
     assign_variant_attr_value(v_month_swl, teams_av, team_swl)
     assign_variant_attr_value(v_month_ka2, stream_type_av, game_type)
-    assign_variant_attr_value(v_month_ka2, ticket_type_av, type_month)
+    assign_variant_attr_value(v_month_ka2, ticket_type_av, type_timed_season)
     assign_variant_attr_value(v_month_ka2, leagues_av, league_20_21)
     assign_variant_attr_value(v_month_ka2, teams_av, team_ka2)
     assign_variant_attr_value(v_month_ash, stream_type_av, game_type)
-    assign_variant_attr_value(v_month_ash, ticket_type_av, type_month)
+    assign_variant_attr_value(v_month_ash, ticket_type_av, type_timed_season)
     assign_variant_attr_value(v_month_ash, leagues_av, league_20_21)
     assign_variant_attr_value(v_month_ash, teams_av, team_ash)
 
