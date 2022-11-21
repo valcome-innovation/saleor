@@ -8,11 +8,13 @@ class TicketType:
     SINGLE = "single"
     TIMED = "timed"
     SEASON = "season"
+    TIMED_SEASON = "timed_season"
 
     CHOICES = [
         (SINGLE, "single"),
         (TIMED, "timed"),
         (SEASON, "season"),
+        (TIMED_SEASON, "timed_season"),
     ]
 
 
@@ -20,14 +22,14 @@ class ProductSlug:
     SINGLE = "single"
     CUP = "cup"
     SEASON = "season"
-    PLAYOFF_SEASON = "playoff-season"
+    PLAYOFFS = "playoffs"
     REGULAR_SEASON = "regular-season"
 
     CHOICES = [
         (SINGLE, "single"),
         (CUP, "cup"),
         (SEASON, "season"),
-        (PLAYOFF_SEASON, "playoff-season"),
+        (PLAYOFFS, "playoffs"),
         (REGULAR_SEASON, "regular-season"),
     ]
 

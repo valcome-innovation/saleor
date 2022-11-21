@@ -67,16 +67,14 @@ const ticketTypeValues = [
   { name: "Single", slug: "single" },
   { name: "Season", slug: "season" },
   { name: "Timed Season", slug: "timed-season" },
-  { name: "Month", slug: "month" },
-  { name: "Day", slug: "day" },
+  { name: "Timed", slug: "timed" },
 ].map((config) => createAttributeValue(ticketTypeAttribute, config));
 
 const [
   singleAttribute,
   seasonAttribute,
   timedSeasonAttribute,
-  monthAttribute,
-  dayAttribute
+  timedAttribute,
 ] = ticketTypeValues;
 
 const streamTypeValues = [
@@ -156,12 +154,12 @@ const [
 
 const startDateValues = [
   { name: "2022-09-01", slug: "date-1", dateTime: "2022-09-01 00:00:00.000000Z" },
-  { name: "2022-02-01", slug: "date-3", dateTime: "2022-02-01 00:00:00.000000Z" },
+  { name: "2022-02-01", slug: "date-3", dateTime: "2023-02-01 00:00:00.000000Z" },
 ].map((config) => createAttributeValue(startDateAttribute, config, config.dateTime));
 
 const endDateValues = [
-  { name: "2022-01-31", slug: "date-2", dateTime: "2022-01-31 00:00:00.000000Z" },
-  { name: "2022-04-16", slug: "date-4", dateTime: "2022-04-16 00:00:00.000000Z" },
+  { name: "2022-01-31", slug: "date-2", dateTime: "2023-01-31 00:00:00.000000Z" },
+  { name: "2022-04-16", slug: "date-4", dateTime: "2023-04-16 00:00:00.000000Z" },
 ].map((config) => createAttributeValue(endDateAttribute, config, config.dateTime));
 
 const [
