@@ -71,7 +71,7 @@ class TicketProductFilter(MetadataFilterBase):
 
     def get_timed_season_filter(self, teams):
         stream_type_filter = self.get_stream_type_filter()
-        type_filter = self.get_ticket_type_filter("timed_season")
+        type_filter = self.get_ticket_type_filter("timed-season")
         teams_filter = self.get_attribute_filter("teams", teams)
 
         return type_filter & stream_type_filter & teams_filter

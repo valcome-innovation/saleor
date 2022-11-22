@@ -70,28 +70,28 @@ def ticket_products_for_filtering(category, channel_EUR):
     single_swl, v_single_swl = create_product_with_variant("single-swl", category, product_type, channel_EUR)
     single_ka2, v_single_ka2 = create_product_with_variant("single-ka2", category, product_type, channel_EUR)
     single_ash, v_single_ash = create_product_with_variant("single-ash", category, product_type, channel_EUR)
-    month_swl, v_month_swl = create_product_with_variant("month-ahl-20-21-swl", category, product_type, channel_EUR)
-    month_ka2, v_month_ka2 = create_product_with_variant("month-ahl-20-21-ka2", category, product_type, channel_EUR)
-    month_ash, v_month_ash = create_product_with_variant("month-ahl-20-21-ash", category, product_type, channel_EUR)
+    timed_season_swl, v_timed_season_swl = create_product_with_variant("timed-season-ahl-20-21-swl", category, product_type, channel_EUR)
+    timed_season_ka2, v_timed_season_ka2 = create_product_with_variant("timed-season-ahl-20-21-ka2", category, product_type, channel_EUR)
+    timed_season_ash, v_timed_season_ash = create_product_with_variant("timed-season-ahl-20-21-ash", category, product_type, channel_EUR)
     season_swl, v_season_swl = create_product_with_variant("season-ahl-20-21-swl", category, product_type, channel_EUR)
     season_ka2, v_season_ka2 = create_product_with_variant("season-ahl-20-21-ka2", category, product_type, channel_EUR)
     season_ash, v_season_ash = create_product_with_variant("season-ahl-20-21-ash", category, product_type, channel_EUR)
-    day_ahl_20_21, v_day_ahl_20_21 = create_product_with_variant("day-ahl-20-21", category, product_type, channel_EUR)
-    month_ahl_20_21, v_month_ahl_20_21 = create_product_with_variant("month-ahl-20-21", category, product_type, channel_EUR)
+    timed_ahl_20_21, v_timed_ahl_20_21 = create_product_with_variant("timed-ahl-20-21", category, product_type, channel_EUR)
+    timed_season_ahl_20_21, v_timed_season_ahl_20_21 = create_product_with_variant("timed-season-ahl-20-21", category, product_type, channel_EUR)
     season_ahl_20_21, v_season_ahl_20_21 = create_product_with_variant("season-ahl-20-21", category, product_type, channel_EUR)
 
     tickets = [
         single_swl, single_ash, single_ka2,
-        month_swl, month_ash, month_ka2, month_ahl_20_21,
+        timed_season_swl, timed_season_ash, timed_season_ka2, timed_season_ahl_20_21,
         season_swl, season_ash, season_ka2, season_ahl_20_21,
-        day_ahl_20_21
+        timed_ahl_20_21
     ]
 
     v_tickets = [
         v_single_swl, v_single_ash, v_single_ka2,
-        v_month_swl, v_month_ash, v_month_ka2, v_month_ahl_20_21,
+        v_timed_season_swl, v_timed_season_ash, v_timed_season_ka2, v_timed_season_ahl_20_21,
         v_season_swl, v_season_ash, v_season_ka2, v_season_ahl_20_21,
-        v_day_ahl_20_21
+        v_timed_ahl_20_21
     ]
 
     stream_type_ap = AttributeProduct.objects.create(attribute=stream_type_attr, product_type=product_type)
@@ -115,28 +115,29 @@ def ticket_products_for_filtering(category, channel_EUR):
     assign_product_attr_value(single_ash, ticket_type_ap, type_single)
     assign_product_attr_value(single_ash, teams_ap, team_ash)
 
-    # Day
-    assign_product_attr_value(day_ahl_20_21, stream_type_ap, game_type)
-    assign_product_attr_value(day_ahl_20_21, ticket_type_ap, type_timed)
-    assign_product_attr_value(day_ahl_20_21, leagues_ap, league_20_21)
+    # Timed
+    assign_product_attr_value(timed_ahl_20_21, stream_type_ap, game_type)
+    assign_product_attr_value(timed_ahl_20_21, ticket_type_ap, type_timed)
+    assign_product_attr_value(timed_ahl_20_21, leagues_ap, league_20_21)
+    assign_product_attr_value(timed_ahl_20_21, teams_ap, team_all)
 
-    # Month
-    assign_product_attr_value(month_ahl_20_21, stream_type_ap, game_type)
-    assign_product_attr_value(month_ahl_20_21, ticket_type_ap, type_timed_season)
-    assign_product_attr_value(month_ahl_20_21, leagues_ap, league_20_21)
-    assign_product_attr_value(month_ahl_20_21, teams_ap, team_all)
-    assign_product_attr_value(month_swl, stream_type_ap, game_type)
-    assign_product_attr_value(month_swl, ticket_type_ap, type_timed_season)
-    assign_product_attr_value(month_swl, leagues_ap, league_20_21)
-    assign_product_attr_value(month_swl, teams_ap, team_swl)
-    assign_product_attr_value(month_ka2, stream_type_ap, game_type)
-    assign_product_attr_value(month_ka2, ticket_type_ap, type_timed_season)
-    assign_product_attr_value(month_ka2, leagues_ap, league_20_21)
-    assign_product_attr_value(month_ka2, teams_ap, team_ka2)
-    assign_product_attr_value(month_ash, stream_type_ap, game_type)
-    assign_product_attr_value(month_ash, ticket_type_ap, type_timed_season)
-    assign_product_attr_value(month_ash, leagues_ap, league_20_21)
-    assign_product_attr_value(month_ash, teams_ap, team_ash)
+    # Timed Season
+    assign_product_attr_value(timed_season_ahl_20_21, stream_type_ap, game_type)
+    assign_product_attr_value(timed_season_ahl_20_21, ticket_type_ap, type_timed_season)
+    assign_product_attr_value(timed_season_ahl_20_21, leagues_ap, league_20_21)
+    assign_product_attr_value(timed_season_ahl_20_21, teams_ap, team_all)
+    assign_product_attr_value(timed_season_swl, stream_type_ap, game_type)
+    assign_product_attr_value(timed_season_swl, ticket_type_ap, type_timed_season)
+    assign_product_attr_value(timed_season_swl, leagues_ap, league_20_21)
+    assign_product_attr_value(timed_season_swl, teams_ap, team_swl)
+    assign_product_attr_value(timed_season_ka2, stream_type_ap, game_type)
+    assign_product_attr_value(timed_season_ka2, ticket_type_ap, type_timed_season)
+    assign_product_attr_value(timed_season_ka2, leagues_ap, league_20_21)
+    assign_product_attr_value(timed_season_ka2, teams_ap, team_ka2)
+    assign_product_attr_value(timed_season_ash, stream_type_ap, game_type)
+    assign_product_attr_value(timed_season_ash, ticket_type_ap, type_timed_season)
+    assign_product_attr_value(timed_season_ash, leagues_ap, league_20_21)
+    assign_product_attr_value(timed_season_ash, teams_ap, team_ash)
 
     # Season
     assign_product_attr_value(season_ahl_20_21, stream_type_ap, game_type)
@@ -163,28 +164,29 @@ def ticket_products_for_filtering(category, channel_EUR):
     assign_variant_attr_value(v_single_ash, ticket_type_av, type_single)
     assign_variant_attr_value(v_single_ash, teams_av, team_ash)
 
-    # Day
-    assign_variant_attr_value(v_day_ahl_20_21, stream_type_av, game_type)
-    assign_variant_attr_value(v_day_ahl_20_21, ticket_type_av, type_timed)
-    assign_variant_attr_value(v_day_ahl_20_21, leagues_av, league_20_21)
+    # Timed
+    assign_variant_attr_value(v_timed_ahl_20_21, stream_type_av, game_type)
+    assign_variant_attr_value(v_timed_ahl_20_21, ticket_type_av, type_timed)
+    assign_variant_attr_value(v_timed_ahl_20_21, leagues_av, league_20_21)
+    assign_variant_attr_value(v_timed_ahl_20_21, teams_av, team_all)
 
-    # Month
-    assign_variant_attr_value(v_month_ahl_20_21, stream_type_av, game_type)
-    assign_variant_attr_value(v_month_ahl_20_21, ticket_type_av, type_timed_season)
-    assign_variant_attr_value(v_month_ahl_20_21, leagues_av, league_20_21)
-    assign_variant_attr_value(v_month_ahl_20_21, teams_av, team_all)
-    assign_variant_attr_value(v_month_swl, stream_type_av, game_type)
-    assign_variant_attr_value(v_month_swl, ticket_type_av, type_timed_season)
-    assign_variant_attr_value(v_month_swl, leagues_av, league_20_21)
-    assign_variant_attr_value(v_month_swl, teams_av, team_swl)
-    assign_variant_attr_value(v_month_ka2, stream_type_av, game_type)
-    assign_variant_attr_value(v_month_ka2, ticket_type_av, type_timed_season)
-    assign_variant_attr_value(v_month_ka2, leagues_av, league_20_21)
-    assign_variant_attr_value(v_month_ka2, teams_av, team_ka2)
-    assign_variant_attr_value(v_month_ash, stream_type_av, game_type)
-    assign_variant_attr_value(v_month_ash, ticket_type_av, type_timed_season)
-    assign_variant_attr_value(v_month_ash, leagues_av, league_20_21)
-    assign_variant_attr_value(v_month_ash, teams_av, team_ash)
+    # Timed Season
+    assign_variant_attr_value(v_timed_season_ahl_20_21, stream_type_av, game_type)
+    assign_variant_attr_value(v_timed_season_ahl_20_21, ticket_type_av, type_timed_season)
+    assign_variant_attr_value(v_timed_season_ahl_20_21, leagues_av, league_20_21)
+    assign_variant_attr_value(v_timed_season_ahl_20_21, teams_av, team_all)
+    assign_variant_attr_value(v_timed_season_swl, stream_type_av, game_type)
+    assign_variant_attr_value(v_timed_season_swl, ticket_type_av, type_timed_season)
+    assign_variant_attr_value(v_timed_season_swl, leagues_av, league_20_21)
+    assign_variant_attr_value(v_timed_season_swl, teams_av, team_swl)
+    assign_variant_attr_value(v_timed_season_ka2, stream_type_av, game_type)
+    assign_variant_attr_value(v_timed_season_ka2, ticket_type_av, type_timed_season)
+    assign_variant_attr_value(v_timed_season_ka2, leagues_av, league_20_21)
+    assign_variant_attr_value(v_timed_season_ka2, teams_av, team_ka2)
+    assign_variant_attr_value(v_timed_season_ash, stream_type_av, game_type)
+    assign_variant_attr_value(v_timed_season_ash, ticket_type_av, type_timed_season)
+    assign_variant_attr_value(v_timed_season_ash, leagues_av, league_20_21)
+    assign_variant_attr_value(v_timed_season_ash, teams_av, team_ash)
 
     # Season
     assign_variant_attr_value(v_season_ahl_20_21, stream_type_av, game_type)
