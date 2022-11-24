@@ -129,7 +129,7 @@ def team_timed_season_ticket_checkout(
         'PRODUCT_ID': product_id,
         'SEASON_ID': 'seasonId',
         'STREAM_TYPE': 'g',
-        'TEAM_IDS': ['team1', 'team2']
+        'TEAM_IDS': 'team1,team2'
     })
 
     line = create_checkout_line(team_timed_season_ticket_product)

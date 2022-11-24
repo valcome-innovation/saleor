@@ -41,13 +41,13 @@ const teamsAttribute = createAttribute({
 });
 const startDateAttribute = createAttribute({
   name: "Start Time",
-  slug: "start-time",
+  slug: "start-date",
   input_type: "date",
   isRequired: false,
 });
 const endDateAttribute = createAttribute({
   name: "End Time",
-  slug: "end-time",
+  slug: "end-date",
   input_type: "date",
   isRequired: false,
 });

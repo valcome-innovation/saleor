@@ -24,11 +24,6 @@ INVALID_PRODUCT_CONFIGURATION_ERROR = ValidationError(
     code=OrderErrorCode.INVALID.value
 )
 
-INVALID_STREAM_TICKET_PARAMS = ValidationError(
-    "STREAM_PLUGIN: Could not create valid stream ticket from checkout",
-    code=OrderErrorCode.INVALID.value
-)
-
 
 def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     (
@@ -36,8 +31,8 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
         game_id,
         video_id,
         season_id,
-        team_ids,
-        league_ids,
+        team_ids_string,
+        league_ids_string,
         stream_type_param,
         expires_param,
         start_time_param
@@ -80,8 +75,8 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     stream_ticket.game_id = game_id or None
     stream_ticket.video_id = video_id or None
     stream_ticket.season_id = season_id or None
-    stream_ticket.league_ids = league_ids or None
-    stream_ticket.team_ids = team_ids or None
+    stream_ticket.league_ids = league_ids_string or None
+    stream_ticket.team_ids = team_ids_string or None
     stream_ticket.stream_type = stream_type.lower().capitalize()
     stream_ticket.start_time = start_time
     stream_ticket.expires = expires
@@ -116,8 +111,8 @@ def validate_stream_ticket_checkout(checkout: "Checkout", lines: "list"):
         game_id,
         video_id,
         season_id,
-        team_ids,
-        league_ids,
+        team_ids_string,
+        league_ids_string,
         stream_type,
         expires,
         start_time
@@ -150,8 +145,8 @@ def validate_stream_ticket_checkout(checkout: "Checkout", lines: "list"):
             and team_attr is not None \
             and team_attr.first().slug != 'all-teams' \
             and team_attr.count() > 0:
-        are_teams_matching = team_ids is not None \
-                             and team_attr.count() == len(team_ids)
+        are_teams_matching = team_ids_string is not None \
+                             and team_attr.count() == len(team_ids_string.split(','))
 
     # check if stream type is matching with metadata
     is_stream_type_matching = stream_type == 'g' and stream_type_attr.slug == 'game' \
@@ -165,19 +160,28 @@ def validate_stream_ticket_checkout(checkout: "Checkout", lines: "list"):
         season_id,
         expires,
         start_time,
-        league_ids
+        league_ids_string
     )
 
     _, product_id = from_global_id(global_product_id)
 
-    if product.id == int(product_id) \
+    is_product_matching = product.id == int(product_id)
+
+    if is_product_matching \
             and is_meta_matching \
             and is_stream_type_matching \
             and are_teams_matching \
             and do_attributes_match_type:
         return True
     else:
-        raise INVALID_STREAM_TICKET_PARAMS
+        raise ValidationError({
+            "message": "STREAM_PLUGIN: Could not create valid stream ticket from checkout",
+            "is_product_matching": is_product_matching,
+            "is_meta_matching": is_meta_matching,
+            "is_stream_type_matching": is_stream_type_matching,
+            "are_teams_matching": are_teams_matching,
+            "do_attributes_match_type": do_attributes_match_type,
+        }, code=OrderErrorCode.INVALID.value)
 
 
 def is_meta_matching_ticket_type(ticket_type,
