@@ -83,6 +83,8 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     stream_ticket.type = ticket_type
     stream_ticket.timed_type = timed_type
     stream_ticket.product_slug = product_slug
+    # Hardcode guests value as there is no real world use case without
+    stream_ticket.for_guests = True
 
     stream_ticket.save()
 
