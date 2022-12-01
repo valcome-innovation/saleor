@@ -64,7 +64,7 @@ def create_user_watch_log(stream_ticket: "StreamTicket"):
     return {
         'gameId': f'{stream_ticket.game_id}',
         'userId': f'{global_user_id}',
-        'streamTicketId': f'{stream_ticket.id}',
+        'streamTicketId': stream_ticket.id,
         'fanTeamId': f'{user.favorite_team}',
         'timestamp': datetime.now(tz=timezone.utc).isoformat(),
         'hideInAnalytics': False,
