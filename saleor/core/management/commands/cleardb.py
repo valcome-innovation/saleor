@@ -100,7 +100,7 @@ class Command(BaseCommand):
         # Delete all users except for staff members.
         # VALCOME: just delete everything
         # staff = User.objects.filter(Q(is_staff=True) | Q(is_superuser=True))
-        User.objects.delete()
+        User.objects.all().delete()
         self.stdout.write("Removed customers")
 
         # VALCOME: just delete everything
