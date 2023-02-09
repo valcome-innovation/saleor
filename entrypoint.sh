@@ -2,7 +2,7 @@
 
 if [ -v CLEAR_DB ]; then
   echo "Clearing database..."
-  python3 manage.py cleardb
+  python3 manage.py cleardb --force
 fi
 
 if [ -v MIGRATE ]; then
