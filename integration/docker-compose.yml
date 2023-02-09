@@ -20,6 +20,7 @@ services:
       - saleor-int-media:/app/media
     env_file: integration.env
     environment:
+      - CLEAR_DB=True
       - MIGRATE=True
       - COLLECT_STATIC=True
       - POPULATE=True
