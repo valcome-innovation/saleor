@@ -101,7 +101,7 @@
                 <td align="left" style="font-size: 0px; padding: 10px 25px; word-break: break-word;">
                   <h1
                     style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.2;text-align:left;color:#212121; margin: 0">
-                    Refund on order {{ order.id }}
+                    Your refund is on its way (Order #{{ order.id }})
                   </h1>
                 </td>
               </tr>
@@ -110,9 +110,23 @@
                 <td align="left" style="font-size: 0px; padding: 10px 25px; word-break: break-word;">
                   <div
                     style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.2;text-align:left;color:#212121; max-width: 600px;">
-                    A payment of {{amount}} {{currency}} has been refunded for your order.
-                    Depending on the used payment method, it can take up to a several working days for the money to
-                    arrive.
+                    Sehr geehrter Kunde,<br>
+                    <br>
+                    es wurde Ihnen <b>{{amount}} {{currency}}</b> zurückerstattet. Wir hoffen, diese Vorgehensweise ist
+                    für Sie in Ordnung und bitten um Entschuldigung für die Umstände.<br>
+                    <br>
+                    Bitte beachten Sie, dass es bis zu zwei Wochen dauern kann, bis die Rückbuchung auf Ihrem Konto
+                    sichtbar ist. Wir sind bemüht, Ihnen in Zukunft wieder einen reibungslosen Service zu bieten und
+                    bedanken uns für Ihr Verständnis.<br>
+                    <br>
+                    <br>
+                    Dear customer,<br>
+                    <br>
+                    you have been refunded <b>{{amount}} {{currency}}</b>. We hope this procedure is okay for you and
+                    apologize for the inconvenience.<br>
+                    <br>
+                    Please note that it may take up to two weeks before the chargeback is visible on your account. We
+                    are committed to providing you with a smooth service again in the future, and thank you for your understanding.<br>
                   </div>
                 </td>
               </tr>
