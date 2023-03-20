@@ -174,6 +174,15 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
     language_code = models.CharField(
         max_length=35, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE
     )
+    newsletter_status = models.CharField(
+        max_length=35, choices=[
+            ("subscribed", "subscribed"),
+            ("unsubscribed", "unsubscribed"),
+            ("cleaned", "cleaned"),
+            ("pending", "pending"),
+            ("transactional", "transactional")
+        ], default="pending"
+    )
 
     USERNAME_FIELD = "email"
 
