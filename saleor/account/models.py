@@ -21,6 +21,7 @@ from django_countries.fields import Country, CountryField
 from phonenumber_field.modelfields import PhoneNumber, PhoneNumberField
 from versatileimagefield.fields import VersatileImageField
 
+from .enums import NewsletterStatus
 from ..app.models import App
 from ..core.models import ModelWithMetadata
 from ..core.permissions import AccountPermissions, BasePermissionEnum, get_permissions
@@ -175,13 +176,11 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         max_length=35, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE
     )
     newsletter_status = models.CharField(
-        max_length=35, choices=[
-            ("subscribed", "subscribed"),
-            ("unsubscribed", "unsubscribed"),
-            ("cleaned", "cleaned"),
-            ("pending", "pending"),
-            ("transactional", "transactional")
-        ], default="pending"
+        max_length=35,
+        choices=[
+            (status.value, status.value) for status in NewsletterStatus
+        ],
+        default="pending"
     )
 
     USERNAME_FIELD = "email"
