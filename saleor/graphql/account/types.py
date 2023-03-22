@@ -293,6 +293,7 @@ class User(CountableDjangoObjectType):
             "is_staff",
             "last_login",
             "last_name",
+            "newsletter_status",
             "note",
         ]
 
