@@ -25,7 +25,8 @@ def process_payment(
         "app_id": payment_information.data.get("app_id", None),
         "checkout_token": payment_information.data.get("checkout_token", None),
         "checkout_params": payment_information.data.get("checkout_params", None),
-        "redirect_id": payment_information.data.get("redirect_id", None)
+        "redirect_id": payment_information.data.get("redirect_id", None),
+        "subscribe_to_newsletter": payment_information.data.get("subscribe_to_newsletter", None)
     }
 
     # same implementation as in stripe/plugin.py:189
@@ -169,6 +170,7 @@ def create_sofort_payment_intent(config: GatewayConfig, amount, currency, meta, 
             "app_id": meta["app_id"],
             "checkout_token": meta["checkout_token"],
             "checkout_params": meta["checkout_params"],
-            "redirect_id": meta["redirect_id"]
+            "redirect_id": meta["redirect_id"],
+            "subscribe_to_newsletter": meta["subscribe_to_newsletter"]
         }
     )
