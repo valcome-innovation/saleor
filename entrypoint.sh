@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -v CLEAR_DB ]; then
+  echo "Clearing database..."
+  python3 manage.py cleardb --force
+fi
+
 if [ -v MIGRATE ]; then
   echo "Applying database migrations..."
   python3 manage.py migrate

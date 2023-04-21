@@ -1,9 +1,7 @@
 import pytest
-from django.core.exceptions import ValidationError
 
 from .....graphql.tests.utils import get_graphql_content, \
     assert_graphql_error_with_message
-from .....product.models import Product
 
 QUERY_TICKET_PRODUCTS_WITH_FILTERING = """
     query (
@@ -34,7 +32,7 @@ QUERY_TICKET_PRODUCTS_WITH_FILTERING = """
             "teams": ["swl"],
             "leagues": ["ahl-20-21"],
             "streamType": "Game"
-         }, 4),
+         }, 3),
         ({
             "singleTeams": ["SWL"],
             "teams": ["all-teams"],
@@ -58,7 +56,7 @@ QUERY_TICKET_PRODUCTS_WITH_FILTERING = """
             "teams": ["swl", "ash", "ka2"],
             "leagues": ["ahl-20-21"],
             "streamType": "Game"
-         }, 10),
+         }, 9),
         ({
             "singleTeams": ["swl"],
             "teams": ["all-teams"],

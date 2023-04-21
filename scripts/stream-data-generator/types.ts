@@ -5,7 +5,7 @@ export interface Entity {
 export type AttributeConfig = {
   slug: string;
   name: string;
-  input_type: 'dropdown' | 'multiselect' | 'file' | 'text' | 'numeric' | 'references';
+  input_type: 'dropdown' | 'multiselect' | 'file' | 'text' | 'numeric' | 'references' | 'date';
   isRequired: boolean;
 }
 

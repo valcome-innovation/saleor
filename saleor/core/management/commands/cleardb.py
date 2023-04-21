@@ -98,18 +98,14 @@ class Command(BaseCommand):
         self.stdout.write("Removed webhooks")
 
         # Delete all users except for staff members.
-        staff = User.objects.filter(Q(is_staff=True) | Q(is_superuser=True))
-        User.objects.exclude(pk__in=staff).delete()
+        # VALCOME: just delete everything
+        # staff = User.objects.filter(Q(is_staff=True) | Q(is_superuser=True))
+        User.objects.all().delete()
         self.stdout.write("Removed customers")
 
-        should_delete_staff = options.get("delete_staff")
-        if should_delete_staff:
-            staff = staff.exclude(is_superuser=True)
-            staff.delete()
-            self.stdout.write("Removed staff users")
-
-        # Remove addresses of staff members. Used to clear saved addresses of staff
-        # accounts used on demo for testing checkout.
-        for user in staff:
-            user.addresses.all().delete()
-        self.stdout.write("Removed staff addresses")
+        # VALCOME: just delete everything
+        # should_delete_staff = options.get("delete_staff")
+        # if should_delete_staff:
+        #     staff = staff.exclude(is_superuser=True)
+        #     staff.delete()
+        #     self.stdout.write("Removed staff users")
