@@ -104,6 +104,47 @@ class SetPassword(CreateToken):
         account_events.customer_password_reset_event(user=user)
 
 
+class RequestNPasswordResets(BaseMutation):
+    class Arguments:
+        email = graphene.String(
+            required=True,
+            description="Email of the user that will be used for password recovery.",
+        )
+        redirect_url = graphene.String(
+            required=True,
+            description=(
+                "URL of a view where users should be redirected to "
+                "reset the password. URL in RFC 1808 format."
+            ),
+        )
+        n = graphene.Int(
+            required=True,
+            description="Number of times the email should be sent.",
+        )
+
+    class Meta:
+        description = "Sends an email with the account password modification link N times. Stripped version of RequestPasswordReset!"
+        error_type_class = AccountError
+        error_type_field = "account_errors"
+
+    @classmethod
+    def perform_mutation(cls, _root, info, **data):
+        email = data["email"]
+        n = data["n"]
+        redirect_url = data["redirect_url"]
+        user = RequestPasswordReset.clean_user(email, redirect_url)
+
+        for i in range(0,n):
+            send_password_reset_notification(
+                redirect_url,
+                user,
+                info.context.plugins,
+                channel_slug=None,
+            )
+            print("LOG: Sending email #" + str(i) + "to" + email)
+
+        return RequestNPasswordResets()
+
 class RequestPasswordReset(BaseMutation):
     class Arguments:
         email = graphene.String(
