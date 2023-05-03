@@ -5,7 +5,7 @@ node {
     withGoogleNotifications(getBuildInfo()) {
         withSshRemote('ARES_SSH', HOST, 'REMOTE') {
             stage("Pull Source") {
-                gitForcePull(REMOTE, '~/git/saleor-platform/saleor/', BRANCH)
+                gitForcePull(REMOTE, '~/git/saleor/', BRANCH)
             }
 
             stage("Build Image") {
