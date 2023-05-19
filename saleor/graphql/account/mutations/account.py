@@ -16,7 +16,7 @@ from ....settings import JWT_TTL_REQUEST_EMAIL_CHANGE
 from ...account.enums import AddressTypeEnum
 from ...account.types import Address, AddressInput, User
 from ...channel.utils import clean_channel
-from ...core.enums import LanguageCodeEnum
+from ...core.enums import LanguageCodeEnum, NewsletterStatusEnum
 from ...core.mutations import BaseMutation, ModelDeleteMutation, ModelMutation
 from ...core.types.common import AccountError
 from ...meta.mutations import MetadataInput
@@ -32,6 +32,11 @@ from .base import (
 class AccountRegisterInput(graphene.InputObjectType):
     email = graphene.String(description="The email address of the user.", required=True)
     password = graphene.String(description="Password.", required=True)
+    newsletter_status = graphene.Argument(
+        NewsletterStatusEnum,
+        description="Status of the user's newsletter subscription.",
+        required=True
+    )
     redirect_url = graphene.String(
         description=(
             "Base of frontend URL that will be needed to create confirmation URL."

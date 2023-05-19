@@ -2,6 +2,7 @@ import graphene
 from django.conf import settings
 
 from ...account import error_codes as account_error_codes
+from ...account.enums import NewsletterStatus
 from ...app import error_codes as app_error_codes
 from ...attribute import error_codes as attribute_error_codes
 from ...channel import error_codes as channel_error_codes
@@ -86,6 +87,7 @@ LanguageCodeEnum = graphene.Enum(
     [(lang[0].replace("-", "_").upper(), lang[0]) for lang in settings.LANGUAGES],
 )
 
+NewsletterStatusEnum = graphene.Enum.from_enum(NewsletterStatus)
 
 JobStatusEnum = to_enum(JobStatus)
 PermissionEnum = graphene.Enum("PermissionEnum", get_permissions_enum_list())
