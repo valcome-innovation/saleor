@@ -1,6 +1,7 @@
 import json
 import stripe
 
+from saleor.core.transactions import transaction_with_commit_on_errors
 from .sofort_checkout import complete_sofort_checkout
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,6 +13,7 @@ from .utils import get_payment_object, is_sofort_payment, \
 
 # NOTE: This does handle all stripe payments (not only sofort)
 @csrf_exempt
+@transaction_with_commit_on_errors()
 def stripe_webhook(request):
     body = json.loads(request.body)
 
@@ -20,10 +22,10 @@ def stripe_webhook(request):
     except ValueError:
         return HttpResponse(status=400)
 
-    return handle_sofort_webhook_event(request, event)
+    return handle_webhook_event(request, event)
 
 
-def handle_sofort_webhook_event(request, event):
+def handle_webhook_event(request, event):
     if event.type == "payment_intent.processing":
         handle_processing_payments(request, event)
     elif event.type == "payment_intent.payment_failed":

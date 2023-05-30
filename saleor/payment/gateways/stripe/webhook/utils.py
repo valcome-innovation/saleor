@@ -1,3 +1,6 @@
+from typing import Optional
+
+from ....models import Payment
 from ..... import settings
 from .....streaming import stream_settings
 
@@ -16,3 +19,14 @@ def is_sofort_payment(payment_intent):
 
 def get_payment_object(event):
     return event.data.object
+
+
+def get_payment(payment_intent_id: str) -> Optional[Payment]:
+    return (
+        Payment.objects.prefetch_related(
+            "checkout",
+        )
+        .select_for_update(of=("self",))
+        .filter(transactions__token=payment_intent_id)
+        .first()
+    )

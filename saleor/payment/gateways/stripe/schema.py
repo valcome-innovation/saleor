@@ -3,7 +3,7 @@ import graphene
 from .resolvers import resolve_payment_meta
 
 
-class SofortQueries(graphene.ObjectType):
+class StripeQueries(graphene.ObjectType):
     payment_meta = graphene.String(
         description="Look up a payment meta by payment intent ID",
         id=graphene.Argument(

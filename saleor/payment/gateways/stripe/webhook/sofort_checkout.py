@@ -1,5 +1,6 @@
 from graphql_relay import to_global_id
 
+from .utils import get_payment
 from ....models import Checkout as CheckoutModel
 from .....graphql.checkout.mutations import CheckoutComplete
 from .....graphql.checkout.types import Checkout
@@ -14,15 +15,27 @@ class Info:
 
 def complete_sofort_checkout(request, payment_intent):
     info = Info(request, schema)
-    checkout_token = str(payment_intent.metadata.checkout_token)
+    payment = get_payment(payment_intent.id)
 
-    if not _is_checkout_processing(checkout_token):
-        # Manually fill request context
-        info.context.user = CheckoutModel.objects.get(pk=checkout_token).user
-        info.context.app = None
+    # if payment doesn't exist, do nothing
+    if not payment:
+        return
 
-        _update_checkout_webhook_processing(checkout_token, True)
-        _complete_checkout(info, checkout_token, payment_intent)
+    # order already created, nothing left to do
+    if payment.order_id:
+        return
+
+    if payment.checkout:
+        checkout = payment.checkout
+        checkout_token = checkout.token
+
+        if not checkout.webhook_processing:
+            # Manually fill request context
+            info.context.user = checkout.user
+            info.context.app = None
+
+            _update_checkout_webhook_processing(checkout_token, True)
+            _complete_checkout(info, checkout_token, payment_intent)
 
 
 def _is_checkout_processing(checkout_token):

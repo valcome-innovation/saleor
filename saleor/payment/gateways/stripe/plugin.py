@@ -1,6 +1,7 @@
 import logging
 from typing import TYPE_CHECKING, List, Tuple
 
+from . import get_payment_meta
 from ....streaming import stream_settings
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
@@ -546,6 +547,12 @@ class StripeGatewayPlugin(BasePlugin):
                         )
                     }
                 )
+
+    @require_active_plugin
+    def get_payment_meta(self, payment_intent_id):
+        params = self.config.connection_params
+        api_key = params['secret_api_key']
+        return get_payment_meta(api_key, payment_intent_id)
 
     @require_active_plugin
     def get_payment_config(self, previous_value):
