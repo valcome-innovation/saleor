@@ -33,7 +33,8 @@ from .stripe_api import (
     list_customer_payment_methods,
     refund_payment_intent,
     retrieve_payment_intent,
-    subscribe_webhook
+    subscribe_webhook,
+    detach_customer_payment_method
 )
 from .webhooks import handle_webhook
 
@@ -450,6 +451,13 @@ class StripeGatewayPlugin(BasePlugin):
             previous_value.extend(customer_sources)
 
         return previous_value
+
+    @require_active_plugin
+    def delete_payment_source(self, payment_method_id: str):
+        return detach_customer_payment_method(
+            api_key=self.config.connection_params["secret_api_key"],
+            payment_method_id=payment_method_id
+        )
 
     @classmethod
     def pre_save_plugin_configuration(cls, plugin_configuration: "PluginConfiguration"):

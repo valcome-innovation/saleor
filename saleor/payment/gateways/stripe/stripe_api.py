@@ -7,6 +7,7 @@ from urllib.parse import urljoin
 import stripe
 from django.contrib.sites.models import Site
 from django.urls import reverse
+from stripe.api_resources.payment_method import PaymentMethod
 from stripe.error import AuthenticationError, InvalidRequestError, StripeError
 from stripe.stripe_object import StripeObject
 
@@ -204,6 +205,20 @@ def list_customer_payment_methods(
                 type="card",  # we support only cards for now
             )
         return payment_methods, None
+    except StripeError as error:
+        return None, error
+
+
+def detach_customer_payment_method(
+    api_key: str, payment_method_id: str
+) -> Tuple[Optional["PaymentMethod"], Optional[StripeError]]:
+    try:
+        with stripe_opentracing_trace("stripe.PaymentMethod.detach"):
+            payment_method: "PaymentMethod" = stripe.PaymentMethod.detach(
+                payment_method_id,
+                api_key=api_key
+            )
+            return payment_method, None
     except StripeError as error:
         return None, error
 

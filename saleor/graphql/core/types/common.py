@@ -36,7 +36,7 @@ from ..enums import (
     WarehouseErrorCode,
     WebhookErrorCode,
     WeightUnitsEnum,
-    WishlistErrorCode,
+    WishlistErrorCode, StripeErrorCode,
 )
 from .money import VAT
 
@@ -321,6 +321,10 @@ class StockError(Error):
     code = StockErrorCode(description="The error code.", required=True)
 
 
+class StripeError(Error):
+    code = StripeErrorCode(description="The error code.", required=True)
+
+
 class BulkStockError(ProductError):
     index = graphene.Int(
         description="Index of an input list item that caused the error."
@@ -350,7 +354,6 @@ class TranslationError(Error):
 class SeoInput(graphene.InputObjectType):
     title = graphene.String(description="SEO title.")
     description = graphene.String(description="SEO description.")
-
 
 class Weight(graphene.ObjectType):
     unit = WeightUnitsEnum(description="Weight unit.", required=True)

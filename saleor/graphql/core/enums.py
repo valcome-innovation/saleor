@@ -25,6 +25,7 @@ from ...menu import error_codes as menu_error_codes
 from ...order import error_codes as order_error_codes
 from ...page import error_codes as page_error_codes
 from ...payment import error_codes as payment_error_codes
+from ...payment.gateways.stripe import error_codes as stripe_error_codes
 from ...plugins import error_codes as plugin_error_codes
 from ...product import error_codes as product_error_codes
 from ...shipping import error_codes as shipping_error_codes
@@ -126,6 +127,7 @@ CollectionErrorCode = graphene.Enum.from_enum(product_error_codes.CollectionErro
 ShopErrorCode = graphene.Enum.from_enum(core_error_codes.ShopErrorCode)
 ShippingErrorCode = graphene.Enum.from_enum(shipping_error_codes.ShippingErrorCode)
 StockErrorCode = graphene.Enum.from_enum(warehouse_error_codes.StockErrorCode)
+StripeErrorCode = graphene.Enum.from_enum(stripe_error_codes.StripeErrorCode)
 UploadErrorCode = graphene.Enum.from_enum(core_error_codes.UploadErrorCode)
 WarehouseErrorCode = graphene.Enum.from_enum(warehouse_error_codes.WarehouseErrorCode)
 WebhookErrorCode = graphene.Enum.from_enum(webhook_error_codes.WebhookErrorCode)
