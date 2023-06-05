@@ -7,7 +7,7 @@ import pytest
 from saleor.checkout.models import Checkout
 from saleor.graphql.checkout.mutations import CheckoutComplete
 from saleor.payment import ChargeStatus
-from saleor.payment.gateways.sofort.webhook.views import stripe_webhook
+from saleor.payment.gateways.stripe.valcome_webhook.views import stripe_webhook
 from saleor.payment.models import Payment
 
 

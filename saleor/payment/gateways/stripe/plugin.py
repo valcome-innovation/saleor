@@ -186,6 +186,7 @@ class StripeGatewayPlugin(BasePlugin):
         off_session = data.get("off_session") if data else None
 
         payment_method_types = data.get("payment_method_types") if data else None
+        payment_intent_meta = data.get("payment_intent_meta") if data else None
 
         customer = None
         # confirm that we create customer on stripe side only for log-in customers
@@ -207,6 +208,9 @@ class StripeGatewayPlugin(BasePlugin):
             metadata={
                 "channel": self.channel.slug,  # type: ignore
                 "payment_id": payment_information.graphql_payment_id,
+                "app_id": payment_intent_meta.get("app_id", None),
+                "checkout_token": payment_intent_meta.get("checkout_token", None),
+                "subscribe_to_newsletter": payment_intent_meta.get("subscribe_to_newsletter", None)
             },
             setup_future_usage=setup_future_usage,
             off_session=off_session,
@@ -422,8 +426,11 @@ class StripeGatewayPlugin(BasePlugin):
             api_key=self.config.connection_params["secret_api_key"],
             customer_id=customer_id,
         )
+
         if payment_methods:
-            channel_slug: str = self.channel.slug  # type: ignore
+            # VALCOME: Ignore channel as ng-live does not support it
+            # channel_slug: str = self.channel.slug  # type: ignore
+
             customer_sources = [
                 CustomerSource(
                     id=payment_method.id,
@@ -437,9 +444,11 @@ class StripeGatewayPlugin(BasePlugin):
                     ),
                 )
                 for payment_method in payment_methods
-                if payment_method.metadata.get("channel") == channel_slug
+                # VALCOME: Ignore channel as ng-live does not support it
+                # if payment_method.metadata.get("channel") == channel_slug
             ]
             previous_value.extend(customer_sources)
+
         return previous_value
 
     @classmethod

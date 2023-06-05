@@ -23,9 +23,8 @@ def get_payment_object(event):
 
 def get_payment(payment_intent_id: str) -> Optional[Payment]:
     return (
-        Payment.objects.prefetch_related(
-            "checkout",
-        )
+        Payment.objects
+        .prefetch_related("checkout")
         .select_for_update(of=("self",))
         .filter(transactions__token=payment_intent_id)
         .first()

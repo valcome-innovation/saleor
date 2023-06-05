@@ -13,7 +13,7 @@ class Info:
         self.schema = schema
 
 
-def complete_sofort_checkout(request, payment_intent):
+def complete_stripe_checkout(request, payment_intent):
     info = Info(request, schema)
     payment = get_payment(payment_intent.id)
 

@@ -24,8 +24,8 @@ def process_payment(
     meta = {
         "app_id": payment_information.data.get("app_id", None),
         "checkout_token": payment_information.data.get("checkout_token", None),
-        "checkout_params": payment_information.data.get("checkout_params", None),
         "redirect_id": payment_information.data.get("redirect_id", None),
+        "checkout_params": payment_information.data.get("checkout_params", None),
         "subscribe_to_newsletter": payment_information.data.get("subscribe_to_newsletter", None)
     }
 

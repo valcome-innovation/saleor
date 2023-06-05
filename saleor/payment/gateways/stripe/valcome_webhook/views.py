@@ -2,16 +2,17 @@ import json
 import stripe
 
 from saleor.core.transactions import transaction_with_commit_on_errors
-from .sofort_checkout import complete_sofort_checkout
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from .stripe_psp_data import update_sofort_failure_psp_data, update_refund_psp_data
-from .utils import get_payment_object, is_sofort_payment, \
+from .sofort_checkout import complete_stripe_checkout
+from .stripe_psp_data import update_refund_psp_data, \
+    update_failure_psp_data
+from .utils import get_payment_object, \
     has_matching_app_id
 
 
-# NOTE: This does handle all stripe payments (not only sofort)
+# NOTE: This does handle all stripe payments
 @csrf_exempt
 @transaction_with_commit_on_errors()
 def stripe_webhook(request):
@@ -26,7 +27,8 @@ def stripe_webhook(request):
 
 
 def handle_webhook_event(request, event):
-    if event.type == "payment_intent.processing":
+    if event.type == "payment_intent.processing" \
+            or event.type == "payment_intent.succeeded":
         handle_processing_payments(request, event)
     elif event.type == "payment_intent.payment_failed":
         handle_payment_failures(event)
@@ -36,24 +38,23 @@ def handle_webhook_event(request, event):
     return HttpResponse(status=200)
 
 
-# Filter SOFORT and APP_ID and complete checkout for webhook processing
+# Filter APP_ID and complete checkout for webhook processing
 def handle_processing_payments(request, event):
     payment_intent = get_payment_object(event)
 
-    if is_sofort_payment(payment_intent) and has_matching_app_id(payment_intent):
-        complete_sofort_checkout(request, payment_intent)
+    if has_matching_app_id(payment_intent):
+        complete_stripe_checkout(request, payment_intent)
 
 
-# For CC and SOFORT => Update psp data
+# Update psp data
 def handle_refunds(event):
     charge = get_payment_object(event)
 
     update_refund_psp_data(charge)
 
 
-# Filter SOFORT only and update psp state
+# Update psp state
 def handle_payment_failures(event):
     payment_intent = get_payment_object(event)
 
-    if is_sofort_payment(payment_intent):
-        update_sofort_failure_psp_data(payment_intent)
+    update_failure_psp_data(payment_intent)

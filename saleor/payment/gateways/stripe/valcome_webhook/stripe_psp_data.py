@@ -42,7 +42,7 @@ def get_latest_refund_date(refunds):
         return datetime.fromtimestamp(latest_unix)
 
 
-def update_sofort_failure_psp_data(payment_intent):
+def update_failure_psp_data(payment_intent):
     psp_reference = payment_intent.id
     payment = Payment.objects.filter(psp_reference=psp_reference).first()
 

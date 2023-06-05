@@ -90,7 +90,7 @@ class SofortGatewayPlugin(BasePlugin):
     def list_payment_sources(
         self, customer_id: str, previous_value
     ) -> List["CustomerSource"]:
-        sources = list_client_sources(self._get_gateway_config(), customer_id)
+        sources = []
         previous_value.extend(sources)
         return previous_value
 

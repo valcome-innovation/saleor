@@ -8,7 +8,7 @@ from .core.views import jwks
 from .graphql.api import schema
 from .graphql.views import GraphQLView
 from .payment.gateways.paypal.webhook.views import paypal_webhook
-from .payment.gateways.stripe.webhook.views import stripe_webhook
+from .payment.gateways.stripe.valcome_webhook.views import stripe_webhook
 from .plugins.views import (
     handle_global_plugin_webhook,
     handle_plugin_per_channel_webhook,
