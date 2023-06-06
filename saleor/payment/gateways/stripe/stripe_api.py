@@ -216,7 +216,8 @@ def detach_customer_payment_method(
         with stripe_opentracing_trace("stripe.PaymentMethod.detach"):
             payment_method: "PaymentMethod" = stripe.PaymentMethod.detach(
                 payment_method_id,
-                api_key=api_key
+                api_key=api_key,
+                max_network_retries=2,
             )
             return payment_method, None
     except StripeError as error:
