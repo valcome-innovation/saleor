@@ -1,3 +1,4 @@
+from django.core.handlers.asgi import ASGIRequest
 from graphql_relay import to_global_id
 
 from .utils import get_payment
@@ -13,7 +14,7 @@ class Info:
         self.schema = schema
 
 
-def complete_stripe_checkout(request, payment_intent):
+def complete_stripe_checkout(request: ASGIRequest, payment_intent):
     info = Info(request, schema)
     payment = get_payment(payment_intent.id)
 
