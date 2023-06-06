@@ -1,6 +1,8 @@
 import logging
 from typing import TYPE_CHECKING, List, Tuple
 
+import stripe
+
 from . import get_payment_meta
 from ....streaming import stream_settings
 from django.contrib.sites.models import Site
@@ -121,6 +123,7 @@ class StripeGatewayPlugin(BasePlugin):
             },
             store_customer=True,
         )
+        stripe.max_network_retries = 2
 
     def webhook(self, request: WSGIRequest, path: str, previous_value) -> HttpResponse:
         config = self.config
@@ -217,6 +220,7 @@ class StripeGatewayPlugin(BasePlugin):
             off_session=off_session,
             payment_method_types=payment_method_types,
             customer_email=payment_information.customer_email,
+            checkout_token=payment_information.checkout_token
         )
 
         raw_response = None

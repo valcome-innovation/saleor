@@ -1,5 +1,6 @@
 from django.core.handlers.asgi import ASGIRequest
 from graphql_relay import to_global_id
+from stripe.api_resources.payment_intent import PaymentIntent
 
 from .utils import get_payment
 from ....models import Checkout as CheckoutModel
@@ -14,7 +15,8 @@ class Info:
         self.schema = schema
 
 
-def complete_stripe_checkout(request: ASGIRequest, payment_intent):
+def complete_stripe_checkout(request: ASGIRequest,
+                             payment_intent: PaymentIntent):
     info = Info(request, schema)
     payment = get_payment(payment_intent.id)
 
