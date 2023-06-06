@@ -167,7 +167,7 @@ def create_payment_intent(
         with stripe_opentracing_trace("stripe.PaymentIntent.create"):
             intent = stripe.PaymentIntent.create(
                 api_key=api_key,
-                idempotency_key=checkout_token,
+                # idempotency_key=checkout_token,
                 amount=price_to_minor_unit(amount, currency),
                 currency=currency,
                 capture_method=capture_method,
