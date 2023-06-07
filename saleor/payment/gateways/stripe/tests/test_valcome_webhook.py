@@ -15,9 +15,9 @@ from saleor.payment.models import Payment
 def test_create_order_for_processing_sofort(
         checkout_complete_mock,
         stripe_sofort_processing_event,
-        stripe_checkout: Checkout,
+        stripe_webhook_payment: Payment,
 ):
-    stripe_checkout.save()
+    stripe_webhook_payment.save()
 
     stripe_webhook(stripe_sofort_processing_event)
 
@@ -45,9 +45,10 @@ def test_ignore_processing_checkouts(
 ])
 def test_psp_data_to_fully_refund(
         refund_event_fixture,
-        stripe_webhook_payment,
+        stripe_webhook_payment: Payment,
         request
 ):
+    stripe_webhook_payment.save()
     refund_event = request.getfixturevalue(refund_event_fixture)
 
     response = stripe_webhook(refund_event)
@@ -61,8 +62,10 @@ def test_psp_data_to_fully_refund(
 
 def test_psp_data_to_partially_refund(
         stripe_cc_partial_refund_event,
-        stripe_webhook_payment
+        stripe_webhook_payment: Payment,
 ):
+    stripe_webhook_payment.save()
+
     response = stripe_webhook(stripe_cc_partial_refund_event)
     actual = Payment.objects.filter(id=stripe_webhook_payment.id).first()
 
@@ -79,9 +82,11 @@ def test_psp_data_to_partially_refund(
 ])
 def test_psp_data_to_refused(
         fail_event_fixture,
-        stripe_webhook_payment,
+        stripe_webhook_payment: Payment,
         request
 ):
+    stripe_webhook_payment.save()
+
     fail_event = request.getfixturevalue(fail_event_fixture)
 
     response = stripe_webhook(fail_event)
@@ -95,8 +100,10 @@ def test_psp_data_to_refused(
 
 def test_ignore_cc_failures(
         stripe_cc_fail_instant_event,
-        stripe_webhook_payment
+        stripe_webhook_payment: Payment,
 ):
+    stripe_webhook_payment.save()
+
     response = stripe_webhook(stripe_cc_fail_instant_event)
     actual = Payment.objects.filter(id=stripe_webhook_payment.id).first()
 
@@ -109,8 +116,10 @@ def test_ignore_cc_failures(
 def test_no_refund_for_failed_payment(
         stripe_sofort_fail_later_event,
         stripe_sofort_refund_event,
-        stripe_webhook_payment
+        stripe_webhook_payment: Payment
 ):
+    stripe_webhook_payment.save()
+
     stripe_webhook(stripe_sofort_fail_later_event)
     stripe_webhook(stripe_sofort_refund_event)
 

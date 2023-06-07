@@ -4,6 +4,7 @@ from unittest import mock
 import pytest
 
 from saleor.checkout.models import Checkout
+from saleor.payment import TransactionKind
 
 
 @pytest.fixture
@@ -24,15 +25,29 @@ def stripe_checkout(
     checkout.token = stripe_checkout_token
     checkout.webhook_processing = False
 
+    checkout.save()
+
     return checkout
 
 
 @pytest.fixture()
-def stripe_webhook_payment(payment_dummy, stripe_payment_intent_id):
+def stripe_webhook_payment(payment_dummy,
+                           stripe_payment_intent_id,
+                           stripe_checkout: Checkout):
     payment_dummy.gateway = 'saleor.payments.stripe'
     payment_dummy.psp_reference = stripe_payment_intent_id
     payment_dummy.total = 4.9
-    payment_dummy.save()
+    payment_dummy.checkout = stripe_checkout
+    payment_dummy.order = None
+
+    payment_dummy.transactions.create(
+        amount=4.9,
+        currency='EUR',
+        kind=TransactionKind.AUTH,
+        token=stripe_payment_intent_id,
+        gateway_response={},
+        is_success=True,
+    )
 
     return payment_dummy
 
