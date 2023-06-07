@@ -227,6 +227,182 @@ def stripe_sofort_processing_event():
 
 
 @pytest.fixture
+def stripe_sofort_succeeded_event():
+    event = mock.Mock()
+    event.body = json.dumps({
+  "api_version": "2019-12-03",
+  "created": 1686137895,
+  "data": {
+    "object": {
+      "amount": 490,
+      "amount_capturable": 0,
+      "amount_details": {
+        "tip": {}
+      },
+      "amount_received": 490,
+      "application": None,
+      "application_fee_amount": None,
+      "automatic_payment_methods": None,
+      "canceled_at": None,
+      "cancellation_reason": None,
+      "capture_method": "automatic",
+      "charges": {
+        "data": [
+          {
+            "amount": 490,
+            "amount_captured": 490,
+            "amount_refunded": 0,
+            "application": None,
+            "application_fee": None,
+            "application_fee_amount": None,
+            "balance_transaction": "txn_3NGKdgH8gEfhfk0t1taMmLYt",
+            "billing_details": {
+              "address": {
+                "city": None,
+                "country": None,
+                "line1": None,
+                "line2": None,
+                "postal_code": None,
+                "state": None
+              },
+              "email": "simon.kepplinger@gmail.com",
+              "name": "Simon Kepplinger",
+              "phone": None
+            },
+            "calculated_statement_descriptor": None,
+            "captured": True,
+            "created": 1686137711,
+            "currency": "eur",
+            "customer": "cus_O2PGYR8pgIdzl3",
+            "description": None,
+            "destination": None,
+            "dispute": None,
+            "disputed": False,
+            "failure_balance_transaction": None,
+            "failure_code": None,
+            "failure_message": None,
+            "fraud_details": {},
+            "id": "py_3NGKdgH8gEfhfk0t15knUtqq",
+            "invoice": None,
+            "livemode": False,
+            "metadata": {
+              "app_id": "ICE",
+              "channel": "streaming-channel",
+              "checkout_token": "7c763c0e-8eba-4192-a294-dac868fee33b",
+              "payment_id": "UGF5bWVudDoyNQ==",
+              "subscribe_to_newsletter": "False"
+            },
+            "object": "charge",
+            "on_behalf_of": None,
+            "order": None,
+            "outcome": {
+              "network_status": "approved_by_network",
+              "reason": None,
+              "risk_level": "not_assessed",
+              "seller_message": "Payment complete.",
+              "type": "authorized"
+            },
+            "paid": True,
+            "payment_intent": "pi_3LueggH8gEfhfk0t1APAIgKx",
+            "payment_method": "pm_1NGKdfH8gEfhfk0tjwygbjS1",
+            "payment_method_details": {
+              "sofort": {
+                "bank_code": "DEUT",
+                "bank_name": "Deutsche Bank",
+                "bic": "DEUTDE2H",
+                "country": "AT",
+                "generated_sepa_debit": None,
+                "generated_sepa_debit_mandate": None,
+                "iban_last4": "3000",
+                "preferred_language": None,
+                "verified_name": "Jenny Rosen"
+              },
+              "type": "sofort"
+            },
+            "receipt_email": None,
+            "receipt_number": None,
+            "receipt_url": "https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xRzZCdzBIOGdFZmhmazB0KKfYgaQGMgaBRNh0kjs6LBaAMuEJeUJh3y-Yw4iAiomTJ_NxiKpJtJCyBd8nE9Ek_e8cKh8oxu4N41o9",
+            "refunded": False,
+            "refunds": {
+              "data": [],
+              "has_more": False,
+              "object": "list",
+              "total_count": 0,
+              "url": "/v1/charges/py_3NGKdgH8gEfhfk0t15knUtqq/refunds"
+            },
+            "review": None,
+            "shipping": None,
+            "source": None,
+            "source_transfer": None,
+            "statement_descriptor": None,
+            "statement_descriptor_suffix": None,
+            "status": "succeeded",
+            "transfer_data": None,
+            "transfer_group": None
+          }
+        ],
+        "has_more": False,
+        "object": "list",
+        "total_count": 1,
+        "url": "/v1/charges?payment_intent=pi_3LueggH8gEfhfk0t1APAIgKx"
+      },
+      "client_secret": "pi_3LueggH8gEfhfk0t1APAIgKx_secret_v35tdQW6Nvakpxv20jPCFafDa",
+      "confirmation_method": "automatic",
+      "created": 1686137696,
+      "currency": "eur",
+      "customer": "cus_O2PGYR8pgIdzl3",
+      "description": None,
+      "id": "pi_3LueggH8gEfhfk0t1APAIgKx",
+      "invoice": None,
+      "last_payment_error": None,
+      "latest_charge": "py_3NGKdgH8gEfhfk0t15knUtqq",
+      "livemode": False,
+      "metadata": {
+        "app_id": "VTV",
+        "channel": "streaming-channel",
+        "checkout_token": "7c763c0e-8eba-4192-a294-dac868fee33b",
+        "payment_id": "UGF5bWVudDoyNQ==",
+        "subscribe_to_newsletter": "False"
+      },
+      "next_action": None,
+      "object": "payment_intent",
+      "on_behalf_of": None,
+      "payment_method": "pm_1NGKdfH8gEfhfk0tjwygbjS1",
+      "payment_method_options": {
+        "sofort": {
+          "preferred_language": None
+        }
+      },
+      "payment_method_types": [
+        "sofort"
+      ],
+      "processing": None,
+      "receipt_email": None,
+      "review": None,
+      "setup_future_usage": None,
+      "shipping": None,
+      "source": None,
+      "statement_descriptor": None,
+      "statement_descriptor_suffix": None,
+      "status": "succeeded",
+      "transfer_data": None,
+      "transfer_group": None
+    }
+  },
+  "id": "evt_3NGKdgH8gEfhfk0t1rNbp9IE",
+  "livemode": False,
+  "object": "event",
+  "pending_webhooks": 4,
+  "request": {
+    "id": None,
+    "idempotency_key": None
+  },
+  "type": "payment_intent.succeeded"
+})
+
+    return event
+
+@pytest.fixture
 def stripe_cc_refund_event():
     request = mock.Mock()
     request.body = json.dumps({
@@ -1239,6 +1415,198 @@ def stripe_cc_fail_instant_event():
             "idempotency_key": "875ec26f-1352-4666-af92-52c2929a6998"
         },
         "type": "payment_intent.payment_failed"
+    })
+
+    return request
+
+
+@pytest.fixture
+def stripe_cc_intent_succeeded():
+    request = mock.Mock()
+    request.body = json.dumps({
+        "api_version": "2019-12-03",
+        "created": 1686136988,
+        "data": {
+            "object": {
+                "amount": 490,
+                "amount_capturable": 0,
+                "amount_details": {
+                    "tip": {}
+                },
+                "amount_received": 490,
+                "application": None,
+                "application_fee_amount": None,
+                "automatic_payment_methods": None,
+                "canceled_at": None,
+                "cancellation_reason": None,
+                "capture_method": "automatic",
+                "charges": {
+                    "data": [
+                        {
+                            "amount": 490,
+                            "amount_captured": 490,
+                            "amount_refunded": 0,
+                            "application": None,
+                            "application_fee": None,
+                            "application_fee_amount": None,
+                            "balance_transaction": "txn_3NGKSFH8gEfhfk0t0T5PEBVD",
+                            "billing_details": {
+                                "address": {
+                                    "city": None,
+                                    "country": "AT",
+                                    "line1": None,
+                                    "line2": None,
+                                    "postal_code": "4040",
+                                    "state": None
+                                },
+                                "email": None,
+                                "name": None,
+                                "phone": None
+                            },
+                            "calculated_statement_descriptor": "ICEHOCKEY LIVESTREAM",
+                            "captured": True,
+                            "created": 1686136987,
+                            "currency": "eur",
+                            "customer": "cus_O2PGYR8pgIdzl3",
+                            "description": None,
+                            "destination": None,
+                            "dispute": None,
+                            "disputed": False,
+                            "failure_balance_transaction": None,
+                            "failure_code": None,
+                            "failure_message": None,
+                            "fraud_details": {},
+                            "id": "ch_3NGKSFH8gEfhfk0t03xz8r8D",
+                            "invoice": None,
+                            "livemode": False,
+                            "metadata": {
+                                "app_id": "VTV",
+                                "channel": "streaming-channel",
+                                "checkout_token": "108d422a-d72e-483f-a95a-44eff085bad1",
+                                "payment_id": "UGF5bWVudDoyNA==",
+                                "subscribe_to_newsletter": "False"
+                            },
+                            "object": "charge",
+                            "on_behalf_of": None,
+                            "order": None,
+                            "outcome": {
+                                "network_status": "approved_by_network",
+                                "reason": None,
+                                "risk_level": "normal",
+                                "risk_score": 6,
+                                "seller_message": "Payment complete.",
+                                "type": "authorized"
+                            },
+                            "paid": True,
+                            "payment_intent": "pi_3LueggH8gEfhfk0t1APAIgKx",
+                            "payment_method": "pm_1NGKSDH8gEfhfk0tox3oyX5y",
+                            "payment_method_details": {
+                                "card": {
+                                    "brand": "visa",
+                                    "checks": {
+                                        "address_line1_check": None,
+                                        "address_postal_code_check": "pass",
+                                        "cvc_check": "pass"
+                                    },
+                                    "country": "US",
+                                    "exp_month": 2,
+                                    "exp_year": 2042,
+                                    "fingerprint": "16GUWWVRomf1xICD",
+                                    "funding": "credit",
+                                    "installments": None,
+                                    "last4": "4242",
+                                    "mandate": None,
+                                    "network": "visa",
+                                    "network_token": {
+                                        "used": False
+                                    },
+                                    "three_d_secure": None,
+                                    "wallet": None
+                                },
+                                "type": "card"
+                            },
+                            "receipt_email": None,
+                            "receipt_number": None,
+                            "receipt_url": "https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xRzZCdzBIOGdFZmhmazB0KJzRgaQGMgZlJnf722o6LBbt6ZZigsj9kV_Z0lYm_vzoWWu9GV6FRZHoK8BLSFwR1LorbCGK743k47UK",
+                            "refunded": False,
+                            "refunds": {
+                                "data": [],
+                                "has_more": False,
+                                "object": "list",
+                                "total_count": 0,
+                                "url": "/v1/charges/ch_3NGKSFH8gEfhfk0t03xz8r8D/refunds"
+                            },
+                            "review": None,
+                            "shipping": None,
+                            "source": None,
+                            "source_transfer": None,
+                            "statement_descriptor": None,
+                            "statement_descriptor_suffix": None,
+                            "status": "succeeded",
+                            "transfer_data": None,
+                            "transfer_group": None
+                        }
+                    ],
+                    "has_more": False,
+                    "object": "list",
+                    "total_count": 1,
+                    "url": "/v1/charges?payment_intent=pi_3LueggH8gEfhfk0t1APAIgKx"
+                },
+                "client_secret": "pi_3LueggH8gEfhfk0t1APAIgKx_secret_797SnBiECwPzwcL8V1LdAjhw5",
+                "confirmation_method": "automatic",
+                "created": 1686136987,
+                "currency": "eur",
+                "customer": "cus_O2PGYR8pgIdzl3",
+                "description": None,
+                "id": "pi_3LueggH8gEfhfk0t1APAIgKx",
+                "invoice": None,
+                "last_payment_error": None,
+                "latest_charge": "ch_3NGKSFH8gEfhfk0t03xz8r8D",
+                "livemode": False,
+                "metadata": {
+                    "app_id": "ICE",
+                    "channel": "streaming-channel",
+                    "checkout_token": "108d422a-d72e-483f-a95a-44eff085bad1",
+                    "payment_id": "UGF5bWVudDoyNA==",
+                    "subscribe_to_newsletter": "False"
+                },
+                "next_action": None,
+                "object": "payment_intent",
+                "on_behalf_of": None,
+                "payment_method": "pm_1NGKSDH8gEfhfk0tox3oyX5y",
+                "payment_method_options": {
+                    "card": {
+                        "installments": None,
+                        "mandate_options": None,
+                        "network": None,
+                        "request_three_d_secure": "automatic"
+                    }
+                },
+                "payment_method_types": [
+                    "card"
+                ],
+                "processing": None,
+                "receipt_email": None,
+                "review": None,
+                "setup_future_usage": "on_session",
+                "shipping": None,
+                "source": None,
+                "statement_descriptor": None,
+                "statement_descriptor_suffix": None,
+                "status": "succeeded",
+                "transfer_data": None,
+                "transfer_group": None
+            }
+        },
+        "id": "evt_3NGKSFH8gEfhfk0t0lFY9ytS",
+        "livemode": False,
+        "object": "event",
+        "pending_webhooks": 4,
+        "request": {
+            "id": "req_oNPGV8wE2EHUQw",
+            "idempotency_key": "71dce62f-81e6-4888-8cab-b45e0c58c8e2"
+        },
+        "type": "payment_intent.succeeded"
     })
 
     return request

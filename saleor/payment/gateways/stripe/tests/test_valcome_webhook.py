@@ -12,16 +12,37 @@ from saleor.payment.models import Payment
 
 
 @patch.object(CheckoutComplete, 'perform_mutation')
-def test_create_order_for_processing_sofort(
+@pytest.mark.parametrize('stripe_order_event_fixture', [
+    'stripe_sofort_processing_event',
+    'stripe_cc_intent_succeeded'
+])
+def test_create_order_for_stripe_events(
+        checkout_complete_mock,
+        stripe_order_event_fixture,
+        request,
+        stripe_webhook_payment: Payment,
+):
+    stripe_webhook_payment.save()
+    stripe_order_event = request.getfixturevalue(stripe_order_event_fixture)
+
+    stripe_webhook(stripe_order_event)
+
+    assert checkout_complete_mock.called
+
+
+@patch.object(CheckoutComplete, 'perform_mutation')
+def test_call_order_complete_once_for_single_sofort_payment(
         checkout_complete_mock,
         stripe_sofort_processing_event,
+        stripe_sofort_succeeded_event,
         stripe_webhook_payment: Payment,
 ):
     stripe_webhook_payment.save()
 
     stripe_webhook(stripe_sofort_processing_event)
+    stripe_webhook(stripe_sofort_succeeded_event)
 
-    assert checkout_complete_mock.called
+    assert checkout_complete_mock.call_count == 1
 
 
 @patch.object(CheckoutComplete, 'perform_mutation')
