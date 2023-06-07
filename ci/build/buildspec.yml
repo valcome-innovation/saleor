@@ -6,6 +6,15 @@ env:
 phases:
   install:
     commands:
+      # Install docker buildx plugin
+      - export DOCKER_CLI_EXPERIMENTAL=enabled
+      - wget https://github.com/docker/buildx/releases/download/v0.10.5/buildx-v0.10.5.linux-amd64
+      - mkdir -p ~/.docker/cli-plugins
+      - mv buildx-v0.10.5.linux-amd64 ~/.docker/cli-plugins/docker-buildx
+      - chmod a+x ~/.docker/cli-plugins/docker-buildx
+      - docker buildx create --use
+
+      # Run docker login
       - docker login -u $dockerhub_username -p $dockerhub_password
   pre_build:
     commands:
