@@ -219,8 +219,7 @@ class StripeGatewayPlugin(BasePlugin):
             setup_future_usage=setup_future_usage,
             off_session=off_session,
             payment_method_types=payment_method_types,
-            customer_email=payment_information.customer_email,
-            checkout_token=payment_information.checkout_token
+            customer_email=payment_information.customer_email
         )
 
         raw_response = None

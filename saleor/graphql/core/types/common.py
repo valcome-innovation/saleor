@@ -36,7 +36,8 @@ from ..enums import (
     WarehouseErrorCode,
     WebhookErrorCode,
     WeightUnitsEnum,
-    WishlistErrorCode, StripeErrorCode,
+    WishlistErrorCode,
+    StripeErrorCode,
 )
 from .money import VAT
 
