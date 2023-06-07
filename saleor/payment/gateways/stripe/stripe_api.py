@@ -7,6 +7,7 @@ from urllib.parse import urljoin
 import stripe
 from django.contrib.sites.models import Site
 from django.urls import reverse
+from stripe.api_resources.payment_method import PaymentMethod
 from stripe.error import AuthenticationError, InvalidRequestError, StripeError
 from stripe.stripe_object import StripeObject
 
@@ -133,6 +134,7 @@ def create_payment_intent(
     off_session: Optional[bool] = None,
     payment_method_types: Optional[List[str]] = None,
     customer_email: Optional[str] = None,
+    checkout_token: Optional[str] = None,
 ) -> Tuple[Optional[StripeObject], Optional[StripeError]]:
 
     capture_method = AUTOMATIC_CAPTURE_METHOD if auto_capture else MANUAL_CAPTURE_METHOD
@@ -165,6 +167,7 @@ def create_payment_intent(
         with stripe_opentracing_trace("stripe.PaymentIntent.create"):
             intent = stripe.PaymentIntent.create(
                 api_key=api_key,
+                # idempotency_key=checkout_token,
                 amount=price_to_minor_unit(amount, currency),
                 currency=currency,
                 capture_method=capture_method,
@@ -204,6 +207,20 @@ def list_customer_payment_methods(
                 type="card",  # we support only cards for now
             )
         return payment_methods, None
+    except StripeError as error:
+        return None, error
+
+
+def detach_customer_payment_method(
+    api_key: str, payment_method_id: str
+) -> Tuple[Optional["PaymentMethod"], Optional[StripeError]]:
+    try:
+        with stripe_opentracing_trace("stripe.PaymentMethod.detach"):
+            payment_method: "PaymentMethod" = stripe.PaymentMethod.detach(
+                payment_method_id,
+                api_key=api_key,
+            )
+            return payment_method, None
     except StripeError as error:
         return None, error
 

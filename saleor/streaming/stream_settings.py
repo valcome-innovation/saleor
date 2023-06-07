@@ -1,6 +1,7 @@
 import os
 import ast
 import os.path
+
 from get_docker_secret import get_docker_secret
 
 
@@ -40,7 +41,6 @@ def add_backends(backends):
 
 def add_plugins(plugins):
     plugins.append("saleor.payment.gateways.paypal.plugin.PaypalGatewayPlugin")
-    plugins.append("saleor.payment.gateways.sofort.plugin.SofortGatewayPlugin")
     plugins.append("saleor.plugins.streaming.plugin.StreamingPlugin")
     plugins.append("saleor.plugins.social_auth.plugin.SocialAuthPlugin")
 

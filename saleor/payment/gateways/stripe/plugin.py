@@ -1,6 +1,9 @@
 import logging
 from typing import TYPE_CHECKING, List, Tuple
 
+import stripe
+
+from . import get_payment_meta
 from ....streaming import stream_settings
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
@@ -32,7 +35,8 @@ from .stripe_api import (
     list_customer_payment_methods,
     refund_payment_intent,
     retrieve_payment_intent,
-    subscribe_webhook
+    subscribe_webhook,
+    detach_customer_payment_method
 )
 from .webhooks import handle_webhook
 
@@ -119,6 +123,7 @@ class StripeGatewayPlugin(BasePlugin):
             },
             store_customer=True,
         )
+        stripe.max_network_retries = 2
 
     def webhook(self, request: WSGIRequest, path: str, previous_value) -> HttpResponse:
         config = self.config
@@ -185,6 +190,7 @@ class StripeGatewayPlugin(BasePlugin):
         off_session = data.get("off_session") if data else None
 
         payment_method_types = data.get("payment_method_types") if data else None
+        payment_intent_meta = data.get("payment_intent_meta") if data else None
 
         customer = None
         # confirm that we create customer on stripe side only for log-in customers
@@ -206,11 +212,15 @@ class StripeGatewayPlugin(BasePlugin):
             metadata={
                 "channel": self.channel.slug,  # type: ignore
                 "payment_id": payment_information.graphql_payment_id,
+                "app_id": payment_intent_meta.get("app_id", None),
+                "checkout_token": payment_intent_meta.get("checkout_token", None),
+                "subscribe_to_newsletter": payment_intent_meta.get("subscribe_to_newsletter", None)
             },
             setup_future_usage=setup_future_usage,
             off_session=off_session,
             payment_method_types=payment_method_types,
             customer_email=payment_information.customer_email,
+            checkout_token=payment_information.checkout_token
         )
 
         raw_response = None
@@ -421,8 +431,11 @@ class StripeGatewayPlugin(BasePlugin):
             api_key=self.config.connection_params["secret_api_key"],
             customer_id=customer_id,
         )
+
         if payment_methods:
-            channel_slug: str = self.channel.slug  # type: ignore
+            # VALCOME: Ignore channel as ng-live does not support it
+            # channel_slug: str = self.channel.slug  # type: ignore
+
             customer_sources = [
                 CustomerSource(
                     id=payment_method.id,
@@ -436,10 +449,19 @@ class StripeGatewayPlugin(BasePlugin):
                     ),
                 )
                 for payment_method in payment_methods
-                if payment_method.metadata.get("channel") == channel_slug
+                # VALCOME: Ignore channel as ng-live does not support it
+                # if payment_method.metadata.get("channel") == channel_slug
             ]
             previous_value.extend(customer_sources)
+
         return previous_value
+
+    @require_active_plugin
+    def delete_payment_source(self, payment_method_id: str):
+        return detach_customer_payment_method(
+            api_key=self.config.connection_params["secret_api_key"],
+            payment_method_id=payment_method_id
+        )
 
     @classmethod
     def pre_save_plugin_configuration(cls, plugin_configuration: "PluginConfiguration"):
@@ -546,6 +568,12 @@ class StripeGatewayPlugin(BasePlugin):
                         )
                     }
                 )
+
+    @require_active_plugin
+    def get_payment_meta(self, payment_intent_id):
+        params = self.config.connection_params
+        api_key = params['secret_api_key']
+        return get_payment_meta(api_key, payment_intent_id)
 
     @require_active_plugin
     def get_payment_config(self, previous_value):

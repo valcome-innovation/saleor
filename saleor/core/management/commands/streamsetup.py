@@ -1,26 +1,19 @@
-import django.conf as conf
-from io import StringIO
-from django.apps import apps
 from django.contrib.sites.models import Site
-from django.core.management import call_command
 from django.core.management.base import BaseCommand
-from django.db import connection
 
-from ....account.models import User, Address
-from ....streaming.models import StreamTicket
-from ....account.utils import create_superuser
-from ....site.models import AuthenticationBackends
 from ...utils.random_data import (
     add_address_to_admin,
     create_products_by_schema,
-    create_channel, create_address,
-)
+    create_channel, )
 from ...utils.stream_data import (
     create_page,
     create_page_type,
     create_users,
     create_test_user, create_page_translation,
 )
+from ....account.models import User, Address
+from ....account.utils import create_superuser
+from ....streaming.models import StreamTicket
 
 
 class Command(BaseCommand):

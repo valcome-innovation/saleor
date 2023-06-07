@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
+from django.utils.timezone import make_aware
 
 from saleor.payment import ChargeStatus
 from saleor.payment.models import Payment
@@ -39,10 +40,11 @@ def get_latest_refund_date(refunds):
             latest_unix = refund.created
 
     if latest_unix is not None:
-        return datetime.fromtimestamp(latest_unix)
+        naive_datetime = datetime.fromtimestamp(latest_unix)
+        return make_aware(naive_datetime)
 
 
-def update_sofort_failure_psp_data(payment_intent):
+def update_failure_psp_data(payment_intent):
     psp_reference = payment_intent.id
     payment = Payment.objects.filter(psp_reference=psp_reference).first()
 
