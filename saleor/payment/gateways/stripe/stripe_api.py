@@ -134,6 +134,7 @@ def create_payment_intent(
     off_session: Optional[bool] = None,
     payment_method_types: Optional[List[str]] = None,
     customer_email: Optional[str] = None,
+    checkout_token: Optional[str] = None,
 ) -> Tuple[Optional[StripeObject], Optional[StripeError]]:
 
     capture_method = AUTOMATIC_CAPTURE_METHOD if auto_capture else MANUAL_CAPTURE_METHOD
@@ -166,6 +167,7 @@ def create_payment_intent(
         with stripe_opentracing_trace("stripe.PaymentIntent.create"):
             intent = stripe.PaymentIntent.create(
                 api_key=api_key,
+                # idempotency_key=checkout_token,
                 amount=price_to_minor_unit(amount, currency),
                 currency=currency,
                 capture_method=capture_method,
@@ -217,7 +219,6 @@ def detach_customer_payment_method(
             payment_method: "PaymentMethod" = stripe.PaymentMethod.detach(
                 payment_method_id,
                 api_key=api_key,
-                max_network_retries=2,
             )
             return payment_method, None
     except StripeError as error:
