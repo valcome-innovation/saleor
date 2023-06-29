@@ -92,7 +92,7 @@ class Command(BaseCommand):
 
     def create_company_address(self):
         company_address = Address(
-            company_name="Valcome Analytics GmbH",
+            company_name="Valcome Innovation GmbH",
             street_address_1="Im Backerfeld 12a",
             city="Linz",
             postal_code="4020",
