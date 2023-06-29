@@ -17,6 +17,7 @@ FROM python:3.9-slim
 
 RUN groupadd -r saleor && useradd -r -g saleor saleor
 
+ # VACLOME libtiff5 changed to libtiff-dev as the former package was somehow not found
 RUN apt-get update \
   && apt-get install -y \
   libcairo2 \
@@ -25,9 +26,9 @@ RUN apt-get update \
   libopenjp2-7 \
   libpango-1.0-0 \
   libpangocairo-1.0-0 \
-  libssl1.1 \
-  libtiff5 \
-  libwebp6 \
+  libssl3 \
+  libtiff-dev \
+  libwebp7 \
   libxml2 \
   libpq5 \
   shared-mime-info \
