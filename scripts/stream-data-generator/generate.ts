@@ -188,7 +188,7 @@ const teamRestrictionValues = [
   { name: "Allow Both", slug: "allow-both" },
   { name: "Home Only", slug: "home-only" },
   { name: "Guest Only", slug: "guest-only" },
-].map((config) => createAttributeValue(streamTypeAttribute, config));
+].map((config) => createAttributeValue(teamRestrictionAttribute, config));
 
 const [
   allowBoth,
