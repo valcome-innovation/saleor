@@ -15,6 +15,7 @@ TEAMS_SLUG = 'teams'
 LEAGUES_SLUG = 'leagues'
 TICKET_TYPE_SLUG = 'ticket-type'
 PRODUCT_SLUG_SLUG = 'product-slug'
+TEAM_RESTRICTION_SLUG = 'team-restriction'
 STREAM_TYPE_SLUG = 'stream-type'
 START_DATE_SLUG = 'start-date'
 END_DATE_SLUG = 'end-date'
@@ -55,6 +56,7 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     stream_type = get_attribute_values(attributes, STREAM_TYPE_SLUG).first().slug
     product_slug = get_attribute_values(attributes, PRODUCT_SLUG_SLUG).first().slug
     ticket_type = get_attribute_values(attributes, TICKET_TYPE_SLUG).first().slug
+    team_restriction = get_attribute_values(attributes, TEAM_RESTRICTION_SLUG).first().slug
 
     # optional attributes
     start_time_attr = get_attribute_values(attributes, START_DATE_SLUG)
@@ -83,6 +85,7 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     stream_ticket.type = ticket_type
     stream_ticket.timed_type = timed_type
     stream_ticket.product_slug = product_slug
+    stream_ticket.team_restriction = team_restriction
     # Hardcode guests value as there is no real world use case without
     stream_ticket.for_guests = True
 

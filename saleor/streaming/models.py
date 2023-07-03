@@ -34,6 +34,17 @@ class ProductSlug:
     ]
 
 
+class TeamRestriction:
+    ALLOW_BOTH = "allow-both"
+    HOME_ONLY = "home-only"
+    GUEST_ONLY = "guest-only"
+
+    CHOICES = [
+        (ALLOW_BOTH, "allow-both"),
+        (HOME_ONLY, "home-only"),
+        (GUEST_ONLY, "guest-only"),
+    ]
+
 class StreamTicket(models.Model):
     type = models.CharField(
         max_length=256,
@@ -66,6 +77,11 @@ class StreamTicket(models.Model):
     hide_in_analytics = models.BooleanField(default=False, null=False)
     timed_type = models.CharField(max_length=256, default="none", null=False)
     for_guests = models.BooleanField(default=False, null=False)
+    team_restriction = models.CharField(
+        max_length=256,
+        choices=TeamRestriction.CHOICES,
+        default="home-only"
+    )
     product_slug = models.CharField(
         max_length=256,
         choices=ProductSlug.CHOICES,
