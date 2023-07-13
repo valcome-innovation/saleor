@@ -39,18 +39,6 @@ const teamsAttribute = createAttribute({
   input_type: "multiselect",
   isRequired: false,
 });
-const startDateAttribute = createAttribute({
-  name: "Start Time",
-  slug: "start-date",
-  input_type: "date",
-  isRequired: false,
-});
-const endDateAttribute = createAttribute({
-  name: "End Time",
-  slug: "end-date",
-  input_type: "date",
-  isRequired: false,
-});
 const teamRestrictionAttribute = createAttribute({
   name: "Team Restriction",
   slug: "team-restriction",
@@ -64,8 +52,6 @@ const attributeLinks = [
   ticketTypeAttribute,
   leaguesAttribute,
   teamsAttribute,
-  startDateAttribute,
-  endDateAttribute,
   teamRestrictionAttribute
 ].map((attribute) => createAttributeProductLinks(attribute))
   .flat();
@@ -164,26 +150,6 @@ const [
   dolLeague
 ] = leagueValues;
 
-const startDateValues = [
-  { name: "2022-09-01", slug: "date-1", dateTime: "2022-09-01 00:00:00.000000Z" },
-  { name: "2022-02-01", slug: "date-3", dateTime: "2023-02-01 00:00:00.000000Z" },
-].map((config) => createAttributeValue(startDateAttribute, config, config.dateTime));
-
-const endDateValues = [
-  { name: "2022-01-31", slug: "date-2", dateTime: "2023-01-31 00:00:00.000000Z" },
-  { name: "2022-04-16", slug: "date-4", dateTime: "2023-04-16 00:00:00.000000Z" },
-].map((config) => createAttributeValue(endDateAttribute, config, config.dateTime));
-
-const [
-  regularStart,
-  playoffsStart,
-] = startDateValues;
-
-const [
-  regularEnd,
-  playoffsEnd,
-] = endDateValues;
-
 const teamRestrictionValues = [
   { name: "Allow Both", slug: "allow-both" },
   { name: "Home Only", slug: "home-only" },
@@ -229,8 +195,6 @@ const regularSeasonProducts = teamValues
         { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
         { attribute: streamTypeAttribute, values: [streamTypeGame] },
         { attribute: productSlugAttribute, values: [regularSeasonProductSlug] },
-        { attribute: startDateAttribute, values: [regularStart] },
-        { attribute: endDateAttribute, values: [regularEnd] },
         { attribute: teamRestrictionAttribute, values: [allowBoth] },
       ],
     })
@@ -251,8 +215,6 @@ const regularSeasonAwayProducts = teamValues
         { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
         { attribute: streamTypeAttribute, values: [streamTypeGame] },
         { attribute: productSlugAttribute, values: [regularSeasonAwayProductSlug] },
-        { attribute: startDateAttribute, values: [regularStart] },
-        { attribute: endDateAttribute, values: [regularEnd] },
         { attribute: teamRestrictionAttribute, values: [guestOnly] },
       ],
     })
@@ -273,8 +235,6 @@ const playoffsProducts = teamValues
         { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
         { attribute: streamTypeAttribute, values: [streamTypeGame] },
         { attribute: productSlugAttribute, values: [playoffsProductSlug] },
-        { attribute: startDateAttribute, values: [playoffsStart] },
-        { attribute: endDateAttribute, values: [playoffsEnd] },
         { attribute: teamRestrictionAttribute, values: [allowBoth] },
       ],
     })
@@ -295,8 +255,6 @@ const playoffsAwayProducts = teamValues
         { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
         { attribute: streamTypeAttribute, values: [streamTypeGame] },
         { attribute: productSlugAttribute, values: [playoffsAwayProductSlug] },
-        { attribute: startDateAttribute, values: [playoffsStart] },
-        { attribute: endDateAttribute, values: [playoffsEnd] },
         { attribute: teamRestrictionAttribute, values: [guestOnly] },
       ],
     })
@@ -422,8 +380,6 @@ const result = [
   streamTypeAttribute,
   leaguesAttribute,
   teamsAttribute,
-  startDateAttribute,
-  endDateAttribute,
   allTeamValue,
   teamRestrictionAttribute,
   ...attributeLinks,
@@ -432,8 +388,6 @@ const result = [
   ...teamValues,
   ...leagueValues,
   ...productSlugValues,
-  ...startDateValues,
-  ...endDateValues,
   ...teamRestrictionValues,
   ...singleProducts,
   ...regularSeasonProducts,
