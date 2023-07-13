@@ -17,8 +17,6 @@ TICKET_TYPE_SLUG = 'ticket-type'
 PRODUCT_SLUG_SLUG = 'product-slug'
 TEAM_RESTRICTION_SLUG = 'team-restriction'
 STREAM_TYPE_SLUG = 'stream-type'
-START_DATE_SLUG = 'start-date'
-END_DATE_SLUG = 'end-date'
 
 INVALID_PRODUCT_CONFIGURATION_ERROR = ValidationError(
     "STREAM_PLUGIN: Invalid product configuration in checkout found.",
@@ -57,14 +55,6 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     product_slug = get_attribute_values(attributes, PRODUCT_SLUG_SLUG).first().slug
     ticket_type = get_attribute_values(attributes, TICKET_TYPE_SLUG).first().slug
     team_restriction = get_attribute_values(attributes, TEAM_RESTRICTION_SLUG).first().slug
-
-    # optional attributes
-    start_time_attr = get_attribute_values(attributes, START_DATE_SLUG)
-    end_time_attr = get_attribute_values(attributes, END_DATE_SLUG)
-
-    if ticket_type == 'timed-season':
-        start_time = start_time_attr.first().date_time
-        expires = end_time_attr.first().date_time
 
     if ticket_type == 'timed':
         timed_type = ticket_type
@@ -133,17 +123,10 @@ def validate_stream_ticket_checkout(checkout: "Checkout", lines: "list"):
     ticket_type_attr = get_attribute_values(attributes, TICKET_TYPE_SLUG).first()
     stream_type_attr = get_attribute_values(attributes, STREAM_TYPE_SLUG).first()
 
-    start_time_attr = get_attribute_values(attributes, START_DATE_SLUG)
-    end_time_attr = get_attribute_values(attributes, END_DATE_SLUG)
     team_attr = get_attribute_values(attributes, TEAMS_SLUG)
 
     do_attributes_match_type = True
     are_teams_matching = True
-
-    # check if optional attributes are consistent
-    if ticket_type_attr.slug == 'timed-season':
-        do_attributes_match_type = start_time_attr.first() is not None \
-                                   and end_time_attr.first() is not None
 
     # prevent teams from being altered in meta (single tickets do not need team-attr)
     if ticket_type_attr.slug != 'single' \
