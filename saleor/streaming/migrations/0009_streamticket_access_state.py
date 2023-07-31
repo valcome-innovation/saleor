@@ -15,4 +15,18 @@ class Migration(migrations.Migration):
             name='access_state',
             field=models.CharField(choices=[('active', 'active'), ('disabled', 'disabled'), ('fully-refunded', 'fully-refunded'), ('partially-refunded', 'partially-refunded')], default='active', max_length=256),
         ),
+        migrations.RunSQL("""
+            UPDATE streaming_streamticket
+            SET access_state = 'fully-refunded'
+            WHERE order_id in (select order_id
+                from payment_payment
+                where charge_status = 'fully-refunded')
+            """),
+        migrations.RunSQL("""
+            UPDATE streaming_streamticket
+            SET access_state = 'partially-refunded'
+            WHERE order_id in (select order_id
+                from payment_payment
+                where charge_status = 'partially-refunded')
+            """)
     ]
