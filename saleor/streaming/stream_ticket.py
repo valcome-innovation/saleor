@@ -4,11 +4,13 @@ from django.utils.timezone import make_aware
 from graphql_relay import from_global_id
 
 from . import stream_settings
-from .models import StreamTicket
+from .models import StreamTicket, AccessState
 from ..checkout.models import Checkout
 from ..core.models import ModelWithMetadata
 from ..order.error_codes import OrderErrorCode
 from ..order.models import Order
+from ..payment import ChargeStatus
+from ..payment.models import Payment
 from ..product import models
 
 TEAMS_SLUG = 'teams'
@@ -210,3 +212,29 @@ def get_attribute_values(attributes, slug: "str"):
     for attr in attributes:
         if attr.attribute.slug == slug:
             return attr.values
+
+
+def update_stream_ticket_access_state(payment: "Payment"):
+    if payment.order:
+        access_state = _get_access_state_from_payment(payment)
+
+        if access_state is not None:
+            stream_tickets = StreamTicket.objects.filter(order_id=payment.order.pk)
+            _update_access_state(stream_tickets, access_state)
+
+
+def _get_access_state_from_payment(payment: "Payment") -> AccessState:
+    access_state = None
+
+    if payment.charge_status == ChargeStatus.FULLY_REFUNDED:
+        access_state = AccessState.FULLY_REFUNDED
+    elif payment.charge_status == ChargeStatus.PARTIALLY_REFUNDED:
+        access_state = AccessState.PARTIALLY_REFUNDED
+
+    return access_state
+
+
+def _update_access_state(stream_tickets, access_state: "AccessState"):
+    for ticket in stream_tickets:
+        ticket.access_state = access_state
+        ticket.save()
