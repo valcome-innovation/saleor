@@ -45,6 +45,21 @@ class TeamRestriction:
         (GUEST_ONLY, "guest-only"),
     ]
 
+
+class AccessState:
+    ACTIVE = "active"
+    DISABLED = "disabled"
+    FULLY_REFUNDED = "fully-refunded"
+    PARTIALLY_REFUNDED = "partially-refunded"
+
+    CHOICES = [
+        (ACTIVE, "active"),
+        (DISABLED, "disabled"),
+        (FULLY_REFUNDED, "fully-refunded"),
+        (PARTIALLY_REFUNDED, "partially-refunded"),
+    ]
+
+
 class StreamTicket(models.Model):
     type = models.CharField(
         max_length=256,
@@ -87,6 +102,11 @@ class StreamTicket(models.Model):
         choices=ProductSlug.CHOICES,
         null=True,
         default=None
+    )
+    access_state = models.CharField(
+        max_length=256,
+        choices=AccessState.CHOICES,
+        default="active"
     )
 
     class Meta:
