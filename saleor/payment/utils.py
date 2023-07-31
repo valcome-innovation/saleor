@@ -28,6 +28,7 @@ from .interface import (
     PaymentMethodInfo,
 )
 from .models import Payment, Transaction
+from ..streaming.stream_ticket import update_stream_ticket_access_state
 
 logger = logging.getLogger(__name__)
 
@@ -551,6 +552,7 @@ def update_payment_charge_status(payment, transaction, changed_fields=None):
             payment.charge_status = ChargeStatus.FULLY_REFUNDED
             payment.is_active = False
         changed_fields += ["charge_status", "is_active"]
+        update_stream_ticket_access_state(payment)
     elif transaction_kind == TransactionKind.PENDING:
         payment.charge_status = ChargeStatus.PENDING
         changed_fields += ["charge_status"]
