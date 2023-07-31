@@ -143,8 +143,9 @@ def single_ticket_product(product: "Product"):
     stream_type = create_attribute('stream-type', 'game')
     product_slug = create_attribute('product-slug', 'single')
     ticket_type = create_attribute('ticket-type', 'single')
+    team_restriction = create_attribute('team-restriction', 'allow-both')
 
-    assign_attributes(product, [stream_type, product_slug, ticket_type])
+    assign_attributes(product, [stream_type, product_slug, ticket_type, team_restriction])
     product.save()
 
     return product
@@ -155,9 +156,10 @@ def season_ticket_product(product: "Product"):
     stream_type = create_attribute('stream-type', 'game')
     product_slug = create_attribute('product-slug', 'cup')
     ticket_type = create_attribute('ticket-type', 'season')
+    team_restriction = create_attribute('team-restriction', 'allow-both')
     teams = create_attribute('teams', 'all-teams')
 
-    assign_attributes(product, [stream_type, product_slug, ticket_type, teams])
+    assign_attributes(product, [stream_type, product_slug, ticket_type, teams, team_restriction])
     product.save()
 
     return product
@@ -165,17 +167,13 @@ def season_ticket_product(product: "Product"):
 
 @pytest.fixture
 def base_timed_season_ticket_product(product: "Product"):
-    start_date = datetime.fromisoformat('2022-09-01 00:00:00.000000+00:00')
-    end_date = datetime.fromisoformat('2023-02-01 00:00:00.000000+00:00')
-
     stream_type = create_attribute('stream-type', 'game')
     product_slug = create_attribute('product-slug', 'regular-season')
     ticket_type = create_attribute('ticket-type', 'timed-season')
-    start_date_attr = create_attribute('start-date', 'start-date', start_date)
-    end_date_attr = create_attribute('end-date', 'end-date', end_date)
+    team_restriction = create_attribute('team-restriction', 'allow-both')
 
     assign_attributes(product, [
-        stream_type, product_slug, ticket_type, start_date_attr, end_date_attr
+        stream_type, product_slug, ticket_type, team_restriction
     ])
 
     return product

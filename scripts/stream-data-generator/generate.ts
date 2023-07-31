@@ -39,17 +39,11 @@ const teamsAttribute = createAttribute({
   input_type: "multiselect",
   isRequired: false,
 });
-const startDateAttribute = createAttribute({
-  name: "Start Time",
-  slug: "start-date",
-  input_type: "date",
-  isRequired: false,
-});
-const endDateAttribute = createAttribute({
-  name: "End Time",
-  slug: "end-date",
-  input_type: "date",
-  isRequired: false,
+const teamRestrictionAttribute = createAttribute({
+  name: "Team Restriction",
+  slug: "team-restriction",
+  input_type: "dropdown",
+  isRequired: true,
 });
 
 const attributeLinks = [
@@ -58,8 +52,7 @@ const attributeLinks = [
   ticketTypeAttribute,
   leaguesAttribute,
   teamsAttribute,
-  startDateAttribute,
-  endDateAttribute
+  teamRestrictionAttribute
 ].map((attribute) => createAttributeProductLinks(attribute))
   .flat();
 
@@ -81,6 +74,7 @@ const streamTypeValues = [
   { name: "Game", slug: "game" },
   { name: "Video", slug: "video" },
 ].map((config) => createAttributeValue(streamTypeAttribute, config));
+
 const [streamTypeGame, streamTypeVideo] = streamTypeValues;
 
 const productSlugValues = [
@@ -88,7 +82,9 @@ const productSlugValues = [
   { name: "Season", slug: "season" },
   { name: "Cup", slug: "cup" },
   { name: "Regular Season", slug: "regular-season" },
+  { name: "Regular Season (Away)", slug: "regular-season-away" },
   { name: "Playoffs", slug: "playoffs" },
+  { name: "Playoffs (Away)", slug: "playoffs-away" },
   { name: "Month", slug: "month" },
   { name: "Day", slug: "day" }
 ].map((config) => createAttributeValue(productSlugAttribute, config));
@@ -98,7 +94,9 @@ const [
   seasonProductSlug,
   cupProductSlug,
   regularSeasonProductSlug,
+  regularSeasonAwayProductSlug,
   playoffsProductSlug,
+  playoffsAwayProductSlug,
   monthProductSlug,
   dayProductSlug
 ] = productSlugValues;
@@ -152,25 +150,17 @@ const [
   dolLeague
 ] = leagueValues;
 
-const startDateValues = [
-  { name: "2022-09-01", slug: "date-1", dateTime: "2022-09-01 00:00:00.000000Z" },
-  { name: "2022-02-01", slug: "date-3", dateTime: "2023-02-01 00:00:00.000000Z" },
-].map((config) => createAttributeValue(startDateAttribute, config, config.dateTime));
-
-const endDateValues = [
-  { name: "2022-01-31", slug: "date-2", dateTime: "2023-01-31 00:00:00.000000Z" },
-  { name: "2022-04-16", slug: "date-4", dateTime: "2023-04-16 00:00:00.000000Z" },
-].map((config) => createAttributeValue(endDateAttribute, config, config.dateTime));
+const teamRestrictionValues = [
+  { name: "Allow Both", slug: "allow-both" },
+  { name: "Home Only", slug: "home-only" },
+  { name: "Guest Only", slug: "guest-only" },
+].map((config) => createAttributeValue(teamRestrictionAttribute, config));
 
 const [
-  regularStart,
-  playoffsStart,
-] = startDateValues;
-
-const [
-  regularEnd,
-  playoffsEnd,
-] = endDateValues;
+  allowBoth,
+  homeOnly,
+  guestOnly
+] = teamRestrictionValues;
 
 // SINGLE TICKETS
 const singleProducts = teamValues
@@ -185,6 +175,7 @@ const singleProducts = teamValues
         { attribute: teamsAttribute, values: [team] },
         { attribute: streamTypeAttribute, values: [streamTypeGame] },
         { attribute: productSlugAttribute, values: [singleProductSlug] },
+        { attribute: teamRestrictionAttribute, values: [allowBoth] },
       ],
     })
   )
@@ -204,8 +195,27 @@ const regularSeasonProducts = teamValues
         { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
         { attribute: streamTypeAttribute, values: [streamTypeGame] },
         { attribute: productSlugAttribute, values: [regularSeasonProductSlug] },
-        { attribute: startDateAttribute, values: [regularStart] },
-        { attribute: endDateAttribute, values: [regularEnd] },
+        { attribute: teamRestrictionAttribute, values: [allowBoth] },
+      ],
+    })
+  )
+  .flat();
+
+// REGULAR SEASON TICKETS (AWAY)
+const regularSeasonAwayProducts = teamValues
+  .map((team) =>
+    createProduct({
+      name: "Regular Season (Away)",
+      postfix: `- ${team.fields.name}`,
+      postfixSlug: `-${team.fields.slug}`,
+      price: "79.500",
+      attributes: [
+        { attribute: ticketTypeAttribute, values: [timedSeasonAttribute] },
+        { attribute: teamsAttribute, values: [team] },
+        { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
+        { attribute: streamTypeAttribute, values: [streamTypeGame] },
+        { attribute: productSlugAttribute, values: [regularSeasonAwayProductSlug] },
+        { attribute: teamRestrictionAttribute, values: [guestOnly] },
       ],
     })
   )
@@ -225,8 +235,27 @@ const playoffsProducts = teamValues
         { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
         { attribute: streamTypeAttribute, values: [streamTypeGame] },
         { attribute: productSlugAttribute, values: [playoffsProductSlug] },
-        { attribute: startDateAttribute, values: [playoffsStart] },
-        { attribute: endDateAttribute, values: [playoffsEnd] },
+        { attribute: teamRestrictionAttribute, values: [allowBoth] },
+      ],
+    })
+  )
+  .flat();
+
+// PLAYOFF SEASON TICKETS (AWAY)
+const playoffsAwayProducts = teamValues
+  .map((team) =>
+    createProduct({
+      name: "Playoffs (Away)",
+      postfix: `- ${team.fields.name}`,
+      postfixSlug: `-${team.fields.slug}`,
+      price: "44.500",
+      attributes: [
+        { attribute: ticketTypeAttribute, values: [timedSeasonAttribute] },
+        { attribute: teamsAttribute, values: [team] },
+        { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
+        { attribute: streamTypeAttribute, values: [streamTypeGame] },
+        { attribute: productSlugAttribute, values: [playoffsAwayProductSlug] },
+        { attribute: teamRestrictionAttribute, values: [guestOnly] },
       ],
     })
   )
@@ -245,6 +274,7 @@ const seasonProducts = teamValues
         { attribute: teamsAttribute, values: [team] },
         { attribute: streamTypeAttribute, values: [streamTypeGame] },
         { attribute: productSlugAttribute, values: [seasonProductSlug] },
+        { attribute: teamRestrictionAttribute, values: [allowBoth] },
       ],
     })
   )
@@ -262,6 +292,7 @@ seasonProducts.push(
       { attribute: teamsAttribute, values: [allTeamValue] },
       { attribute: streamTypeAttribute, values: [streamTypeGame] },
       { attribute: productSlugAttribute, values: [seasonProductSlug] },
+      { attribute: teamRestrictionAttribute, values: [allowBoth] },
     ],
   })
 );
@@ -279,6 +310,7 @@ seasonProducts.push(
       { attribute: streamTypeAttribute, values: [streamTypeGame] },
       { attribute: productSlugAttribute, values: [cupProductSlug] },
       { attribute: leaguesAttribute, values: [dolLeague] },
+      { attribute: teamRestrictionAttribute, values: [allowBoth] },
     ],
   })
 );
@@ -348,20 +380,20 @@ const result = [
   streamTypeAttribute,
   leaguesAttribute,
   teamsAttribute,
-  startDateAttribute,
-  endDateAttribute,
   allTeamValue,
+  teamRestrictionAttribute,
   ...attributeLinks,
   ...streamTypeValues,
   ...ticketTypeValues,
   ...teamValues,
   ...leagueValues,
   ...productSlugValues,
-  ...startDateValues,
-  ...endDateValues,
+  ...teamRestrictionValues,
   ...singleProducts,
   ...regularSeasonProducts,
+  ...regularSeasonAwayProducts,
   ...playoffsProducts,
+  ...playoffsAwayProducts,
   ...seasonProducts,
   // ...dayProducts,
   // ...monthProducts,
