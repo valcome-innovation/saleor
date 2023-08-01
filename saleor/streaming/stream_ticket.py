@@ -78,9 +78,6 @@ def create_stream_ticket_from_order(order: "Order") -> "StreamTicket":
     stream_ticket.timed_type = timed_type
     stream_ticket.product_slug = product_slug
     stream_ticket.team_restriction = team_restriction
-    # Hardcode guests value as there is no real world use case without
-    stream_ticket.for_guests = True
-
     stream_ticket.save()
 
     return stream_ticket
