@@ -91,7 +91,6 @@ class StreamTicket(models.Model):
     expires = models.DateTimeField(default=None, editable=True, blank=True, null=True)
     hide_in_analytics = models.BooleanField(default=False, null=False)
     timed_type = models.CharField(max_length=256, default="none", null=False)
-    for_guests = models.BooleanField(default=False, null=False)
     team_restriction = models.CharField(
         max_length=256,
         choices=TeamRestriction.CHOICES,
