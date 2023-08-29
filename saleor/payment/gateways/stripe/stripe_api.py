@@ -336,4 +336,9 @@ def get_payment_method_details(
                 brand=card_details.get("brand", ""),
                 type="card",
             )
+        elif payment_method_details.get("type") == "sofort":
+            payment_method_info = PaymentMethodInfo(
+                type="sofort",
+            )
+
     return payment_method_info

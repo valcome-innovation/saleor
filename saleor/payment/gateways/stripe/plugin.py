@@ -63,7 +63,7 @@ class StripeGatewayPlugin(BasePlugin):
     DEFAULT_ACTIVE = stream_settings.STRIPE_PLUGIN_ACTIVE
     DEFAULT_CONFIGURATION = [
         {"name": "public_api_key", "value": stream_settings.STRIPE_PUBLIC_KEY},
-        {"name": "secret_api_key", "value":  stream_settings.STRIPE_PRIVATE_KEY},
+        {"name": "secret_api_key", "value": stream_settings.STRIPE_PRIVATE_KEY},
         {"name": "automatic_payment_capture", "value": True},
         {"name": "supported_currencies", "value": stream_settings.DEFAULT_CURRENCY},
         {"name": "webhook_endpoint_id", "value": None},
@@ -89,7 +89,7 @@ class StripeGatewayPlugin(BasePlugin):
         "supported_currencies": {
             "type": ConfigurationTypeField.STRING,
             "help_text": "Determines currencies supported by gateway."
-            " Please enter currency codes separated by a comma.",
+                         " Please enter currency codes separated by a comma.",
             "label": "Supported currencies",
         },
         "webhook_endpoint_id": {
@@ -309,7 +309,12 @@ class StripeGatewayPlugin(BasePlugin):
             kind, action_required = self._get_transaction_details_for_stripe_status(
                 payment_intent.status
             )
-            if kind in (TransactionKind.AUTH, TransactionKind.CAPTURE):
+
+            if kind in (
+                    TransactionKind.AUTH,
+                    TransactionKind.CAPTURE,
+                    TransactionKind.PENDING
+            ):
                 payment_method_info = get_payment_method_details(payment_intent)
         else:
             action_required = False
