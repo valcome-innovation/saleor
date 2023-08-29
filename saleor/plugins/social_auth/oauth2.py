@@ -33,12 +33,12 @@ def social_auth(backend, access_token, context) -> ExternalAccessTokens:
     context.backend = load_backend(context.social_strategy, backend, uri)
     user_data = context.backend.user_data(access_token)
     validate_user_email(user_data)
-    user = context.backend.do_auth(access_token)
+    email = context.backend.do_auth(access_token)
 
     if hasattr(context, 'user'):
-        context.user = user
+        context.user = email
 
-    return do_authenticate(user)
+    return do_authenticate(email)
 
 
 def validate_social_auth_config():
