@@ -209,6 +209,12 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         super().__init__(*args, **kwargs)
         self._effective_permissions = None
 
+    # VALCOME: enforce email address to be lowercase [NWS-1468]
+    # https://stackoverflow.com/a/13044762/12237560
+    def save(self, *args, **kwargs):
+        self.email = self.email.lower()
+        super().save(*args, **kwargs)
+
     @property
     def effective_permissions(self) -> "QuerySet[Permission]":
         if self._effective_permissions is None:
