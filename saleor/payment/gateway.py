@@ -328,22 +328,30 @@ def _fetch_gateway_response(fn, *args, **kwargs):
     return response, error
 
 
- # VALCOME: enable refunds for CONFIRM actions
+# VALCOME: enable refunds also for CONFIRM and PENDING actions
 def _get_transaction_token_for_refund(
-    payment: Payment
+        payment: Payment
 ) -> Optional[str]:
     if payment.is_manual():
         return _get_past_transaction_token(payment, TransactionKind.EXTERNAL)
-    else:
+
+    transaction_kinds = [
+        TransactionKind.CAPTURE,
+        TransactionKind.CONFIRM,
+        TransactionKind.PENDING
+    ]
+
+    for kind in transaction_kinds:
         try:
-            token = _get_past_transaction_token(payment, TransactionKind.CAPTURE)
+            return _get_past_transaction_token(payment, kind)
         except PaymentError:
-            token = _get_past_transaction_token(payment, TransactionKind.CONFIRM)
-        return token
+            pass
+
+    raise PaymentError("Cannot find a successful transaction.")
 
 
 def _get_past_transaction_token(
-    payment: Payment, kind: str  # for kind use "TransactionKind"
+        payment: Payment, kind: str  # for kind use "TransactionKind"
 ) -> Optional[str]:
     txn = payment.transactions.filter(kind=kind, is_success=True).last()
     if txn is None:
@@ -359,7 +367,9 @@ def _validate_refund_amount(payment: Payment, amount: Decimal):
 
 
 def payment_refund_or_void(
-    payment: Optional[Payment], manager: "PluginsManager", channel_slug: Optional[str]
+        payment: Optional[Payment],
+        manager: "PluginsManager",
+        channel_slug: Optional[str]
 ):
     if payment is None:
         return

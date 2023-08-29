@@ -529,6 +529,7 @@ def update_payment_charge_status(payment, transaction, changed_fields=None):
     if transaction_kind in {
         TransactionKind.CAPTURE,
         TransactionKind.REFUND_REVERSED,
+        TransactionKind.PENDING, # VALCOME: SOFORT Payments will be created as CHARGED
     } or is_stripe_confirmation(transaction_kind, payment.gateway):
         payment.captured_amount += transaction.amount
         payment.is_active = True
@@ -553,9 +554,10 @@ def update_payment_charge_status(payment, transaction, changed_fields=None):
             payment.is_active = False
         changed_fields += ["charge_status", "is_active"]
         update_stream_ticket_access_state(payment)
-    elif transaction_kind == TransactionKind.PENDING:
-        payment.charge_status = ChargeStatus.PENDING
-        changed_fields += ["charge_status"]
+    # VALCOME: SOFORT Payments will be created as CHARGED
+    # elif transaction_kind == TransactionKind.PENDING:
+    #     payment.charge_status = ChargeStatus.PENDING
+    #     changed_fields += ["charge_status"]
     elif transaction_kind == TransactionKind.CANCEL:
         payment.charge_status = ChargeStatus.CANCELLED
         payment.is_active = False
