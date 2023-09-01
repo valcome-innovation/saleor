@@ -201,6 +201,24 @@ const regularSeasonProducts = teamValues
   )
   .flat();
 
+// GLOBAL REGULAR SEASON TICKET (for all leagues)
+regularSeasonProducts.push(
+  ...createProduct({
+    name: "Regular Season",
+    postfix: "",
+    postfixSlug: "",
+    price: "259.000",
+    attributes: [
+      { attribute: ticketTypeAttribute, values: [timedSeasonAttribute] },
+      { attribute: teamsAttribute, values: [allTeamValue] },
+      { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
+      { attribute: streamTypeAttribute, values: [streamTypeGame] },
+      { attribute: productSlugAttribute, values: [regularSeasonProductSlug] },
+      { attribute: teamRestrictionAttribute, values: [allowBoth] },
+    ],
+  })
+);
+
 // REGULAR SEASON TICKETS (AWAY)
 const regularSeasonAwayProducts = teamValues
   .map((team) =>
@@ -240,6 +258,24 @@ const playoffsProducts = teamValues
     })
   )
   .flat();
+
+// GLOBAL REGULAR SEASON TICKET (for all leagues)
+playoffsProducts.push(
+  ...createProduct({
+    name: "Playoffs",
+    postfix: "",
+    postfixSlug: "",
+    price: "189.000",
+    attributes: [
+      { attribute: ticketTypeAttribute, values: [timedSeasonAttribute] },
+      { attribute: teamsAttribute, values: [allTeamValue] },
+      { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
+      { attribute: streamTypeAttribute, values: [streamTypeGame] },
+      { attribute: productSlugAttribute, values: [playoffsProductSlug] },
+      { attribute: teamRestrictionAttribute, values: [allowBoth] },
+    ],
+  })
+);
 
 // PLAYOFF SEASON TICKETS (AWAY)
 const playoffsAwayProducts = teamValues
