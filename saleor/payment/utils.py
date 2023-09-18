@@ -425,6 +425,9 @@ def create_transaction(
             raw_response={},
         )
 
+    print("===== REFUND DEBUG ======")
+    print(gateway_response)
+
     txn = Transaction.objects.create(
         payment=payment,
         action_required=action_required,
