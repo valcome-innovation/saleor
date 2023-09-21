@@ -5,6 +5,7 @@ from ...utils.random_data import (
     add_address_to_admin,
     create_products_by_schema,
     create_channel, )
+from django.contrib.auth.models import Permission
 from ...utils.stream_data import (
     create_page,
     create_page_type,
@@ -13,6 +14,7 @@ from ...utils.stream_data import (
 )
 from ....account.models import User, Address
 from ....account.utils import create_superuser
+from ....app.models import App
 from ....streaming.models import StreamTicket
 
 
@@ -46,6 +48,9 @@ class Command(BaseCommand):
         create_products_by_schema(placeholder_dir=self.placeholders_dir,
                                   create_images=False,
                                   data_json="streamdb_data.json")
+
+        self.stdout.write("Creating Apps:")
+        self.create_refund_app()
 
     def create_info_pages(self):
         for msg in create_page_type(1, "Impressum", "about"):
@@ -104,3 +109,20 @@ class Command(BaseCommand):
         site_settings = Site.objects.get_current().settings
         site_settings.company_address = company_address
         site_settings.save(update_fields=["company_address"])
+
+    def create_refund_app(self):
+        manage_order_permissions = Permission.objects.filter(
+            codename='manage_orders'
+        ).first()
+
+        app, _ = App.objects.get_or_create(
+            name="Valcome LiveServer",
+        )
+
+        app.permissions.set([manage_order_permissions])
+        app.tokens.create(
+            name="Management Refund Token",
+            auth_token="LOCAL_REFUND_TOKEN"
+        )
+
+        print(f"App: {app.name}")
