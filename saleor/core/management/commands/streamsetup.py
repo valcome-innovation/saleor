@@ -116,7 +116,7 @@ class Command(BaseCommand):
         ).first()
 
         app, _ = App.objects.get_or_create(
-            name="Valcome LiveServer",
+            name="Live Server Refund",
         )
 
         app.permissions.set([manage_order_permissions])
@@ -124,7 +124,7 @@ class Command(BaseCommand):
         if app.tokens.all().count() == 0:
             app.tokens.create(
                 name="Management Refund Token",
-                auth_token="LOCAL_REFUND_TOKEN_30CHARACTER"
+                auth_token="DEV_REFUND_TOKEN_30_CHARACTERS"
             )
 
         print(f"App: {app.name}")
