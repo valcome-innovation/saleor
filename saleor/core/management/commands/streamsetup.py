@@ -120,9 +120,11 @@ class Command(BaseCommand):
         )
 
         app.permissions.set([manage_order_permissions])
-        app.tokens.create(
-            name="Management Refund Token",
-            auth_token="LOCAL_REFUND_TOKEN"
-        )
+
+        if app.tokens.all().count() == 0:
+            app.tokens.create(
+                name="Management Refund Token",
+                auth_token="LOCAL_REFUND_TOKEN_30CHARACTER"
+            )
 
         print(f"App: {app.name}")
