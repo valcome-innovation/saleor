@@ -1,63 +1,27 @@
 //file:noinspection GroovyAssignabilityCheck
-library('valcome_jenkins_functions')
+@Library('valcome_jenkins_functions')
+import org.valcome.AWSCodebuild
 
 node {
     withGoogleNotifications(getBuildInfo()) {
-        withSshRemote('ARES_SSH', HOST, 'REMOTE') {
-            stage("Pull Source") {
-                gitForcePull(REMOTE, '~/git/saleor/', BRANCH)
-            }
+        stage("Build Image") {
+            buildRemote()
+        }
 
-            stage("Build Image") {
-                build(REMOTE)
-            }
+        stage("Tag Version") {
+            gitPushTag(VERSION, 'github-ssh')
+        }
 
-            stage('Clean Workspace') {
-                cleanWs()
-            }
+        stage('Clean Workspace') {
+            cleanWs()
         }
     }
 }
 
-def build(remote) {
-    def build = startBuild(remote)
-    def runningBuild = getBuildStatus(remote, build.id)
 
-    while (runningBuild.currentPhase != "COMPLETED") {
-        sleep 15
-        runningBuild = getBuildStatus(remote, build.id)
-        echo "ID: " + runningBuild.id
-        echo "Phase: " + runningBuild.currentPhase
-        echo "Status: " + runningBuild.buildStatus
-    }
-
-    if (runningBuild.buildStatus == "STOPPED") {
-        currentBuild.result = 'ABORTED'
-    } else if (runningBuild.buildStatus != "SUCCEEDED") {
-        throw new Exception('AWS Code Build failed (https://eu-central-1.console.aws.amazon.com/codesuite/codebuild/projects?region=eu-central-1)')
-    }
-}
-
-def startBuild(remote) {
-    def result = sshCommand remote: remote,
-            command: """
-                aws codebuild start-build \
-                    --project-name saleor \
-                    --source-version refs/heads/${BRANCH} \
-                    --environment-variables-override \
-                        name=TAG,value=${VERSION}
-            """
-
-    def json = readJSON text: "" + result
-    return json.build
-}
-
-def getBuildStatus(remote, build_id) {
-    def result = sshCommand remote: remote,
-            command: "aws codebuild batch-get-builds --ids ${build_id}"
-
-    def json = readJSON text: "" + result
-    return json.builds[0]
+def buildRemote() {
+    def codebuild = new org.valcome.AWSCodebuild(this, "saleor", BRANCH, VERSION)
+    codebuild.triggerBuildAndAwait()
 }
 
 def getBuildInfo() {
