@@ -45,8 +45,7 @@ def startBuild(remote) {
                     --project-name saleor \
                     --source-version refs/heads/${BRANCH} \
                     --environment-variables-override \
-                        name=TAG,value=${VERSION} \
-                        name=STATIC_URL,value=${STATIC_URL}
+                        name=TAG,value=${VERSION}
             """
 
     def json = readJSON text: "" + result
