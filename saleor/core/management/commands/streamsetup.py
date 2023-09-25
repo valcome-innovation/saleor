@@ -61,16 +61,20 @@ class Command(BaseCommand):
             self.stdout.write(msg)
         for msg in create_page_type(4, "FAQ", "faq"):
             self.stdout.write(msg)
+        for msg in create_page_type(5, "Withdrawal Rights", "withdrawal-rights"):
+            self.stdout.write(msg)
 
         about = create_page(1, "Impressum", "about")
         privacy = create_page(2, "Datenschutzerklärung", "privacy")
         terms = create_page(3, "AGB", "terms")
         faq = create_page(4, "Frequently Asked Questions", "faq")
+        withdrawal = create_page(5, "Withdrawal Rights", "withdrawal-rights")
 
         self.stdout.write(about.slug)
         self.stdout.write(privacy.slug)
         self.stdout.write(terms.slug)
         self.stdout.write(faq.slug)
+        self.stdout.write(withdrawal.slug)
 
         for msg in create_page_translation(about):
             self.stdout.write(msg)
@@ -79,6 +83,8 @@ class Command(BaseCommand):
         for msg in create_page_translation(terms):
             self.stdout.write(msg)
         for msg in create_page_translation(faq):
+            self.stdout.write(msg)
+        for msg in create_page_translation(withdrawal):
             self.stdout.write(msg)
 
     def create_stream_ticket(self, user):
