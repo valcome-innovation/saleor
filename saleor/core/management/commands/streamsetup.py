@@ -10,7 +10,7 @@ from ...utils.stream_data import (
     create_page,
     create_page_type,
     create_users,
-    create_test_user, create_page_translation,
+    create_gatling_test_user, create_page_translation, create_user_object,
 )
 from ....account.models import User, Address
 from ....account.utils import create_superuser
@@ -30,8 +30,12 @@ class Command(BaseCommand):
             self.stdout.write(msg)
 
         self.stdout.write("Creating test user:")
-        for msg in create_test_user(100):
+        for msg in create_gatling_test_user(100):
             self.stdout.write(msg)
+
+        create_user_object("e2e1@valcome.dev", "KG5gTEhNJa&K@?&5#KG4YBXDS94dPnnmfXtMqNqR")
+        create_user_object("e2e2@valcome.dev", "KG5gTEhNJa&K@?&5#KG4YBXDS94dPnnmfXtMqNqR")
+        create_user_object("e2e3@valcome.dev", "KG5gTEhNJa&K@?&5#KG4YBXDS94dPnnmfXtMqNqR")
 
         user = User.objects.filter(email="dev@valcome.tv").first()
         self.create_stream_ticket(user)

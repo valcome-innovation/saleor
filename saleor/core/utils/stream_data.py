@@ -10,26 +10,31 @@ from ...tests.utils import dummy_editorjs
 fake = Factory.create()
 
 
-def create_test_user(how_many=100):
+def create_gatling_test_user(how_many=100):
     for dummy in range(how_many):
-        address = create_address()
+        email = "gatling%d@valcome.tv" % dummy
 
-        if not User.objects.filter(email="gatling%d@valcome.tv" % dummy).exists():
-            user = User.objects.create_user(
-                first_name=address.first_name,
-                last_name=address.last_name,
-                email="gatling%d@valcome.tv" % dummy,
-                password="password",
-                default_billing_address=address,
-                default_shipping_address=address,
-                is_active=True,
-                note=fake.paragraph(),
-                date_joined=fake.date_time(tzinfo=timezone.get_current_timezone()),
-            )
-            user.save()
-            user.addresses.add(address)
+        if not User.objects.filter(email=email).exists():
+            user = create_user_object(email, "password")
             yield "User: %s" % (user.email,)
 
+
+def create_user_object(email, password):
+    address = create_address()
+    user = User.objects.create_user(
+        first_name=address.first_name,
+        last_name=address.last_name,
+        email=email,
+        password=password,
+        default_billing_address=address,
+        default_shipping_address=address,
+        is_active=True,
+        note=fake.paragraph(),
+        date_joined=fake.date_time(tzinfo=timezone.get_current_timezone()),
+    )
+    user.save()
+    user.addresses.add(address)
+    return user
 
 def create_users(how_many=10):
     for dummy in range(how_many):
