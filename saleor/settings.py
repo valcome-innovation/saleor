@@ -562,9 +562,7 @@ DEFAULT_CHANNEL_SLUG = os.environ.get("DEFAULT_CHANNEL_SLUG", "default-channel")
 
 # VALCOME
 def before_send(event, hint):
-    # Add server IP address
-    event['server_name'] = socket.gethostname()
-    event['extra']['server_ip'] = socket.gethostbyname(socket.gethostname())
+    event.setdefault("tags", {})['server_ip'] = socket.gethostbyname(socket.gethostname())
 
     return event
 
