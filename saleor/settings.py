@@ -12,6 +12,7 @@ import jaeger_client.config
 import pkg_resources
 import sentry_sdk
 import sentry_sdk.utils
+import socket
 
 from .core.error_codes import TokenDeactivatedError
 from .streaming import stream_settings
@@ -559,12 +560,20 @@ DEFAULT_MENUS = {"top_menu_name": "navbar", "bottom_menu_name": "footer"}
 DEFAULT_CHANNEL_SLUG = os.environ.get("DEFAULT_CHANNEL_SLUG", "default-channel")
 
 
+# VALCOME
+def before_send(event, hint):
+    event.setdefault("tags", {})['server_ip'] = socket.gethostbyname(socket.gethostname())
+
+    return event
+
+
 #  Sentry
 sentry_sdk.utils.MAX_STRING_LENGTH = 4096
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
 SENTRY_OPTS = {
     "integrations": [CeleryIntegration(), DjangoIntegration()],
-    "ignore_errors": [TokenDeactivatedError]
+    "ignore_errors": [TokenDeactivatedError],
+    "before_send": before_send,
 }
 
 
