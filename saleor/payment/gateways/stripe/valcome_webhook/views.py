@@ -21,7 +21,7 @@ from .utils import has_matching_app_id
 @csrf_exempt
 @transaction_with_commit_on_errors()
 def stripe_webhook(request: ASGIRequest):
-    # Log 2
+    # Log 1
     try:
         sentry_sdk.capture_message("Stripe webhook initiated",
                                    level="info")
