@@ -21,23 +21,7 @@ from .utils import has_matching_app_id
 @csrf_exempt
 @transaction_with_commit_on_errors()
 def stripe_webhook(request: ASGIRequest):
-    # Log 1
-    try:
-        sentry_sdk.capture_message("Stripe webhook initiated",
-                                   level="info")
-    except Exception as sentry_error:
-        print(f"Sentry logging failed: {sentry_error}")
-
     body = json.loads(request.body)
-
-    # Log 2
-    try:
-        event_id = body.get('id')
-        print(f"Stripe webhook received - Event ID: {event_id}")
-        sentry_sdk.capture_message(f"Stripe webhook received - Event ID: {event_id}",
-                                   level="info")
-    except Exception as sentry_error:
-        print(f"Sentry logging failed: {sentry_error}")
 
     try:
         event: StripeEvent = stripe.Event.construct_from(body, stripe.api_key)
