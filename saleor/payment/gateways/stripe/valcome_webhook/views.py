@@ -1,6 +1,5 @@
 import json
 
-import sentry_sdk
 import stripe
 from django.core.handlers.asgi import ASGIRequest
 from stripe.api_resources.charge import Charge
