@@ -239,25 +239,27 @@ const regularSeasonAwayProducts = teamValues
   )
   .flat();
 
-// PLAYOFF SEASON TICKETS
-const playoffsProducts = teamValues
-  .map((team) =>
-    createProduct({
-      name: "Playoffs",
-      postfix: `- ${team.fields.name}`,
-      postfixSlug: `-${team.fields.slug}`,
-      price: "89.000",
-      attributes: [
-        { attribute: ticketTypeAttribute, values: [timedSeasonAttribute] },
-        { attribute: teamsAttribute, values: [team] },
-        { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
-        { attribute: streamTypeAttribute, values: [streamTypeGame] },
-        { attribute: productSlugAttribute, values: [playoffsProductSlug] },
-        { attribute: teamRestrictionAttribute, values: [allowBoth] },
-      ],
-    })
-  )
-  .flat();
+const playoffsProducts = [];
+
+// // PLAYOFF SEASON TICKETS
+// const playoffsProducts = teamValues
+//   .map((team) =>
+//     createProduct({
+//       name: "Playoffs",
+//       postfix: `- ${team.fields.name}`,
+//       postfixSlug: `-${team.fields.slug}`,
+//       price: "89.000",
+//       attributes: [
+//         { attribute: ticketTypeAttribute, values: [timedSeasonAttribute] },
+//         { attribute: teamsAttribute, values: [team] },
+//         { attribute: leaguesAttribute, values: [iceLeague, ahlLeague] },
+//         { attribute: streamTypeAttribute, values: [streamTypeGame] },
+//         { attribute: productSlugAttribute, values: [playoffsProductSlug] },
+//         { attribute: teamRestrictionAttribute, values: [allowBoth] },
+//       ],
+//     })
+//   )
+//   .flat();
 
 // GLOBAL REGULAR SEASON TICKET (for all leagues)
 playoffsProducts.push(
