@@ -16,7 +16,7 @@ def has_matching_app_id(payment_intent: PaymentIntent):
 
 def is_sofort_payment(payment_intent):
     return hasattr(payment_intent, "payment_method_types") \
-            and "sofort" in payment_intent.payment_method_types
+            and "klarna" in payment_intent.payment_method_types
 
 
 def get_payment(payment_intent_id: str) -> Optional[Payment]:

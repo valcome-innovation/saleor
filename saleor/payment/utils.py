@@ -529,7 +529,7 @@ def update_payment_charge_status(payment, transaction, changed_fields=None):
     if transaction_kind in {
         TransactionKind.CAPTURE,
         TransactionKind.REFUND_REVERSED,
-        TransactionKind.PENDING, # VALCOME: SOFORT Payments will be created as CHARGED
+        TransactionKind.PENDING, # VALCOME: klarna Payments will be created as CHARGED
     } or is_stripe_confirmation(transaction_kind, payment.gateway):
         payment.captured_amount += transaction.amount
         payment.is_active = True
@@ -554,7 +554,7 @@ def update_payment_charge_status(payment, transaction, changed_fields=None):
             payment.is_active = False
         changed_fields += ["charge_status", "is_active"]
         update_stream_ticket_access_state(payment)
-    # VALCOME: SOFORT Payments will be created as CHARGED
+    # VALCOME: klarna Payments will be created as CHARGED
     # elif transaction_kind == TransactionKind.PENDING:
     #     payment.charge_status = ChargeStatus.PENDING
     #     changed_fields += ["charge_status"]
@@ -581,7 +581,7 @@ def update_payment_charge_status(payment, transaction, changed_fields=None):
 
 
 def is_stripe_confirmation(transaction_kind, gateway):
-    return ("stripe" in gateway or "sofort" in gateway) \
+    return ("stripe" in gateway or "klarna" in gateway) \
            and transaction_kind == TransactionKind.CONFIRM
 
 
@@ -601,9 +601,9 @@ def store_customer_id(user: User, gateway: str, customer_id: str):
 def prepare_key_for_gateway_customer_id(gateway_name: str) -> str:
     gateway_id = gateway_name.strip()
 
-    # VALCOME: sofort also uses stripe customers.
+    # VALCOME: klarna also uses stripe customers.
     # Therefore, the customer prefix key has to be the same
-    if gateway_id == "mirumee.payments.sofort":
+    if gateway_id == "mirumee.payments.klarna":
         gateway_id = "saleor.payments.stripe"
 
     return (gateway_id.upper()) + ".customer_id"
