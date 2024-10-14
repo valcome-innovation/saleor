@@ -340,5 +340,9 @@ def get_payment_method_details(
             payment_method_info = PaymentMethodInfo(
                 type="sofort",
             )
+        elif payment_method_details.get("type") == "eps":
+            payment_method_info = PaymentMethodInfo(
+                type="eps",
+            )
 
     return payment_method_info
